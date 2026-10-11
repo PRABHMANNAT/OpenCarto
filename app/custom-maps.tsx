@@ -1,6 +1,6 @@
 'use client';
 import {useEffect,useImperativeHandle,useMemo,useRef,useState,type Ref} from 'react';
-import {Download,FolderOpen,MapPinned,PencilLine,Plus,Save,Search,LockKeyhole} from 'lucide-react';
+import {Download,FolderOpen,MapPinned,PencilLine,Plus,Save,Search} from 'lucide-react';
 import {Dialog,DialogContent,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {download,type MapDoc} from './map-model';
 import {scopeLabel} from './scope-model';
@@ -62,10 +62,10 @@ export default function CustomMaps({ref,doc,getViewBounds,onOpen,onStatus,onOpen
  return <Dialog open={mode!==null} onOpenChange={open=>{if(!open&&!busy.current)setMode(null)}}>
   <DialogContent className="custom-maps-dialog" showCloseButton={!saving}>
    <div className="custom-maps-heading"><span className="custom-maps-icon"><FolderOpen size={23}/></span><div><DialogTitle>{mode==='save'?'Save custom map':mode==='rename'?'Rename saved map':'My maps'}</DialogTitle><DialogDescription>Keep your maps here and return to them anytime.</DialogDescription></div></div>
-   <p className="custom-maps-storage">Your editable saves stay in this browser on this device. The private atlas loads from the server after unlocking. Download saved-map settings for a backup.</p>
+   <p className="custom-maps-storage">Your editable saves stay in this browser on this device. The custom atlas opens directly from the server. Download saved-map settings for a backup.</p>
    {error&&<p role="alert" className="custom-maps-error">{error}</p>}
    {mode==='library'?<>
-    {(!query||'united subcontinent alternative political geography private atlas'.includes(query.toLowerCase()))&&<div className="ua-private-card"><LockKeyhole size={23}/><div><strong>United Subcontinent — Alternative Political Geography</strong><small>Private atlas · server protected · independent geography</small></div><button type="button" onClick={()=>{setMode(null);onOpenPrivate()}}>Open private map</button></div>}
+    {(!query||'united subcontinent alternative political geography private atlas'.includes(query.toLowerCase()))&&<div className="ua-private-card"><MapPinned size={23}/><div><strong>United Subcontinent — Alternative Political Geography</strong><small>Custom atlas · no password · independent geography</small></div><button type="button" onClick={()=>{setMode(null);onOpenPrivate()}}>Open custom map</button></div>}
     <div className="custom-map-working"><div><small>CURRENT MAP</small><strong>{active?.name||doc.title||'Untitled map'}</strong><span>{active?(dirty?'Unsaved changes':'Saved map'):'Not saved to My maps yet'}</span></div><div className="custom-map-working-actions"><button type="button" className="map-save-primary" disabled={loading||saving} onClick={()=>active?void persist('update'):startNew()}><Save size={15}/>{saving?'Saving…':active?'Save changes':'Save current map'}</button>{active&&<button type="button" disabled={loading||saving} onClick={startNew}><Plus size={15}/>Save as new map</button>}</div></div>
     <div className="custom-maps-search"><Search size={16}/><input type="search" aria-label="Search saved maps" placeholder="Search your maps" value={query} onChange={e=>setQuery(e.target.value)}/><span>{maps.length}</span></div>
     <div className="custom-map-list" aria-label="Saved custom maps" aria-busy={loading}>

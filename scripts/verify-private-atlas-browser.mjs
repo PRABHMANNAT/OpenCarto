@@ -2,10 +2,6 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { loadMapModel, loadLocalModule } from './load-map-model.mjs';
-let password = '';
-for await (const chunk of process.stdin) password += chunk;
-password = password.trim();
-assert.ok(password, 'Supply test password on stdin.');
 let populationFixture;
 try {
   populationFixture = JSON.parse(
@@ -53,12 +49,10 @@ await fs.mkdir('outputs/private-atlas', { recursive: true });
 async function open() {
   await page.getByRole('button', { name: 'My maps', exact: true }).click();
   await page
-    .getByRole('button', { name: 'Open private map', exact: true })
+    .getByRole('button', { name: 'Open custom map', exact: true })
     .click();
 }
 async function login(target = page) {
-  await target.getByLabel('Access password').fill(password);
-  await target.getByRole('button', { name: 'Unlock map', exact: true }).click();
   await target
     .getByRole('button', { name: 'National overview', exact: true })
     .waitFor();
@@ -87,10 +81,11 @@ try {
     key,
   );
   await open();
-  await page.getByLabel('Access password').waitFor();
-  await page.getByLabel('Access password').fill('incorrect-test-password');
-  await page.getByRole('button', { name: 'Unlock map', exact: true }).click();
-  await page.getByRole('alert').filter({ hasText: 'incorrect' }).waitFor();
+  assert.equal(await page.getByLabel('Access password').count(), 0);
+  assert.equal(
+    await page.getByRole('button', { name: 'Lock map', exact: true }).count(),
+    0,
+  );
   await login();
   const api = await context.request.get(
     url + 'api/private-atlas?action=overview',
@@ -282,15 +277,13 @@ try {
       .then((s) => s.includes('Panja Sahib')),
   );
   const download = page.waitForEvent('download');
-  await page
-    .getByRole('button', { name: 'Download private CSV', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Download CSV', exact: true }).click();
   await (
     await download
   ).saveAs('outputs/private-atlas/administrative-changes.csv');
   await page.getByRole('button', { name: 'Close', exact: true }).last().click();
   await page
-    .getByRole('button', { name: 'Close private atlas', exact: true })
+    .getByRole('button', { name: 'Close custom atlas', exact: true })
     .click();
   assert.deepEqual(
     await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), key),
@@ -300,13 +293,12 @@ try {
   await page
     .getByRole('button', { name: 'National overview', exact: true })
     .waitFor();
-  await page.getByRole('button', { name: 'Lock map', exact: true }).click();
-  await page.getByLabel('Access password').waitFor();
+  assert.equal(await page.getByLabel('Access password').count(), 0);
   assert.equal(
     (
       await context.request.get(url + 'api/private-atlas?action=overview')
     ).status(),
-    401,
+    200,
   );
   const mobile = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -324,7 +316,7 @@ try {
     .getByRole('button', { name: 'My maps', exact: true })
     .click();
   await mobilePage
-    .getByRole('button', { name: 'Open private map', exact: true })
+    .getByRole('button', { name: 'Open custom map', exact: true })
     .click();
   await login(mobilePage);
   // Tap an actual interior point using a real touch-enabled mobile context.
@@ -386,7 +378,7 @@ try {
   }
   assert.deepEqual(errors, []);
   console.log(
-    'Verified password errors and unlock, national map, desktop hover, province search, detail layers, photos, themes, source research/CSV, lock/reopen, mobile layout and preserved editor draft.',
+    'Verified direct password-free opening, national map, desktop hover, province search, detail layers, photos, themes, source research/CSV, close/reopen, mobile layout and preserved editor draft.',
   );
 } catch (error) {
   console.error('Private atlas browser errors:', errors);

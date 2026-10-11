@@ -1,7 +1,7 @@
-// Pass the initial password on stdin. It is never included in source or output.
+// Keep the atlas encryption key on the server; map access does not require a password.
 import fs from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { createCipheriv, randomBytes, scryptSync } from 'node:crypto';
+import { createCipheriv, randomBytes } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
 if (existsSync('.env.local')) process.loadEnvFile('.env.local');
 const envPath = new URL('../.env.local', import.meta.url);
@@ -9,35 +9,8 @@ let env = '';
 try {
   env = await fs.readFile(envPath, 'utf8');
 } catch {}
-if (!process.env.PRIVATE_ATLAS_PASSWORD_HASH) {
-  let password = '';
-  for await (const chunk of process.stdin) password += chunk;
-  password = password.trim();
-  if (!password || password.length > 128)
-    throw Error('Provide an initial password through stdin.');
-  const salt = randomBytes(32),
-    hash = scryptSync(password, salt, 64, {
-      N: 32768,
-      r: 8,
-      p: 1,
-      maxmem: 64 * 1024 * 1024,
-    });
-  process.env.PRIVATE_ATLAS_PASSWORD_HASH = [
-    'scrypt',
-    32768,
-    8,
-    1,
-    salt.toString('hex'),
-    hash.toString('hex'),
-  ].join('$');
-}
-for (const key of ['PRIVATE_ATLAS_SESSION_SECRET', 'PRIVATE_ATLAS_DATA_KEY'])
-  process.env[key] ||= randomBytes(32).toString('hex');
-for (const key of [
-  'PRIVATE_ATLAS_PASSWORD_HASH',
-  'PRIVATE_ATLAS_SESSION_SECRET',
-  'PRIVATE_ATLAS_DATA_KEY',
-]) {
+process.env.PRIVATE_ATLAS_DATA_KEY ||= randomBytes(32).toString('hex');
+for (const key of ['PRIVATE_ATLAS_DATA_KEY']) {
   const line = key + '=' + process.env[key];
   const re = new RegExp('^' + key + '=.*$', 'm');
   env = re.test(env)
@@ -47,7 +20,7 @@ for (const key of [
 await fs.writeFile(envPath, env);
 if (process.argv.includes('--configure-only')) {
   console.log(
-    'Private atlas server credentials configured in ignored .env.local.',
+    'Private atlas server data key configured in ignored .env.local.',
   );
   process.exit(0);
 }

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import {
   ArrowLeft,
-  LockKeyhole,
   Globe2,
   Maximize,
   Plus,
@@ -13,7 +12,6 @@ import {
   Search,
   MapPinned,
   ChevronRight,
-  ShieldCheck,
   X,
   BookOpen,
   Download,
@@ -93,7 +91,6 @@ type Province = {
 type Overview = {
   name: string;
   caption: string;
-  sessionExpiresAt: number;
   provinces: Province[];
   geometry: FeatureCollection;
   capitals: FeatureCollection;
@@ -176,13 +173,13 @@ async function request<T>(
   });
   if (!response.headers.get('content-type')?.includes('application/json'))
     throw new AtlasError(
-      'This private atlas requires the map server. Open the server-enabled app to continue.',
+      'This custom atlas requires the map server. Open the server-enabled app to continue.',
       503,
     );
   const data = (await response.json()) as { error?: string };
   if (!response.ok)
     throw new AtlasError(
-      data.error || 'The private map could not load.',
+      data.error || 'The custom map could not load.',
       response.status,
     );
   return data as T;
@@ -1043,7 +1040,6 @@ function AtlasMap({
 export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
   const [data, setData] = useState<Overview | null>(null),
     [loading, setLoading] = useState(true),
-    [password, setPassword] = useState(''),
     [error, setError] = useState(''),
     [selected, setSelected] = useState(''),
     [hover, setHover] = useState(''),
@@ -1063,8 +1059,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     [researchQuery, setResearchQuery] = useState('');
   const map = useRef<GLMap | null>(null),
     sidebar = useRef<HTMLElement | null>(null),
-    requestVersion = useRef(0),
-    passwordInput = useRef<HTMLInputElement>(null);
+    requestVersion = useRef(0);
   const province = data?.provinces.find((p) => p.id === (selected || hover)),
     active = selected || hover;
   useEffect(() => {
@@ -1088,47 +1083,23 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       setError('');
     } catch (e) {
       if (signal?.aborted) return;
-      if (e instanceof AtlasError && e.status === 401) {
-        setData(null);
-        setError('');
-      } else
-        setError(
-          e instanceof Error ? e.message : 'The private atlas could not load.',
-        );
+      setError(e instanceof Error ? e.message : 'The atlas could not load.');
     } finally {
       if (!signal?.aborted) setLoading(false);
     }
   }, []);
-  // oxlint-disable-next-line react/react-compiler -- Synchronise authenticated server state when this private view mounts.
+  // oxlint-disable-next-line react/react-compiler -- Synchronise map server state when this private view mounts.
   useEffect(() => {
     const controller = new AbortController();
-    // oxlint-disable-next-line react/react-compiler -- Fetch and synchronise the authenticated server session.
+    // oxlint-disable-next-line react/react-compiler -- Fetch and synchronise the map server session.
     void fetchOverview(controller.signal);
     return () => controller.abort();
   }, [fetchOverview]);
-  useEffect(() => {
-    if (!data) return;
-    const timeout = setTimeout(
-      () => {
-        setData(null);
-        setAnalysis(null);
-        setDetail(empty);
-        setPrecise(empty);
-        setSelected('');
-        setHover('');
-        setLevel('province');
-        setResearch(false);
-        setError('Your private session expired. Unlock the map to continue.');
-      },
-      Math.max(0, data.sessionExpiresAt - Date.now()),
-    );
-    return () => clearTimeout(timeout);
-  }, [data]);
-  // Province outlines arrive in small protected requests, then replace the
+  // Province outlines arrive in small paged requests, then replace the
   // national coverage together so neighbouring borders share identical edges.
-  // oxlint-disable-next-line react/react-compiler -- Synchronise full-resolution geometry from the authenticated server.
+  // oxlint-disable-next-line react/react-compiler -- Synchronise full-resolution geometry from the map server.
   useEffect(() => {
-    // oxlint-disable-next-line react/react-compiler -- This loading flag tracks an authenticated external geometry request.
+    // oxlint-disable-next-line react/react-compiler -- This loading flag tracks an external geometry request.
     if (!data) return;
     const controller = new AbortController();
     // oxlint-disable-next-line react/react-compiler -- Publish loading state for the external geometry request.
@@ -1167,44 +1138,6 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       });
     return () => controller.abort();
   }, [data]);
-  async function unlock(event: { preventDefault: () => void }) {
-    event.preventDefault();
-    if (loading) return;
-    setLoading(true);
-    setError('');
-    try {
-      await request('action=unlock', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
-      setPassword('');
-      await fetchOverview();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'The map could not unlock.');
-      setPassword('');
-      passwordInput.current?.focus();
-    } finally {
-      setLoading(false);
-    }
-  }
-  async function lock() {
-    try {
-      await request('action=session', { method: 'DELETE' });
-      setData(null);
-      setAnalysis(null);
-      setDetail(empty);
-      setPrecise(empty);
-      setInspected(null);
-      setQuery('');
-      setSelected('');
-      setHover('');
-      setLevel('province');
-      setResearch(false);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not lock the map.');
-    }
-  }
   function national() {
     setSelected('');
     setHover('');
@@ -1305,7 +1238,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     );
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'private-united-subcontinent-administrative-proposal.csv';
+    a.download = 'united-subcontinent-administrative-proposal.csv';
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
@@ -1346,65 +1279,37 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
           <div>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>
-              Private research atlas · hypothetical political geography
+              Custom research atlas · hypothetical political geography
             </DialogDescription>
           </div>
-          {data && (
-            <button type="button" onClick={() => void lock()}>
-              <LockKeyhole size={16} />
-              <span>Lock map</span>
-            </button>
-          )}
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close private atlas"
+            aria-label="Close custom atlas"
           >
             <X size={19} />
           </button>
         </header>
         {!data ? (
           <div className="ua-locked">
-            <div className="ua-lock-mark">
-              <LockKeyhole size={35} />
-            </div>
-            <span className="ua-kicker">PRIVATE ATLAS</span>
-            <h2>A different political geography</h2>
-            <p>
-              A fictional federal union spanning India and Pakistan, with a
-              researched Punjab, Multan and Bahawalpur. Unlock to explore its
-              provinces and cultural histories.
-            </p>
-            <form onSubmit={(event) => void unlock(event)}>
-              <label htmlFor="ua-password">Access password</label>
-              <input
-                id="ua-password"
-                ref={passwordInput}
-                type="password"
-                autoComplete="current-password"
-                maxLength={128}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                disabled={loading}
-              />
-              <button type="submit" disabled={loading || !password}>
-                <ShieldCheck size={17} />
-                {loading ? 'Opening private atlas…' : 'Unlock map'}
+            <span className="ua-kicker">CUSTOM ATLAS</span>
+            <h2>
+              {loading ? 'Opening your atlas…' : 'The atlas could not load'}
+            </h2>
+            {!loading && (
+              <button type="button" onClick={() => void fetchOverview()}>
+                Try again
               </button>
-            </form>
+            )}
             {error && (
               <p role="alert" className="ua-error">
                 {error}
               </p>
             )}
-            <small>
-              Verified on the server. Protected map data loads only after
-              authentication.
-            </small>
           </div>
         ) : (
           <>
-            <nav className="ua-controls" aria-label="Private atlas navigation">
+            <nav className="ua-controls" aria-label="Custom atlas navigation">
               <button type="button" className="ua-national" onClick={national}>
                 <Globe2 size={17} />
                 National overview
@@ -1530,20 +1435,20 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                   onDetailInspect={setInspected}
                 />
                 <div className="ua-map-badge">
-                  <LockKeyhole size={12} />
-                  <span>PRIVATE · ALTERNATIVE HISTORY</span>
+                  <Globe2 size={12} />
+                  <span>ALTERNATIVE HISTORY</span>
                 </div>
                 <div className="ua-zoom">
                   <button
                     type="button"
-                    aria-label="Zoom in private map"
+                    aria-label="Zoom in custom map"
                     onClick={() => map.current?.zoomIn()}
                   >
                     <Plus size={19} />
                   </button>
                   <button
                     type="button"
-                    aria-label="Zoom out private map"
+                    aria-label="Zoom out custom map"
                     onClick={() => map.current?.zoomOut()}
                   >
                     <Minus size={19} />
@@ -1722,10 +1627,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
             </div>
             <footer className="ua-footer">
               <span>{data.caption}</span>
-              <span>
-                <ShieldCheck size={13} />
-                Authenticated session · 2 hours
-              </span>
+              <span>Custom atlas · no password required</span>
             </footer>
           </>
         )}
@@ -1849,7 +1751,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                   />
                   <button type="button" onClick={csv}>
                     <Download size={15} />
-                    Download private CSV
+                    Download CSV
                   </button>
                 </div>
                 <div className="ua-table-wrap">
