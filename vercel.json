@@ -3,10 +3,8 @@
   "framework": "vite",
   "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist-vercel",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "functions": {
+    "api/private-atlas.mjs": {"includeFiles": "server/private-atlas.enc"}
+  },
+  "routes": [{"handle":"filesystem"},{"src":"/.*","dest":"/index.html"}]
 }

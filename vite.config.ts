@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/postcss';
 import vinext from 'vinext';
 import { defineConfig } from 'vite';
 import hostingConfig from './.openai/hosting.json';
+import {privateAtlasPlugin} from './server/private-atlas-plugin.mjs';
 
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   '00000000-0000-4000-8000-000000000000';
@@ -47,6 +48,7 @@ export default defineConfig(async () => {
   return {
     css: { postcss: { plugins: [tailwindcss()] } },
     server: {
+      fs:{deny:['.env','.env.*','*.{crt,pem}','**/.git/**','**/private/**','**/server/private-atlas.enc']},
       watch: {
         // Downloads and generated build artifacts are not HMR inputs. Watching
         // large exports can raise EBUSY and terminate the Windows dev server.
@@ -55,6 +57,7 @@ export default defineConfig(async () => {
       },
     },
     plugins: [
+      privateAtlasPlugin(),
       vinext(),
       sites(),
       cloudflare({

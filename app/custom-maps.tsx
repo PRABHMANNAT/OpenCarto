@@ -1,6 +1,6 @@
 'use client';
 import {useEffect,useImperativeHandle,useMemo,useRef,useState,type Ref} from 'react';
-import {Download,FolderOpen,MapPinned,PencilLine,Plus,Save,Search} from 'lucide-react';
+import {Download,FolderOpen,MapPinned,PencilLine,Plus,Save,Search,LockKeyhole} from 'lucide-react';
 import {Dialog,DialogContent,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {download,type MapDoc} from './map-model';
 import {scopeLabel} from './scope-model';
@@ -8,7 +8,7 @@ import {activeCustomMapKey,listCustomMaps,saveCustomMap,suggestMapName,type Cust
 import './custom-maps.css';
 
 export type CustomMapsAPI={save:()=>void;open:()=>void;detach:()=>void};
-type Props={ref:Ref<CustomMapsAPI>;doc:MapDoc;getViewBounds:()=>number[]|null;onOpen:(map:CustomMap)=>void;onStatus:(message:string)=>void};
+type Props={ref:Ref<CustomMapsAPI>;doc:MapDoc;getViewBounds:()=>number[]|null;onOpen:(map:CustomMap)=>void;onStatus:(message:string)=>void;onOpenPrivate:()=>void};
 type Mode='library'|'save'|'rename'|null;
 const message=(error:unknown)=>error instanceof Error?error.message:'Saved maps are unavailable. Download settings to keep a copy.';
 function rememberActive(map:CustomMap|null){try{if(map)localStorage.setItem(activeCustomMapKey,JSON.stringify({id:map.id,updatedAt:map.updatedAt}));else localStorage.removeItem(activeCustomMapKey)}catch{/* Named maps remain saved even if draft metadata is unavailable. */}}
@@ -17,7 +17,7 @@ function downloadSettings(doc:MapDoc,name:string){
  download(new Blob([JSON.stringify(doc,null,2)],{type:'application/json'}),file+'.json');
 }
 
-export default function CustomMaps({ref,doc,getViewBounds,onOpen,onStatus}:Props){
+export default function CustomMaps({ref,doc,getViewBounds,onOpen,onStatus,onOpenPrivate}:Props){
  const [maps,setMaps]=useState<CustomMap[]>([]),[mode,setMode]=useState<Mode>(null),[loading,setLoading]=useState(true),[saving,setSaving]=useState(false),[error,setError]=useState(''),[query,setQuery]=useState(''),[name,setName]=useState(''),[renameId,setRenameId]=useState(''),[activeId,setActiveId]=useState(''),[activeVersion,setActiveVersion]=useState<number>();
  const busy=useRef(false),refreshVersion=useRef(0);
  const active=maps.find(m=>m.id===activeId);
@@ -62,9 +62,10 @@ export default function CustomMaps({ref,doc,getViewBounds,onOpen,onStatus}:Props
  return <Dialog open={mode!==null} onOpenChange={open=>{if(!open&&!busy.current)setMode(null)}}>
   <DialogContent className="custom-maps-dialog" showCloseButton={!saving}>
    <div className="custom-maps-heading"><span className="custom-maps-icon"><FolderOpen size={23}/></span><div><DialogTitle>{mode==='save'?'Save custom map':mode==='rename'?'Rename saved map':'My maps'}</DialogTitle><DialogDescription>Keep your maps here and return to them anytime.</DialogDescription></div></div>
-   <p className="custom-maps-storage">Stored in this browser on this device. Download settings for a backup or another device.</p>
+   <p className="custom-maps-storage">Your editable saves stay in this browser on this device. The private atlas loads from the server after unlocking. Download saved-map settings for a backup.</p>
    {error&&<p role="alert" className="custom-maps-error">{error}</p>}
    {mode==='library'?<>
+    {(!query||'united subcontinent alternative political geography private atlas'.includes(query.toLowerCase()))&&<div className="ua-private-card"><LockKeyhole size={23}/><div><strong>United Subcontinent — Alternative Political Geography</strong><small>Private atlas · server protected · independent geography</small></div><button type="button" onClick={()=>{setMode(null);onOpenPrivate()}}>Open private map</button></div>}
     <div className="custom-map-working"><div><small>CURRENT MAP</small><strong>{active?.name||doc.title||'Untitled map'}</strong><span>{active?(dirty?'Unsaved changes':'Saved map'):'Not saved to My maps yet'}</span></div><div className="custom-map-working-actions"><button type="button" className="map-save-primary" disabled={loading||saving} onClick={()=>active?void persist('update'):startNew()}><Save size={15}/>{saving?'Saving…':active?'Save changes':'Save current map'}</button>{active&&<button type="button" disabled={loading||saving} onClick={startNew}><Plus size={15}/>Save as new map</button>}</div></div>
     <div className="custom-maps-search"><Search size={16}/><input type="search" aria-label="Search saved maps" placeholder="Search your maps" value={query} onChange={e=>setQuery(e.target.value)}/><span>{maps.length}</span></div>
     <div className="custom-map-list" aria-label="Saved custom maps" aria-busy={loading}>

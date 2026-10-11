@@ -10,6 +10,8 @@
     "build": "vinext build",
     "build:vercel": "vite build --config vite.vercel.config.ts",
     "preview:vercel": "vite preview --config vite.vercel.config.ts",
+    "check:private-atlas": "node scripts/check-private-atlas.mjs",
+    "check:private-atlas-browser": "node scripts/verify-private-atlas-browser.mjs",
     "check:boundaries": "node scripts/check-indian-regions.mjs && node scripts/check-kashmir-view.mjs && node scripts/check-delhi-layers.mjs && node scripts/check-neighbour-countries.mjs && node scripts/check-pakistan-divisions.mjs",
     "check:atlas": "node scripts/check-map-scopes.mjs && node scripts/check-atlas-overlays.mjs && node scripts/check-gurdwaras.mjs && node scripts/check-gurdwara-directory.mjs",
     "check:atlas-browser": "node scripts/verify-atlas-presets.mjs",
