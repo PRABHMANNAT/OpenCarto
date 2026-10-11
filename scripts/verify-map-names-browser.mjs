@@ -1,0 +1,50 @@
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';
+import {loadMapModel} from './load-map-model.mjs';
+
+const {initial,validate}=await loadMapModel();
+const oldMap={...initial,names:false};
+delete oldMap.cityLabels;
+delete oldMap.metroLabels;
+assert.equal(validate(oldMap).cityLabels,false);
+assert.equal(validate(oldMap).metroLabels,false);
+
+const browser=await chromium.launch({channel:process.env.MAP_BROWSER_CHANNEL||'chrome',headless:true,args:['--enable-unsafe-swiftshader']});
+const page=await browser.newPage({viewport:{width:1440,height:900}});
+const errors=[];
+page.on('pageerror',error=>errors.push(error.message));
+const key='punjab-studio-regional-v2';
+await page.addInitScript(({key,seed})=>localStorage.setItem(key,JSON.stringify(seed)),{key,seed:{...initial,cities:true}});
+const saved=()=>page.evaluate(key=>JSON.parse(localStorage.getItem(key)),key);
+const idle=()=>page.waitForFunction(()=>document.querySelector('.gl-host')?.getAttribute('aria-busy')==='false',null,{timeout:120000});
+try{
+ await page.goto(process.env.MAP_TEST_URL||'http://localhost:4545/',{waitUntil:'networkidle',timeout:60000});
+ await idle();
+ await page.getByRole('tab',{name:'Places',exact:true}).click();
+ await page.getByLabel('Show cities names').uncheck();
+ await idle();
+ let doc=await saved();
+ assert.equal(doc.cityLabels,false);
+ assert.equal(doc.names,true);
+ assert.equal(doc.cities,true);
+ await page.getByLabel('Show states, districts & tehsils names').uncheck();
+ await idle();
+ doc=await saved();
+ assert.equal(doc.names,false);
+ assert.equal(doc.cities,true);
+ await page.getByRole('button',{name:'Hide all names'}).click();
+ await idle();
+ doc=await saved();
+ for(const field of ['names','cityLabels','gurdwaraLabels','communityShrineLabels','riverLabels','landformLabels','demographicLabels','metroLabels'])assert.equal(doc[field],false,field);
+ assert.equal(doc.cities,true);
+ await page.getByRole('button',{name:'Show all names'}).click();
+ await idle();
+ doc=await saved();
+ assert.equal(doc.cityLabels,true);
+ assert.equal(doc.names,true);
+ await page.reload({waitUntil:'networkidle'});
+ await idle();
+ assert.equal((await saved()).cityLabels,true);
+ assert.deepEqual(errors,[]);
+ console.log('Verified independent city/area names, all-names controls, retained markers, legacy settings, and reload.');
+}finally{await browser.close();}

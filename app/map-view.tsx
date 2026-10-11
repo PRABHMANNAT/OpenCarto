@@ -142,7 +142,7 @@ export default function MapView(props:Props){
   if(d.gurdwaras&&data.current['overlay-gurdwaras']&&!cached.gurdwaras)cached.gurdwaras=scopedPoints(data.current['overlay-gurdwaras'],masks);
   const cityData:FeatureCollection={type:'FeatureCollection',features:(cached.cities?.features||[]).filter(f=>majorCity(f.properties||{},d)).map(f=>({...f,properties:{...f.properties,displayColor:cityPaintColor(f.properties||{},d)}}))};
   void (m.getSource('city-data') as GeoJSONSource).setData(cityData);
-  m.setLayoutProperty('city-dots','visibility',d.cities?'visible':'none');m.setLayoutProperty('city-names','visibility',d.cities&&d.names?'visible':'none');m.setPaintProperty('city-names','text-color',['get','displayColor']);
+  m.setLayoutProperty('city-dots','visibility',d.cities?'visible':'none');m.setLayoutProperty('city-names','visibility',d.cities&&d.cityLabels?'visible':'none');m.setPaintProperty('city-names','text-color',['get','displayColor']);
   void (m.getSource('river-data') as GeoJSONSource).setData(cached.rivers||emptyData);
   const riverOn=d.rivers||d.basemap==='rivers';m.setLayoutProperty('river-lines','visibility',riverOn&&d.riverDetail==='major'?'visible':'none');m.setLayoutProperty('river-names','visibility',riverOn&&d.riverLabels?'visible':'none');m.setPaintProperty('river-lines','line-color',d.riverColor);m.setPaintProperty('river-lines','line-width',d.riverWidth);m.setPaintProperty('river-names','text-color',d.riverColor);
   if(d.gurdwaras)prepareShrineSymbols(m,d.gurdwaraColor);
@@ -162,7 +162,7 @@ export default function MapView(props:Props){
   const stations=data.current['delhi-metro-stations'].features.filter(f=>metroStationVisible(f.properties?.lineIds||[],d));
   const stationIds=stations.map(f=>String(f.id)),stationOpacity=['case',['in',['get','id'],['literal',stationIds]],1,0] as ExpressionSpecification;
   m.setLayoutProperty('metro-stations','visibility',d.delhiMetro&&d.metroStations?'visible':'none');m.setPaintProperty('metro-stations','circle-opacity',stationOpacity);m.setPaintProperty('metro-stations','circle-stroke-opacity',stationOpacity);
-  m.setLayoutProperty('metro-station-names','visibility',d.delhiMetro&&d.metroStations&&d.names?'visible':'none');m.setFilter('metro-station-names',['in',['get','id'],['literal',stationIds]]);m.moveLayer('metro-stations');m.moveLayer('metro-station-names');
+  m.setLayoutProperty('metro-station-names','visibility',d.delhiMetro&&d.metroStations&&d.metroLabels?'visible':'none');m.setFilter('metro-station-names',['in',['get','id'],['literal',stationIds]]);m.moveLayer('metro-stations');m.moveLayer('metro-station-names');
  }
  // Use paint opacity for geometry visibility: filter changes reparse source tiles
  // and rapid hide/show can leave an older worker result on screen. Hit testing
