@@ -7,6 +7,14 @@ let password = '';
 for await (const chunk of process.stdin) password += chunk;
 password = password.trim();
 assert.ok(password, 'Supply test password through stdin.');
+let populationFixture;
+try {
+  populationFixture = JSON.parse(
+    await fs.readFile('private/united-atlas/population-check.json', 'utf8'),
+  );
+} catch (error) {
+  if (error.code !== 'ENOENT') throw error;
+}
 const server = createServer(privateAtlasHandler);
 await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
 const base = 'http://127.0.0.1:' + server.address().port + '/api/private-atlas';
@@ -129,6 +137,26 @@ try {
   assert.equal(data.provinces.find((p) => p.id === 'punjab').population, null);
   assert.equal(data.provinces.find((p) => p.id === 'punjab').color, '#4A86BD');
   const punjab = data.provinces.find((p) => p.id === 'punjab');
+  const scenario = punjab.hypotheticalDemographics;
+  assert.ok(Number.isSafeInteger(scenario.total) && scenario.total > 0);
+  assert.equal(
+    scenario.total,
+    scenario.religions.reduce((sum, r) => sum + r.population, 0),
+  );
+  if (populationFixture) {
+    assert.equal(scenario.total, populationFixture.total);
+    assert.deepEqual(scenario.religions, populationFixture.religions);
+  }
+  assert.equal(
+    punjab.census,
+    null,
+    'Hypothetical figures must not become a real census',
+  );
+  assert.ok(
+    data.provinces
+      .filter((p) => p.id !== 'punjab')
+      .every((p) => !p.hypotheticalDemographics),
+  );
   assert.deepEqual(punjab.officialLanguages, [
     'Punjabi (Gurmukhi)',
     'Hindi',

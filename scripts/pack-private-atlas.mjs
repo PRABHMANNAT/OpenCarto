@@ -70,6 +70,20 @@ for (const p of payload.overview.provinces) {
   p.areaKm2 = areas[p.id];
   if (p.population !== null)
     p.density = Math.round((p.population / p.areaKm2) * 10) / 10;
+  if (p.hypotheticalDemographics) {
+    const religions = p.hypotheticalDemographics.religions;
+    if (
+      !religions.length ||
+      religions.some(
+        (r) => !Number.isSafeInteger(r.population) || r.population < 0,
+      )
+    )
+      throw Error('Invalid hypothetical population values for ' + p.id);
+    const total = religions.reduce((sum, r) => sum + r.population, 0);
+    if (!Number.isSafeInteger(total) || total <= 0)
+      throw Error('Invalid hypothetical population total for ' + p.id);
+    p.hypotheticalDemographics.total = total;
+  }
 }
 // Keep full independent source geometry in private/; serve its precise display
 // derivative. Avoid decrypting unused, duplicated source geometry into memory.

@@ -36,6 +36,11 @@ type Census = {
   languages: { name: string; share: number }[];
   religions: { name: string; share: number }[];
 };
+type HypotheticalDemographics = {
+  total: number;
+  religions: { name: string; population: number }[];
+  note: string;
+};
 type Photo = {
   url: string;
   title: string;
@@ -63,6 +68,7 @@ type Province = {
   forestPercent: number | null;
   statisticsNote: string;
   census: Census | null;
+  hypotheticalDemographics?: HypotheticalDemographics;
   etymology: string;
   emblem: string;
   silhouette: string;
@@ -186,6 +192,13 @@ function format(n: number | null, suffix = '') {
     ? 'Not available'
     : n.toLocaleString(undefined, { maximumFractionDigits: 2 }) + suffix;
 }
+function formatPopulation(n: number) {
+  const unit = n >= 10_000_000 ? 10_000_000 : n >= 100_000 ? 100_000 : 1;
+  return (
+    (n / unit).toLocaleString('en-IN', { maximumFractionDigits: 2 }) +
+    (unit === 10_000_000 ? ' crore' : unit === 100_000 ? ' lakh' : '')
+  );
+}
 function fit(map: GLMap, b: number[], mobile = false) {
   map.fitBounds(
     [
@@ -266,7 +279,8 @@ function ProvincePanel({
   onFocus: () => void;
   onDetail: (level: Level) => void;
 }) {
-  const p = province;
+  const p = province,
+    scenario = p.hypotheticalDemographics;
   return (
     <article
       className="ua-profile"
@@ -309,24 +323,34 @@ function ProvincePanel({
           </dd>
         </div>
         <div>
-          <dt>Population</dt>
+          <dt>{scenario ? 'Hypothetical population' : 'Population'}</dt>
           <dd>
-            {format(p.population)}
+            {scenario ? formatPopulation(scenario.total) : format(p.population)}
             <small>
-              {p.census
-                ? 'Real-world census ' + p.census.year
-                : 'No matched aggregate'}
+              {scenario
+                ? scenario.total.toLocaleString('en-IN') +
+                  ' · user-provided scenario'
+                : p.census
+                  ? 'Real-world census ' + p.census.year
+                  : 'No matched aggregate'}
             </small>
           </dd>
         </div>
         <div>
           <dt>Density</dt>
           <dd>
-            {format(p.density, ' / km²')}
+            {format(
+              scenario
+                ? Math.round((scenario.total / p.areaKm2) * 10) / 10
+                : p.density,
+              ' / km²',
+            )}
             <small>
-              {p.density !== null
-                ? 'Census / atlas polygon area'
-                : 'No matched aggregate'}
+              {scenario
+                ? 'Hypothetical total / atlas area'
+                : p.density !== null
+                  ? 'Census / atlas polygon area'
+                  : 'No matched aggregate'}
             </small>
           </dd>
         </div>
@@ -338,7 +362,31 @@ function ProvincePanel({
           </dd>
         </div>
       </dl>
-      <p className="ua-data-note">{p.statisticsNote}</p>
+      {!scenario && <p className="ua-data-note">{p.statisticsNote}</p>}
+      {scenario && (
+        <details open className="ua-scenario-population">
+          <summary>Hypothetical population by religion</summary>
+          <p className="ua-data-note">{scenario.note}</p>
+          {scenario.religions.map((r, i) => {
+            const share = (r.population / scenario.total) * 100,
+              color = ['#628BAC', '#D8B387', '#86B5AA'][i % 3];
+            return (
+              <div className="ua-demographic" key={r.name}>
+                <span>
+                  <i style={{ background: color }} />
+                  {r.name}
+                </span>
+                <strong>
+                  {formatPopulation(r.population)} · {share.toFixed(2)}%
+                </strong>
+                <div>
+                  <b style={{ width: share + '%', background: color }} />
+                </div>
+              </div>
+            );
+          })}
+        </details>
+      )}
       <details open>
         <summary>Identity & geography</summary>
         <dl className="ua-text-facts">

@@ -6,6 +6,14 @@ let password = '';
 for await (const chunk of process.stdin) password += chunk;
 password = password.trim();
 assert.ok(password, 'Supply test password on stdin.');
+let populationFixture;
+try {
+  populationFixture = JSON.parse(
+    await fs.readFile('private/united-atlas/population-check.json', 'utf8'),
+  );
+} catch (error) {
+  if (error.code !== 'ENOENT') throw error;
+}
 const url = process.env.MAP_TEST_URL || 'http://127.0.0.1:4546/';
 const model = await loadMapModel(),
   scope = await loadLocalModule(
@@ -140,6 +148,16 @@ try {
   assert.ok(profileText.includes('hypothetical heart of Sikhs in India'));
   assert.ok(profileText.includes('Proposed official languages'));
   assert.ok(profileText.includes('Punjabi (Gurmukhi), Hindi, Urdu'));
+  assert.ok(profileText.includes('Hypothetical population'));
+  for (const label of populationFixture?.totalLabels || [])
+    assert.ok(profileText.includes(label));
+  const populationPanel = page.locator('.ua-scenario-population');
+  for (const expected of populationFixture?.religionLabels || [])
+    assert.ok((await populationPanel.innerText()).includes(expected));
+  await populationPanel.scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: 'outputs/private-atlas/punjab-population-desktop.png',
+  });
   assert.ok(!profileText.includes('Flag / emblem'));
   assert.ok(!profileText.includes('Area method'));
   for (const subject of [
@@ -315,6 +333,16 @@ try {
     .waitFor();
   await mobilePage.screenshot({
     path: 'outputs/private-atlas/punjab-mobile.png',
+  });
+  await mobilePage.locator('.ua-scenario-population').scrollIntoViewIfNeeded();
+  for (const label of populationFixture?.religionLabels || [])
+    assert.ok(
+      (
+        await mobilePage.locator('.ua-scenario-population').innerText()
+      ).includes(label),
+    );
+  await mobilePage.screenshot({
+    path: 'outputs/private-atlas/punjab-population-mobile.png',
   });
   assert.ok(
     await mobilePage.evaluate(
