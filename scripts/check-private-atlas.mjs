@@ -176,6 +176,13 @@ try {
   const kashmir = data.provinces.find((p) => p.id === 'jammu-kashmir');
   assert.ok(kashmir.aliases.includes('Gilgit-Baltistan'));
   assert.ok(kashmir.aliases.includes('Siachen'));
+  assert.ok(kashmir.aliases.includes('Shaksgam Valley'));
+  assert.equal(
+    data.contextLabels.features.find(
+      (f) => f.properties.id === 'shaksam-valley',
+    ).properties.outside,
+    false,
+  );
   assert.equal(kashmir.detailCounts.district, 44);
   assert.equal(
     data.provinces.find((p) => p.id === 'ladakh').name,
@@ -249,10 +256,18 @@ try {
           const glacier = data.contextLabels.features.find(
             (f) => f.properties.id === 'siachen-glacier',
           ).geometry.coordinates;
-          for (const point of [[74.3088, 35.9208], [74.7973, 34.0837], glacier])
+          const shaksgam = data.contextLabels.features.find(
+            (f) => f.properties.id === 'shaksam-valley',
+          ).geometry.coordinates;
+          for (const point of [
+            [74.3088, 35.9208],
+            [74.7973, 34.0837],
+            glacier,
+            shaksgam,
+          ])
             assert.ok(
               contains(d.features[0].geometry, point),
-              'Gilgit, Srinagar and Siachen share one rendered province',
+              'Gilgit, Srinagar, Siachen and Shaksgam share one rendered province',
             );
         }
         if (level === 'province' && id === 'ladakh') {

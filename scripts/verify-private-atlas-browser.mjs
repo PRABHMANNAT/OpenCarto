@@ -221,6 +221,7 @@ try {
   for (const [term, provinceName] of [
     ['Gilgit-Baltistan', 'United Jammu and Kashmir'],
     ['Siachen', 'United Jammu and Kashmir'],
+    ['Shaksgam Valley', 'United Jammu and Kashmir'],
     ['Aksai Chin', 'Ladakh–Aksai Chin'],
   ]) {
     await page.getByLabel('Find a province or capital').fill(term);
@@ -232,6 +233,21 @@ try {
       .locator('.ua-profile h2')
       .filter({ hasText: provinceName })
       .waitFor();
+    if (term === 'Shaksgam Valley') {
+      await page.waitForFunction(
+        () =>
+          !document
+            .querySelector('.ua-map-caption')
+            ?.textContent.includes('Loading'),
+      );
+      // Let the province fit animation finish before inspecting its new extent.
+      await page.waitForTimeout(800);
+      assert.ok(
+        (await page.locator('.ua-profile').innerText()).includes(
+          'Shaksgam Valley',
+        ),
+      );
+    }
     await page.screenshot({
       path: 'outputs/private-atlas/north-' + term.replace(/\W/g, '-') + '.png',
     });
