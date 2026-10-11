@@ -176,10 +176,23 @@
 .ua-controls button {
   white-space: nowrap;
 }
+.ua-controls > button:last-child {
+  margin-left: auto;
+}
 .ua-national {
   background: #e7efe8 !important;
   border-color: #cbd9ce !important;
   color: #3d6250 !important;
+}
+.ua-punjab-only[aria-pressed='true'] {
+  background: #dce9f1;
+  border-color: #9cb9c9;
+  color: #183956;
+}
+.ua-edit-districts-button[aria-pressed='true'] {
+  background: #e4ebf5;
+  border-color: #9fb3d0;
+  color: #24486f;
 }
 .ua-search {
   position: relative;
@@ -367,6 +380,72 @@
   overflow: auto;
   background: #fbfcfa;
   scrollbar-width: thin;
+}
+.ua-district-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 28px 25px;
+}
+.ua-district-editor h2 {
+  margin: 0;
+  font:
+    30px/1.15 Georgia,
+    'Times New Roman',
+    serif;
+  color: #193a50;
+}
+.ua-district-editor p {
+  margin: 0 0 8px;
+  color: #657b87;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.ua-district-editor label {
+  margin-top: 5px;
+  color: #3a5563;
+  font-size: 11px;
+  font-weight: 650;
+}
+.ua-district-editor > input,
+.ua-district-editor > select {
+  width: 100%;
+  border: 1px solid #d4dfdc;
+  border-radius: 8px;
+  background: #fff;
+  padding: 9px 10px;
+  color: #254257;
+  font-size: 12px;
+}
+.ua-district-color {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #667c87;
+}
+.ua-district-color input {
+  width: 58px;
+  height: 38px;
+  padding: 3px;
+  border: 1px solid #d4dfdc;
+  border-radius: 7px;
+  background: #fff;
+}
+.ua-district-editor .ua-merge-action {
+  width: 100%;
+  background: #e7eff4;
+  border-color: #b9d0de;
+  color: #214962;
+}
+.ua-district-editor small {
+  color: #71848d;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.ua-district-editor .ua-reset-districts {
+  align-self: flex-start;
+  margin-top: 14px;
 }
 .ua-breadcrumb {
   position: sticky;
@@ -909,6 +988,11 @@
   }
   .ua-welcome h2 {
     font-size: 34px;
+  }
+}
+@media (max-width: 1450px) {
+  .ua-controls {
+    flex-wrap: wrap;
   }
 }
 @media (max-width: 850px) {

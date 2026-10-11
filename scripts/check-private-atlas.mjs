@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import fs from 'node:fs/promises';
 import { privateAtlasHandler } from '../server/private-atlas.mjs';
+import { loadLocalModule } from './load-map-model.mjs';
 process.loadEnvFile('.env.local');
 let populationFixture;
 try {
@@ -181,6 +182,7 @@ try {
       analysis.changes.some((r) => r.proposedDistrict === name),
       name + ' assignment documented',
     );
+  const punjabDistricts = [];
   for (const id of [
     'punjab',
     'bahawalpur',
@@ -234,11 +236,56 @@ try {
             );
         }
         assert.ok(d.features.length <= 20);
+        if (id === 'punjab' && level === 'district')
+          punjabDistricts.push(...d.features);
         total += d.features.length;
         offset = d.next;
         if (offset === null) assert.equal(total, d.total);
       } while (offset !== null);
     }
+  const districtEditor = await loadLocalModule(
+    new URL('../app/private-atlas-districts.ts', import.meta.url),
+  );
+  const originalDistricts = {
+    type: 'FeatureCollection',
+    features: punjabDistricts,
+  };
+  const edits = districtEditor.defaultDistrictEdits();
+  const mergedDistricts = districtEditor.mergeDistrictFeatures(
+    originalDistricts,
+    edits.groups,
+  );
+  const styledDistricts = districtEditor.styleDistrictFeatures(
+    mergedDistricts,
+    originalDistricts,
+    edits,
+  );
+  assert.equal(punjabDistricts.length, 52);
+  assert.equal(styledDistricts.features.length, 49);
+  assert.deepEqual(
+    [
+      'punjab-d-panja-sahib',
+      'punjab-d-katas-raj-salt-range',
+      'punjab-d-kartarpur-ravi',
+      'punjab-d-kasur-bulleh-shah',
+    ].map(
+      (id) =>
+        styledDistricts.features.find((feature) => feature.properties.id === id)
+          ?.properties.name,
+    ),
+    ['Panja Sahib', 'Katas Raj', 'Kartarpur Sahib', 'Bulleh Shah'],
+  );
+  assert.equal(
+    new Set(styledDistricts.features.map((feature) => feature.properties.color))
+      .size,
+    49,
+    'Each displayed district starts with a distinct color',
+  );
+  for (const id of ['punjab-d-attock', 'punjab-d-chakwal', 'punjab-d-narowal'])
+    assert.ok(
+      !styledDistricts.features.some((feature) => feature.properties.id === id),
+      id + ' is merged into the requested district',
+    );
   assert.equal(
     (await call('detail&province=__proto__&level=district', { headers }))
       .status,
