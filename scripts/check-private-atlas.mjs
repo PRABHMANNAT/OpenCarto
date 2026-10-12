@@ -172,7 +172,7 @@ try {
   );
   const expected = [
     'Panja Sahib',
-    'Kartarpur–Ravi',
+    'Kartarpur Sahib',
     'Katas',
     'Sri Anandpur Sahib',
     'Yazman–Cholistan',
@@ -258,8 +258,11 @@ try {
   const divisionPlan = JSON.parse(
     await fs.readFile('scripts/punjab-divisions.json', 'utf8'),
   );
-  assert.equal(data.provinces.find((p) => p.id === 'punjab').detailCounts.division, 10);
-  assert.equal(punjabDivisions.length, 10);
+  assert.equal(
+    data.provinces.find((p) => p.id === 'punjab').detailCounts.division,
+    11,
+  );
+  assert.equal(punjabDivisions.length, 11);
   assert.equal(punjabDistricts.length, 49);
   assert.equal(divisionPlan.flatMap((spec) => spec.districts).length, 49);
   const plannedDistricts = new Map(
@@ -267,22 +270,85 @@ try {
   );
   assert.equal(plannedDistricts.size, 49);
   for (const spec of divisionPlan) {
-    const division = punjabDivisions.find((feature) => feature.properties.name === spec.name);
+    const division = punjabDivisions.find(
+      (feature) => feature.properties.name === spec.name,
+    );
     assert.ok(division, spec.name + ' division exists');
     assert.equal(division.properties.capital, spec.headquarters);
     assert.deepEqual(division.properties.memberDistricts, spec.districts);
+    const props = division.properties;
+    assert.ok(props.areaKm2 > 0);
+    assert.ok(contains(division.geometry, props.headquartersCoordinates));
+    assert.equal(props.districtCount, spec.districts.length);
+    assert.equal(
+      props.tehsilCount,
+      punjabTehsils.filter((feature) =>
+        spec.districts.includes(feature.properties.district),
+      ).length,
+    );
+    assert.deepEqual(
+      props.districtStats.map((district) => district.name),
+      spec.districts,
+    );
+    assert.equal(
+      props.districtStats.reduce(
+        (total, district) => total + district.tehsilCount,
+        0,
+      ),
+      props.tehsilCount,
+    );
+    assert.ok(
+      Math.abs(
+        props.districtStats.reduce(
+          (total, district) => total + district.areaKm2,
+          0,
+        ) - props.areaKm2,
+      ) < 1,
+    );
+    for (const field of [
+      'description',
+      'wikiUrl',
+      'landmark',
+      'landmarkSource',
+      'headquartersSource',
+    ])
+      assert.ok(props[field]);
+    for (const field of ['url', 'sourceUrl', 'author', 'license', 'licenseUrl'])
+      assert.ok(props.photo[field]);
   }
+  assert.equal(
+    punjabDivisions.reduce(
+      (total, feature) => total + feature.properties.tehsilCount,
+      0,
+    ),
+    punjabTehsils.length,
+  );
+  assert.ok(
+    Math.abs(
+      punjabDivisions.reduce(
+        (total, feature) => total + feature.properties.provinceAreaShare,
+        0,
+      ) - 100,
+    ) < 0.1,
+  );
   for (const district of punjabDistricts) {
     const spec = plannedDistricts.get(district.properties.name);
     assert.ok(spec, district.properties.name + ' is assigned once');
     assert.equal(district.properties.division, spec.name);
     assert.equal(district.properties.divisionCapital, spec.headquarters);
-    const division = punjabDivisions.find((feature) => feature.properties.name === spec.name);
+    const division = punjabDivisions.find(
+      (feature) => feature.properties.name === spec.name,
+    );
     assert.ok(contains(division.geometry, district.properties.center));
   }
   for (const tehsil of punjabTehsils)
-    assert.equal(tehsil.properties.division, plannedDistricts.get(tehsil.properties.district)?.name);
-  for (const change of analysis.changes.filter((row) => row.provinceId === 'punjab')) {
+    assert.equal(
+      tehsil.properties.division,
+      plannedDistricts.get(tehsil.properties.district)?.name,
+    );
+  for (const change of analysis.changes.filter(
+    (row) => row.provinceId === 'punjab',
+  )) {
     const spec = plannedDistricts.get(change.proposedDistrict);
     assert.equal(change.proposedDivision, spec?.name);
     assert.equal(change.divisionCapital, spec?.headquarters);
@@ -458,7 +524,9 @@ try {
     19,
   );
   assert.equal(
-    reviewRows.filter((row) => row.provenance === 'User-requested name restoration').length,
+    reviewRows.filter(
+      (row) => row.provenance === 'User-requested name restoration',
+    ).length,
     2,
   );
   assert.equal(
@@ -477,7 +545,11 @@ try {
     ['Sandalbar', 'Sandalbar'],
     ['Kartarpur Sahib', 'Kartarpur Sahib'],
   ]) {
-    assert.ok(reviewRows.some((row) => row.proposedDistrict === district && row.newName === tehsil));
+    assert.ok(
+      reviewRows.some(
+        (row) => row.proposedDistrict === district && row.newName === tehsil,
+      ),
+    );
   }
   let documentedRenames = 0;
   for (const feature of punjabTehsils) {
@@ -491,11 +563,12 @@ try {
     );
     assert.equal(props.sourceName, row.oldName);
     assert.equal(props.name, row.newName);
-    const displayedDistrict = {
-      Chakwal: 'Katas',
-      Narowal: 'Kartarpur Sahib',
-      'Kartarpur–Ravi': 'Kartarpur Sahib',
-    }[props.district] || props.district;
+    const displayedDistrict =
+      {
+        Chakwal: 'Katas',
+        Narowal: 'Kartarpur Sahib',
+        'Kartarpur–Ravi': 'Kartarpur Sahib',
+      }[props.district] || props.district;
     assert.equal(displayedDistrict, row.proposedDistrict);
     assert.equal(props.nameMeaning, row.meaning);
     assert.equal(props.namingReason, row.history);

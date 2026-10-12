@@ -316,7 +316,7 @@ export function districtDisplayNames(
     'punjab-d-attock': 'Attock',
     'punjab-d-katas-raj-salt-range': 'Katas',
     'punjab-d-chakwal': 'Chakwal',
-    'punjab-d-kartarpur-ravi': 'Kartarpur–Ravi',
+    'punjab-d-kartarpur-ravi': 'Kartarpur Sahib',
     'punjab-d-narowal': 'Narowal',
     'punjab-d-kasur-bulleh-shah': 'Kasur–Bulleh Shah',
   };

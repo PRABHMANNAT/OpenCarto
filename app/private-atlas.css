@@ -609,6 +609,88 @@
   color: #213f53;
   margin: 6px 0 13px;
 }
+.ua-division-picker {
+  display: grid;
+  gap: 5px;
+  font-size: 11px;
+  color: #607785;
+}
+.ua-division-picker select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #dce4df;
+  border-radius: 7px;
+  background: #fff;
+  color: #29495e;
+}
+.ua-division-content {
+  padding: 12px 24px 24px;
+}
+.ua-division-content h3 {
+  margin: 22px 0 10px;
+  font:
+    18px Georgia,
+    serif;
+  color: #29495e;
+}
+.ua-division-facts {
+  margin: 18px 0;
+  border-top: 1px solid #dce4df;
+}
+.ua-division-facts > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid #e5ebe7;
+  font-size: 12px;
+}
+.ua-division-facts dt {
+  color: #607785;
+}
+.ua-division-facts dd {
+  margin: 0;
+  text-align: right;
+  color: #29495e;
+  font-weight: 600;
+}
+.ua-division-districts {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.ua-division-districts th,
+.ua-division-districts td {
+  padding: 8px 4px;
+  border-bottom: 1px solid #e5ebe7;
+  text-align: right;
+}
+.ua-division-districts th:first-child,
+.ua-division-districts td:first-child {
+  text-align: left;
+}
+.ua-division-links {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 22px;
+  font-size: 11px;
+}
+.ua-division-list {
+  display: grid;
+  gap: 8px;
+}
+.ua-division-list button {
+  display: grid;
+  gap: 5px;
+  text-align: left;
+  white-space: normal;
+}
+.ua-division-list span,
+.ua-division-list small {
+  color: #607785;
+  font-size: 11px;
+}
 .ua-accent {
   display: block;
   width: 39px;

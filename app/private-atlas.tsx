@@ -181,6 +181,25 @@ type AtlasColors = {
   fills: Record<string, string>;
 };
 type DetailPage = FeatureCollection & { next: number | null; total: number };
+type DivisionInfo = {
+  id: string;
+  name: string;
+  capital: string;
+  areaKm2: number;
+  provinceAreaShare: number;
+  districtCount: number;
+  tehsilCount: number;
+  districtStats: { name: string; areaKm2: number; tehsilCount: number }[];
+  headquartersCoordinates: number[];
+  headquartersSourceName: string;
+  headquartersSource: string;
+  description: string;
+  landmark: string;
+  landmarkSource: string;
+  wikiUrl: string;
+  photo: Photo;
+  areaNote: string;
+};
 const empty: FeatureCollection = { type: 'FeatureCollection', features: [] };
 const title = 'United Subcontinent — Alternative Political Geography';
 const atlasColorsStorageKey = 'private-atlas-map-colors-v1';
@@ -388,6 +407,170 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
         </div>
       )}
     </>
+  );
+}
+
+function DivisionPanel({
+  divisions,
+  active,
+  loading,
+  onPick,
+  onBack,
+  onHeadquarters,
+}: {
+  divisions: Feature[];
+  active?: Feature;
+  loading: boolean;
+  onPick: (feature: Feature) => void;
+  onBack: () => void;
+  onHeadquarters: (coordinates: number[]) => void;
+}) {
+  const info = active?.properties as DivisionInfo | undefined;
+  return (
+    <article
+      className="ua-profile ua-division-profile"
+      aria-label="Punjab division information"
+    >
+      <div className="ua-profile-heading">
+        <span className="ua-kicker">PUNJAB · PROPOSED DIVISIONS</span>
+        <h2>{info ? `${info.name} Division` : 'Punjab divisions'}</h2>
+        <label className="ua-division-picker">
+          Choose division
+          <select
+            aria-label="Choose Punjab division"
+            value={info?.id || ''}
+            disabled={loading}
+            onChange={(event) => {
+              const feature = divisions.find(
+                (item) => item.properties?.id === event.currentTarget.value,
+              );
+              if (feature) onPick(feature);
+              else onBack();
+            }}
+          >
+            <option value="">All divisions</option>
+            {divisions.map((feature) => (
+              <option
+                key={String(feature.properties?.id)}
+                value={String(feature.properties?.id)}
+              >
+                {String(feature.properties?.name)}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      {loading ? (
+        <p className="ua-summary">Loading division profiles…</p>
+      ) : info ? (
+        <>
+          <PhotoGallery key={info.id} photos={[info.photo]} />
+          <div className="ua-division-content">
+            <p>{info.description}</p>
+            <dl className="ua-division-facts">
+              <div>
+                <dt>Headquarters</dt>
+                <dd>{info.capital}</dd>
+              </div>
+              {info.headquartersSourceName !== info.capital && (
+                <div>
+                  <dt>Present-day city</dt>
+                  <dd>{info.headquartersSourceName}</dd>
+                </div>
+              )}
+              <div>
+                <dt>Total area</dt>
+                <dd>{format(info.areaKm2)} km²</dd>
+              </div>
+              <div>
+                <dt>Share of Punjab area</dt>
+                <dd>{info.provinceAreaShare}%</dd>
+              </div>
+              <div>
+                <dt>Districts</dt>
+                <dd>{info.districtCount}</dd>
+              </div>
+              <div>
+                <dt>Mapped tehsils / subdistricts</dt>
+                <dd>{info.tehsilCount}</dd>
+              </div>
+            </dl>
+            <button
+              type="button"
+              onClick={() => onHeadquarters(info.headquartersCoordinates)}
+            >
+              <MapPinned size={14} /> Locate headquarters
+            </button>
+            <h3>Districts in this division</h3>
+            <table className="ua-division-districts">
+              <thead>
+                <tr>
+                  <th>District</th>
+                  <th>Tehsils</th>
+                  <th>Area km²</th>
+                </tr>
+              </thead>
+              <tbody>
+                {info.districtStats.map((district) => (
+                  <tr key={district.name}>
+                    <td>{district.name}</td>
+                    <td>{district.tehsilCount}</td>
+                    <td>{format(district.areaKm2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="ua-data-note">
+              {info.areaNote} Tehsil counts reflect the map’s retained source
+              coverage. A combined division population is not available.
+            </p>
+            <h3>Featured landmark</h3>
+            <p>{info.landmark}</p>
+            <div className="ua-division-links">
+              <a href={info.wikiUrl} target="_blank" rel="noreferrer">
+                Headquarters on Wikipedia
+              </a>
+              <a href={info.landmarkSource} target="_blank" rel="noreferrer">
+                Landmark reference
+              </a>
+              <a
+                href={info.headquartersSource}
+                target="_blank"
+                rel="noreferrer"
+              >
+                City point source
+              </a>
+            </div>
+            <button type="button" onClick={onBack}>
+              Show all Punjab divisions
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="ua-division-content">
+          <p>
+            Select a division or its headquarters point to open its profile.
+            Headquarters are marked with burgundy dots.
+          </p>
+          <div className="ua-division-list">
+            {divisions.map((feature) => (
+              <button
+                type="button"
+                key={String(feature.properties?.id)}
+                onClick={() => onPick(feature)}
+              >
+                <strong>{String(feature.properties?.name)} Division</strong>
+                <span>HQ: {String(feature.properties?.capital)}</span>
+                <small>
+                  {Number(feature.properties?.districtCount)} districts ·{' '}
+                  {Number(feature.properties?.tehsilCount)} mapped tehsils
+                </small>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </article>
   );
 }
 
@@ -768,6 +951,7 @@ function AtlasMap({
   selected,
   punjabOnly,
   focusedDistrictId,
+  inspectedAreaId,
   mapStyle,
   colors,
   districtEditing,
@@ -792,6 +976,7 @@ function AtlasMap({
   selected: string;
   punjabOnly: boolean;
   focusedDistrictId: string;
+  inspectedAreaId: string;
   mapStyle: MapStyle;
   colors: AtlasColors;
   districtEditing: boolean;
@@ -1194,6 +1379,49 @@ function AtlasMap({
           });
           map.moveLayer('disputed-borders', 'province-names');
           map.moveLayer('province-names', 'place-names');
+          map.addSource('division-headquarters', {
+            type: 'geojson',
+            data: empty,
+          });
+          map.addLayer({
+            id: 'division-headquarters-dots',
+            type: 'circle',
+            source: 'division-headquarters',
+            paint: {
+              'circle-radius': 5,
+              'circle-color': '#8a3d54',
+              'circle-stroke-color': '#ffffff',
+              'circle-stroke-width': 2,
+            },
+          });
+          map.addLayer({
+            id: 'division-headquarters-names',
+            type: 'symbol',
+            source: 'division-headquarters',
+            layout: {
+              'text-field': ['concat', ['get', 'name'], ' · HQ'],
+              'text-font': ['literal', ['Noto Sans Regular']],
+              'text-size': 11,
+              'text-variable-anchor': ['top', 'bottom', 'right', 'left'],
+              'text-radial-offset': 0.7,
+              'text-max-width': 10,
+            },
+            paint: {
+              'text-color': '#6b243b',
+              'text-halo-color': '#ffffff',
+              'text-halo-width': 1.5,
+            },
+          });
+          map.on('click', 'division-headquarters-dots', (event) => {
+            const feature = event.features?.[0];
+            if (feature) latest.current.onDetailInspect(feature);
+          });
+          map.on('mouseenter', 'division-headquarters-dots', () => {
+            if (map) map.getCanvas().style.cursor = 'pointer';
+          });
+          map.on('mouseleave', 'division-headquarters-dots', () => {
+            if (map) map.getCanvas().style.cursor = '';
+          });
           map.addControl(
             new gl.AttributionControl({
               customAttribution:
@@ -1244,6 +1472,12 @@ function AtlasMap({
             if (f) latest.current.onDetailInspect(f);
           });
           map.on('click', 'place-dots', (event) => {
+            if (
+              map?.queryRenderedFeatures(event.point, {
+                layers: ['division-headquarters-dots'],
+              }).length
+            )
+              return;
             const f = event.features?.[0];
             if (f) latest.current.onDetailInspect(f);
           });
@@ -1478,13 +1712,66 @@ function AtlasMap({
   useEffect(() => {
     const m = mapRef.current;
     if (!loaded || !m) return;
-    m.setFilter('detail-selected', ['==', 'id', editingDistrictId]);
+    const headquarters: FeatureCollection = {
+      type: 'FeatureCollection',
+      features:
+        level === 'division'
+          ? detail.features.flatMap((feature) => {
+              const coordinates = feature.properties?.headquartersCoordinates;
+              if (!Array.isArray(coordinates) || coordinates.length !== 2)
+                return [];
+              return [
+                {
+                  type: 'Feature' as const,
+                  properties: {
+                    id: feature.properties?.id,
+                    name: feature.properties?.capital,
+                  },
+                  geometry: { type: 'Point' as const, coordinates },
+                },
+              ];
+            })
+          : [],
+    };
+    void (m.getSource('division-headquarters') as GeoJSONSource).setData(
+      headquarters,
+    );
+    m.setPaintProperty('division-headquarters-dots', 'circle-radius', [
+      'case',
+      ['==', ['get', 'id'], inspectedAreaId],
+      7,
+      5,
+    ]);
+    m.setLayoutProperty(
+      'division-headquarters-names',
+      'visibility',
+      labels ? 'visible' : 'none',
+    );
+  }, [detail, level, inspectedAreaId, labels, loaded, mapRef]);
+  useEffect(() => {
+    const m = mapRef.current;
+    if (!loaded || !m) return;
+    m.setFilter('detail-selected', [
+      '==',
+      'id',
+      level === 'division' ? inspectedAreaId : editingDistrictId,
+    ]);
     m.setLayoutProperty(
       'detail-selected',
       'visibility',
-      districtEditing && level === 'district' ? 'visible' : 'none',
+      (districtEditing && level === 'district') ||
+        (level === 'division' && inspectedAreaId)
+        ? 'visible'
+        : 'none',
     );
-  }, [districtEditing, editingDistrictId, level, loaded, mapRef]);
+  }, [
+    districtEditing,
+    editingDistrictId,
+    inspectedAreaId,
+    level,
+    loaded,
+    mapRef,
+  ]);
   useEffect(() => {
     const m = mapRef.current;
     if (!loaded || !m) return;
@@ -1692,7 +1979,10 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
   const exportArea = focusedDistrict || inspectedArea;
   const exportProvince = data?.provinces.find((item) => item.id === selected);
   const exportAreaName = String(
-    exportArea?.properties?.name || exportProvince?.name || data?.name || 'atlas',
+    exportArea?.properties?.name ||
+      exportProvince?.name ||
+      data?.name ||
+      'atlas',
   );
   const exportBounds =
     featureBounds(exportArea) || exportProvince?.bbox || data?.bbox || null;
@@ -1948,7 +2238,9 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
           };
           const timeout = window.setTimeout(() => {
             current.off('idle', onIdle);
-            reject(new Error('The full map is still loading. Try again shortly.'));
+            reject(
+              new Error('The full map is still loading. Try again shortly.'),
+            );
           }, 20000);
           current.once('idle', onIdle);
           current.fitBounds(
@@ -2546,11 +2838,17 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                     role="group"
                     aria-label="Map download options"
                   >
-                    <button type="button" onClick={() => void downloadMap('current')}>
+                    <button
+                      type="button"
+                      onClick={() => void downloadMap('current')}
+                    >
                       <strong>Current view</strong>
                       <small>Exactly what is on screen</small>
                     </button>
-                    <button type="button" onClick={() => void downloadMap('full')}>
+                    <button
+                      type="button"
+                      onClick={() => void downloadMap('full')}
+                    >
                       <strong>Full selected area</strong>
                       <small>Fit {exportAreaName} in the image</small>
                     </button>
@@ -2566,6 +2864,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                   selected={selected}
                   punjabOnly={punjabOnly}
                   focusedDistrictId={focusedDistrictId}
+                  inspectedAreaId={String(inspectedArea?.properties?.id || '')}
                   mapStyle={mapStyle}
                   colors={colors}
                   districtEditing={districtEditing}
@@ -2608,7 +2907,13 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                       setInspected(null);
                       return;
                     }
-                    setInspected(feature);
+                    setInspected(
+                      displayedDetail.features.find(
+                        (item) => item.properties?.id === id,
+                      ) || feature,
+                    );
+                    if (level === 'division')
+                      sidebar.current?.scrollTo({ top: 0 });
                     if (
                       districtEditing &&
                       level === 'district' &&
@@ -2686,6 +2991,11 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                   </div>
                 )}
                 {inspected &&
+                  !(
+                    selected === 'punjab' &&
+                    level === 'division' &&
+                    inspectedArea
+                  ) &&
                   (level !== 'province' || inspected.properties?.kind) &&
                   !(
                     selected === 'punjab' &&
@@ -2807,6 +3117,33 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                       setMergeWith('');
                       setInspected(null);
                     }}
+                  />
+                ) : selected === 'punjab' && level === 'division' ? (
+                  <DivisionPanel
+                    divisions={displayedDetail.features}
+                    active={inspectedArea}
+                    loading={detailLoading}
+                    onPick={(feature) => {
+                      setInspected(feature);
+                      const bounds = featureBounds(feature);
+                      if (bounds && map.current)
+                        fit(map.current, bounds, window.innerWidth < 760);
+                      sidebar.current?.scrollTo({ top: 0 });
+                    }}
+                    onBack={() => {
+                      setInspected(null);
+                      const bounds = data.provinces.find(
+                        (item) => item.id === 'punjab',
+                      )?.bbox;
+                      if (bounds && map.current)
+                        fit(map.current, bounds, window.innerWidth < 760);
+                    }}
+                    onHeadquarters={(coordinates) =>
+                      map.current?.flyTo({
+                        center: [coordinates[0], coordinates[1]],
+                        zoom: 9,
+                      })
+                    }
                   />
                 ) : focusedDistrict ? (
                   <section className="ua-single-district">

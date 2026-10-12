@@ -1,23 +1,16 @@
 [
   {
-    "name": "Panja Sahib",
-    "headquarters": "Hasan Abdal",
-    "districts": ["Haripur", "Taxila", "Panja Sahib"]
-  },
-  {
     "name": "Rawalpindi",
     "headquarters": "Rawalpindi",
-    "districts": ["Rawalpindi", "Chakwal", "Katas", "Jhelum"]
-  },
-  {
-    "name": "Dinga",
-    "headquarters": "Gujrat",
-    "districts": ["Dinga", "Kair Sahib", "Rori Sahib", "Babe Di Ber", "Ranjitgarh"]
-  },
-  {
-    "name": "Sargodha",
-    "headquarters": "Sargodha",
-    "districts": ["Khushab", "Sargodha", "Chenab"]
+    "districts": [
+      "Rawalpindi",
+      "Katas",
+      "Jhelum",
+      "Haripur",
+      "Taxila",
+      "Panja Sahib",
+      "Chakwal"
+    ]
   },
   {
     "name": "Lahore",
@@ -26,27 +19,76 @@
   },
   {
     "name": "Sandalbar",
-    "headquarters": "Faisalabad",
-    "districts": ["Jhang", "Toba Tek Singh", "Sandalbar", "Harappa", "Nanaksar", "Fazilka", "Sri Muktsar Sahib"]
+    "headquarters": "Sandalbar city",
+    "districts": ["Sandalbar", "Jhang", "Toba Tek Singh", "Harappa", "Nanaksar"]
   },
   {
     "name": "Kartarpur",
     "headquarters": "Amritsar",
-    "districts": ["Kartarpur–Ravi", "Narowal", "Amritsar", "Gurdaspur", "Pathankot", "Tarn Taran", "Ferozepur"]
+    "districts": [
+      "Kartarpur Sahib",
+      "Narowal",
+      "Gurdaspur",
+      "Amritsar",
+      "Tarn Taran",
+      "Pathankot"
+    ]
   },
   {
     "name": "Jalandhar",
     "headquarters": "Jalandhar",
-    "districts": ["Kapurthala", "Jalandhar", "Hoshiarpur", "Shahid Bhagat Singh Nagar", "Ludhiana"]
+    "districts": [
+      "Jalandhar",
+      "Kapurthala",
+      "Hoshiarpur",
+      "Shahid Bhagat Singh Nagar"
+    ]
   },
   {
     "name": "Anandpur Sahib",
-    "headquarters": "Sri Anandpur Sahib",
-    "districts": ["Sri Anandpur Sahib", "Rupnagar", "Fatehgarh Sahib", "S A S Nagar"]
+    "headquarters": "Mohali",
+    "districts": [
+      "Sri Anandpur Sahib",
+      "Rupnagar",
+      "S A S Nagar",
+      "Fatehgarh Sahib"
+    ]
+  },
+  {
+    "name": "Ludhiana",
+    "headquarters": "Ludhiana",
+    "districts": ["Ludhiana", "Moga", "Barnala"]
   },
   {
     "name": "Patiala",
     "headquarters": "Patiala",
-    "districts": ["Patiala", "Barnala", "Sangrur", "Moga", "Bathinda", "Mansa", "Faridkot"]
+    "districts": ["Patiala", "Mansa", "Sangrur"]
+  },
+  {
+    "name": "Ranjitgarh",
+    "headquarters": "Ranjitgarh",
+    "districts": [
+      "Ranjitgarh",
+      "Dinga",
+      "Kair Sahib",
+      "Rori Sahib",
+      "Babe Di Ber"
+    ]
+  },
+  {
+    "name": "Sargodha",
+    "headquarters": "Sargodha",
+    "districts": ["Sargodha", "Khushab", "Chenab"]
+  },
+  {
+    "name": "Bathinda",
+    "headquarters": "Bathinda",
+    "districts": [
+      "Bathinda",
+      "Faridkot",
+      "Ferozepur",
+      "Sri Muktsar Sahib",
+      "Fazilka"
+    ]
   }
 ]

@@ -1,0 +1,92 @@
+{
+  "Rawalpindi": {
+    "sourceCity": "Rawalpindi",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Rawalpindi",
+    "landmark": "Gurdwara Panja Sahib · Hasan Abdal",
+    "landmarkSource": "https://sgpc.net/gurdwaras-in-pakistan",
+    "description": "This proposed northern division brings the Potohar plateau, Taxila and the Haripur foothills into one administrative region. Rawalpindi is its headquarters; Panja Sahib at Hasan Abdal represents the region’s Sikh heritage.",
+    "photoId": "gs-panja-sahib"
+  },
+  "Lahore": {
+    "sourceCity": "Lahore",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lahore",
+    "landmark": "Gurdwara Janam Asthan · Nankana Sahib",
+    "landmarkSource": "https://sgpc.net/gurdwaras-in-pakistan",
+    "description": "The proposed Lahore Division groups the metropolitan district with Sacha Sauda, Nankana Sahib and Bulleh Shah. Its headquarters is Lahore, and Nankana Sahib’s Gurdwara Janam Asthan is a landmark of Guru Nanak’s birthplace.",
+    "provincePhotoTitle": "Gurdwara Nankana Sahib Janam Asthan.jpg"
+  },
+  "Sandalbar": {
+    "sourceCity": "Faisalabad",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Faisalabad",
+    "landmark": "Archaeological site of Harappa",
+    "landmarkSource": "https://whc.unesco.org/en/tentativelists/1878/",
+    "description": "This proposed division combines the Sandalbar city region with Jhang, Toba Tek Singh, Harappa and Nanaksar. The headquarters label Sandalbar city refers to present-day Faisalabad. Harappa’s archaeological remains connect this region with the Indus civilisation."
+  },
+  "Kartarpur": {
+    "sourceCity": "Amritsar",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Amritsar",
+    "landmark": "Golden Temple · Amritsar",
+    "landmarkSource": "https://amritsar.nic.in/tourist-place/sri-harmandir-sahib/",
+    "description": "The proposed Kartarpur Division links the Ravi corridor around Kartarpur Sahib and Narowal with Amritsar, Tarn Taran, Gurdaspur and Pathankot. Amritsar is its headquarters, and the Golden Temple is its featured landmark.",
+    "provincePhotoTitle": "Golden Temple nighttime.jpg"
+  },
+  "Jalandhar": {
+    "sourceCity": "Jalandhar",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Jalandhar",
+    "landmark": "Gurdwara Ber Sahib · Sultanpur Lodhi",
+    "landmarkSource": "https://sgpc.net/gurdwara-sahib-section-85",
+    "description": "This proposed Doaba division groups Jalandhar, Kapurthala, Hoshiarpur and Shahid Bhagat Singh Nagar, with headquarters at Jalandhar. Its featured landmark is Gurdwara Ber Sahib in Sultanpur Lodhi, within Kapurthala district.",
+    "photoId": "gs-ber-sahib"
+  },
+  "Anandpur Sahib": {
+    "sourceCity": "Mohali",
+    "coordinates": [76.7180556, 30.7194444],
+    "coordinateSource": "https://www.wikidata.org/wiki/Q1949069",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mohali",
+    "landmark": "Takht Sri Keshgarh Sahib · Anandpur Sahib",
+    "landmarkSource": "https://dsgmc.in/Content/PDF/Directory2022.pdf",
+    "description": "The proposed Anandpur Sahib Division groups Sri Anandpur Sahib, Rupnagar, S A S Nagar and Fatehgarh Sahib. Mohali serves as headquarters. Takht Sri Keshgarh Sahib at Anandpur Sahib is the division’s featured historic Sikh landmark.",
+    "photoId": "gs-keshgarh-takht"
+  },
+  "Ludhiana": {
+    "sourceCity": "Ludhiana",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Ludhiana",
+    "landmark": "Gurdwara Manji Sahib · Alamgir",
+    "landmarkSource": "https://sgpc.net/gurdwara-sahib-section-85",
+    "description": "This proposed division joins Ludhiana with Moga and Barnala, bringing a major urban centre and surrounding agricultural districts into one region. Ludhiana is its headquarters; Gurdwara Manji Sahib at Alamgir is the featured heritage site.",
+    "photoId": "gs-manji-alamgir"
+  },
+  "Patiala": {
+    "sourceCity": "Patiala",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Patiala",
+    "landmark": "Gurdwara Dukh Nivaran Sahib · Patiala",
+    "landmarkSource": "https://sgpc.net/gurdwara-sahib-section-85",
+    "description": "The proposed Patiala Division includes Patiala, Mansa and Sangrur, with Patiala as headquarters. Its featured landmark is Gurdwara Dukh Nivaran Sahib in the headquarters city.",
+    "photoId": "gs-dukh-nivaran-patiala"
+  },
+  "Ranjitgarh": {
+    "sourceCity": "Gujranwala",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Gujranwala",
+    "landmark": "Gurdwara Babe Di Ber · Sialkot",
+    "landmarkSource": "https://sgpc.net/gurdwaras-in-pakistan",
+    "description": "This proposed division groups Ranjitgarh, Dinga, Kair Sahib, Rori Sahib and Babe Di Ber. Ranjitgarh is the proposed label for the Gujranwala headquarters city. The photograph shows the historic Babe Di Ber gurdwara in its Babe Di Ber district.",
+    "photoId": "gs-beri-sialkot"
+  },
+  "Sargodha": {
+    "sourceCity": "Sargodha",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Sargodha",
+    "landmark": "Amb temples · Khushab",
+    "landmarkSource": "https://khushab.punjab.gov.pk/prominent%20_places",
+    "description": "The proposed Sargodha Division joins Sargodha, Khushab and Chenab. Sargodha is its headquarters. The Khushab portion includes Salt Range landscapes and the historic Amb temple ruins, shown in the photograph."
+  },
+  "Bathinda": {
+    "sourceCity": "Bathinda",
+    "coordinates": [74.9519444, 30.2133333],
+    "coordinateSource": "https://www.wikidata.org/wiki/Q709319",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Bathinda",
+    "landmark": "Takht Sri Damdama Sahib · Talwandi Sabo",
+    "landmarkSource": "https://dsgmc.in/Content/PDF/Directory2022.pdf",
+    "description": "This proposed southwestern division groups Bathinda, Faridkot, Ferozepur, Sri Muktsar Sahib and Fazilka. Bathinda is its headquarters. Takht Sri Damdama Sahib at Talwandi Sabo is the featured landmark within Bathinda district.",
+    "photoId": "gs-damdama-takht"
+  }
+}

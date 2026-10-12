@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'work/geometry-runtime'))
 from shapely.geometry import Point, mapping, shape
 from shapely.ops import unary_union
+from geographiclib.geodesic import Geodesic
 
 PATH = ROOT / 'private/united-atlas/atlas.json'
 payload = json.loads(PATH.read_text(encoding='utf-8'))
@@ -120,6 +121,7 @@ renames = {
     'punjab-d-sialkot': 'Babe Di Ber',
     'punjab-d-hafizabad': 'Rori Sahib',
     'punjab-d-chiniot': 'Chenab',
+    'punjab-d-kartarpur-ravi': 'Kartarpur Sahib',
 }
 for district_id, name in renames.items():
     by_id[district_id]['properties']['name'] = name
@@ -145,6 +147,7 @@ district_names = {
     'Sialkot': 'Babe Di Ber',
     'Hafizabad': 'Rori Sahib',
     'Chiniot': 'Chenab',
+    'Kartarpur–Ravi': 'Kartarpur Sahib',
 }
 district_notes = {
     'punjab-d-gujranwala': ('Ranjitgarh is a proposed commemorative name honouring Maharaja Ranjit Singh, whose family home and Sikh rule are part of Gujranwala’s history.', 'https://gujranwala.punjab.gov.pk/important-places'),
@@ -282,8 +285,13 @@ for row in payload['analysis']['changes']:
         row['proposedCapital'] = capitals[row['proposedDistrict']]
 
 # Division outlines follow the requested district grouping exactly, including
-# the two separate Kartarpur–Ravi and Narowal district features.
+# the two separate Kartarpur Sahib and Narowal district features.
 division_specs = json.loads((ROOT / 'scripts/punjab-divisions.json').read_text(encoding='utf-8'))
+division_profiles = json.loads((ROOT / 'scripts/punjab-division-profiles.json').read_text(encoding='utf-8'))
+division_photos = json.loads((ROOT / 'scripts/punjab-division-photos.json').read_text(encoding='utf-8'))
+shrine_photos = {photo['id']: photo for photo in json.loads((ROOT / 'app/gurdwara-photo-sources.json').read_text(encoding='utf-8'))['photos']}
+province_photos = json.loads((ROOT / 'private/united-atlas/photos.json').read_text(encoding='utf-8'))['punjab']
+cities = {feature['properties']['name']: feature for feature in json.loads((ROOT / 'public/data/cities.geojson').read_text(encoding='utf-8'))['features']}
 district_by_name = {feature['properties']['name']: feature for feature in districts}
 district_to_division = {}
 new_divisions = []
@@ -301,10 +309,23 @@ def division_member_geometry(feature):
     return repaired
 
 
-if len(division_specs) != 10 or len(district_by_name) != len(districts):
-    raise ValueError('Expected ten requested divisions and uniquely named Punjab districts')
+def area_km2(value):
+    total = 0
+    for polygon in ([value] if value.geom_type == 'Polygon' else value.geoms):
+        for index, ring in enumerate([polygon.exterior, *polygon.interiors]):
+            area = Geodesic.WGS84.Polygon()
+            for longitude, latitude in ring.coords:
+                area.AddPoint(latitude, longitude)
+            total += (1 if index == 0 else -1) * abs(area.Compute()[2]) / 1e6
+    return round(total, 2)
+
+
+province_area = area_km2(geometry(punjab['province']['features'][0]))
+if len(division_specs) != 11 or len(district_by_name) != len(districts):
+    raise ValueError('Expected eleven requested divisions and uniquely named Punjab districts')
 for spec in division_specs:
     division_name = spec['name']
+    profile = division_profiles[division_name]
     if not division_name or not spec['headquarters'] or not spec['districts']:
         raise ValueError(f'Incomplete Punjab division: {division_name}')
     members = []
@@ -326,6 +347,41 @@ for spec in division_specs:
         'geometry': None,
     }
     set_geometry(division, unary_union([division_member_geometry(member) for member in members]))
+    city = cities.get(profile['sourceCity'])
+    headquarters_coordinates = profile.get('coordinates') or city['geometry']['coordinates']
+    headquarters_source = profile.get('coordinateSource') or 'https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-populated-places/'
+    if not geometry(division).covers(Point(headquarters_coordinates)):
+        raise ValueError(f'Headquarters is outside its division: {division_name}')
+    if profile.get('photoId'):
+        photo_source = shrine_photos[profile['photoId']]
+        photo = {key: photo_source[key] for key in ('title', 'author', 'license', 'licenseUrl', 'sourceUrl')}
+        photo.update(url=photo_source['file'], caption=profile['landmark'], changes='Responsive display crop.')
+    elif profile.get('provincePhotoTitle'):
+        photo = next(photo for photo in province_photos if photo['title'] == profile['provincePhotoTitle'])
+    else:
+        photo = division_photos[division_name]
+    district_stats = [dict(
+        name=member['properties']['name'],
+        areaKm2=area_km2(division_member_geometry(member)),
+        tehsilCount=sum(tehsil['properties']['district'] == member['properties']['name'] for tehsil in tehsils),
+    ) for member in members]
+    division_area = area_km2(geometry(division))
+    division['properties'].update(
+        areaKm2=division_area,
+        provinceAreaShare=round(100 * division_area / province_area, 2),
+        districtCount=len(members),
+        tehsilCount=sum(row['tehsilCount'] for row in district_stats),
+        districtStats=district_stats,
+        headquartersCoordinates=headquarters_coordinates,
+        headquartersSource=headquarters_source,
+        headquartersSourceName=profile['sourceCity'],
+        description=profile['description'],
+        landmark=profile['landmark'],
+        landmarkSource=profile['landmarkSource'],
+        wikiUrl=profile['wikiUrl'],
+        photo=photo,
+        areaNote='WGS84 ellipsoidal polygon area, including source inland waters; calculated from the proposed district union.',
+    )
     new_divisions.append(division)
 if set(district_to_division) != set(district_by_name):
     raise ValueError('The requested division plan does not cover all Punjab districts')
@@ -368,8 +424,9 @@ decisions[:] = [decision for decision in decisions if not decision.startswith((
     'Names and short histories for 180 Punjab source tehsils follow',
     'Chiniot, Jhang and Toba Tek Singh remain in the Chenab',
     'The requested ten Punjab divisions group all 49 districts',
+    'The requested eleven Punjab divisions group all 49 districts',
 ))]
-decisions.append('The requested ten Punjab divisions group all 49 districts exactly once. Their boundaries are unions of the member district outlines; Hasan Abdal, Rawalpindi, Gujrat, Sargodha, Lahore, Faisalabad, Amritsar, Jalandhar, Sri Anandpur Sahib and Patiala are their respective headquarters.')
+decisions.append('The requested eleven Punjab divisions group all 49 districts exactly once. Boundaries are unions of member district outlines. Headquarters are Rawalpindi, Lahore, Sandalbar city (Faisalabad), Amritsar, Jalandhar, Mohali, Ludhiana, Patiala, Ranjitgarh (Gujranwala), Sargodha and Bathinda. City points use Natural Earth or linked Wikidata coordinates; areas use WGS84 ellipsoidal polygon measurement and counts use the mapped source tehsils.')
 western_updates = sum(row.get('provenance') == 'User-provided Western Panjab rename list' for row in name_rows)
 locality_updates = sum(row.get('provenance') == 'Project review of requested tehsil renames' for row in name_rows)
 tehsil_note = (f'Names and short histories for 180 Punjab source tehsils follow the user-provided reviews, '
