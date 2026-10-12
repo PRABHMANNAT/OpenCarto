@@ -175,16 +175,25 @@ type Analysis = {
 };
 type Level = 'province' | 'division' | 'district' | 'tehsil';
 type MapStyle = 'political' | 'physical' | 'satellite' | 'nature';
-type AtlasColors = { border: string; fills: Record<string, string> };
+type AtlasColors = {
+  border: string;
+  borderWidth: number;
+  fills: Record<string, string>;
+};
 type DetailPage = FeatureCollection & { next: number | null; total: number };
 const empty: FeatureCollection = { type: 'FeatureCollection', features: [] };
 const title = 'United Subcontinent — Alternative Political Geography';
 const atlasColorsStorageKey = 'private-atlas-map-colors-v1';
 const defaultBorderColor = '#38536a';
+const defaultBorderWidth = 1;
 const isHexColor = (value: unknown): value is string =>
   typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
 function readAtlasColors(): AtlasColors {
-  const fallback = { border: defaultBorderColor, fills: {} };
+  const fallback = {
+    border: defaultBorderColor,
+    borderWidth: defaultBorderWidth,
+    fills: {},
+  };
   if (typeof window === 'undefined') return fallback;
   try {
     const saved = JSON.parse(
@@ -200,6 +209,13 @@ function readAtlasColors(): AtlasColors {
       return fallback;
     return {
       border: saved.border,
+      borderWidth:
+        typeof saved.borderWidth === 'number' &&
+        Number.isFinite(saved.borderWidth) &&
+        saved.borderWidth >= 0.5 &&
+        saved.borderWidth <= 4
+          ? saved.borderWidth
+          : defaultBorderWidth,
       fills: Object.fromEntries(
         Object.entries(saved.fills).filter(
           ([id, color]) => id.length <= 100 && isHexColor(color),
@@ -1313,7 +1329,20 @@ function AtlasMap({
       selected === 'punjab' && level === 'tehsil' ? 'visible' : 'none',
     );
     m.setPaintProperty('punjab-district-outlines', 'line-color', colors.border);
-  }, [districtOutlines, selected, level, colors.border, loaded, mapRef]);
+    m.setPaintProperty(
+      'punjab-district-outlines',
+      'line-width',
+      2.3 * colors.borderWidth,
+    );
+  }, [
+    districtOutlines,
+    selected,
+    level,
+    colors.border,
+    colors.borderWidth,
+    loaded,
+    mapRef,
+  ]);
   useEffect(() => {
     const m = mapRef.current;
     if (!loaded || !m) return;
@@ -1368,7 +1397,9 @@ function AtlasMap({
             : 0.08,
     );
     m.setPaintProperty('detail-borders', 'line-color', colors.border);
+    m.setPaintProperty('detail-borders', 'line-width', colors.borderWidth);
     m.setPaintProperty('detail-selected', 'line-color', colors.border);
+    m.setPaintProperty('detail-selected', 'line-width', 3 * colors.borderWidth);
     m.setLayoutProperty(
       'detail-borders',
       'visibility',
@@ -1477,7 +1508,21 @@ function AtlasMap({
           ],
     );
     m.setPaintProperty('province-borders', 'line-color', colors.border);
+    m.setPaintProperty('province-borders', 'line-width', [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      3,
+      0.65 * colors.borderWidth,
+      8,
+      1.25 * colors.borderWidth,
+    ]);
     m.setPaintProperty('province-highlight', 'line-color', colors.border);
+    m.setPaintProperty(
+      'province-highlight',
+      'line-width',
+      2.6 * colors.borderWidth,
+    );
   }, [
     dark,
     labels,
@@ -2310,6 +2355,43 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                     setColors((current) => ({
                       ...current,
                       border: defaultBorderColor,
+                    }))
+                  }
+                >
+                  <RotateCcw size={13} />
+                </button>
+              )}
+              <label className="ua-border-width-control">
+                Border thickness
+                <input
+                  type="range"
+                  min="0.5"
+                  max="4"
+                  step="0.25"
+                  aria-label="Border thickness"
+                  value={colors.borderWidth}
+                  onChange={(event) => {
+                    const borderWidth = Number(event.currentTarget.value);
+                    setColors((current) => ({
+                      ...current,
+                      borderWidth,
+                    }));
+                  }}
+                />
+                <output>
+                  {colors.borderWidth.toFixed(2).replace(/\.?0+$/, '')}×
+                </output>
+              </label>
+              {colors.borderWidth !== defaultBorderWidth && (
+                <button
+                  type="button"
+                  className="ua-color-reset"
+                  aria-label="Reset border thickness"
+                  title="Restore the default border thickness"
+                  onClick={() =>
+                    setColors((current) => ({
+                      ...current,
+                      borderWidth: defaultBorderWidth,
                     }))
                   }
                 >

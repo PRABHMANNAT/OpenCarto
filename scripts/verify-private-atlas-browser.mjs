@@ -135,6 +135,18 @@ try {
         .querySelector('.ua-map-caption')
         ?.textContent.includes('Loading'),
   );
+  const borderThickness = page.getByRole('slider', {
+    name: 'Border thickness',
+  });
+  assert.equal(await borderThickness.inputValue(), '1');
+  await borderThickness.press('End');
+  assert.equal(await borderThickness.inputValue(), '4');
+  await page.waitForFunction(
+    () =>
+      JSON.parse(localStorage.getItem('private-atlas-map-colors-v1') || '{}')
+        .borderWidth === 4,
+  );
+  assert.equal(await page.locator('.ua-map-error').count(), 0);
   await page
     .locator('.ua-gallery img')
     .evaluate((img) => img.decode().catch(() => {}));
@@ -358,6 +370,15 @@ try {
   await page
     .getByRole('button', { name: 'National overview', exact: true })
     .waitFor();
+  assert.equal(
+    await page.getByRole('slider', { name: 'Border thickness' }).inputValue(),
+    '4',
+  );
+  await page.getByRole('button', { name: 'Reset border thickness' }).click();
+  assert.equal(
+    await page.getByRole('slider', { name: 'Border thickness' }).inputValue(),
+    '1',
+  );
   assert.equal(await page.getByLabel('Access password').count(), 0);
   assert.equal(
     (

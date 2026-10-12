@@ -302,6 +302,24 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
+.ua-border-width-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  color: #687c86;
+  font-size: 11px;
+}
+.ua-border-width-control input[type='range'] {
+  width: 82px;
+  accent-color: #38536a;
+  cursor: pointer;
+}
+.ua-border-width-control output {
+  min-width: 28px;
+  color: #29495e;
+  font-variant-numeric: tabular-nums;
+}
 .ua-controls .ua-color-reset {
   padding: 6px;
   color: #607785;
