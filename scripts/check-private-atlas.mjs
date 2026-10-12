@@ -408,12 +408,12 @@ try {
         ?.properties.name,
       name,
     );
-  assert.equal(punjabTehsils.length, 180);
+  assert.equal(punjabTehsils.length, 181);
   const reviewRows = JSON.parse(
     await fs.readFile('scripts/punjab-tehsil-heritage-names.json', 'utf8'),
   ).rows;
   const reviewed = new Map(reviewRows.map((row) => [row.sourceId, row]));
-  assert.equal(reviewed.size, 180);
+  assert.equal(reviewed.size, 181);
   let documentedRenames = 0;
   for (const feature of punjabTehsils) {
     const props = feature.properties;
@@ -434,8 +434,16 @@ try {
     assert.equal(displayedDistrict, row.proposedDistrict);
     assert.equal(props.nameMeaning, row.meaning);
     assert.equal(props.namingReason, row.history);
-    assert.equal(props.namingProvenance, 'User-provided United Panjab heritage review');
-    assert.equal(props.namingStatus, row.decision === 'Renamed' ? 'renamed' : 'source');
+    assert.equal(
+      props.namingProvenance,
+      row.provenance || 'User-provided United Panjab heritage review',
+    );
+    assert.equal(
+      props.namingStatus,
+      { Renamed: 'renamed', Retained: 'source', Added: 'restored' }[
+        row.decision
+      ],
+    );
     if (props.namingStatus === 'renamed') documentedRenames++;
     assert.ok(
       analysis.changes.some(
@@ -448,6 +456,25 @@ try {
     );
   }
   assert.equal(documentedRenames, 19);
+  const guruHarSahai = punjabTehsils.find(
+    (feature) => feature.properties.sourceId === 'in-t-guru-har-sahai',
+  );
+  assert.ok(guruHarSahai);
+  assert.equal(guruHarSahai.properties.district, 'Ferozepur');
+  assert.ok(contains(guruHarSahai.geometry, [74.3998, 30.7113]));
+  for (const point of [
+    [74.14104, 31.43777],
+    [74.27249, 31.63669],
+    [74.03426, 31.35891],
+  ])
+    assert.ok(
+      punjabTehsils.some(
+        (feature) =>
+          feature.properties.district === 'Lahore' &&
+          contains(feature.geometry, point),
+      ),
+      'the visible gaps around Lahore are covered',
+    );
   const taxila = punjabDistricts.find(
     (feature) => feature.properties.id === 'punjab-d-taxila',
   );

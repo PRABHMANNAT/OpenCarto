@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'work/geometry-runtime'))
-from shapely.geometry import mapping, shape
+from shapely.geometry import Point, mapping, shape
 from shapely.ops import unary_union
 
 PATH = ROOT / 'private/united-atlas/atlas.json'
@@ -167,9 +167,69 @@ for tehsil in tehsils:
     if props['district'] in capitals:
         props['capital'] = capitals[props['district']]
 
+# The source tehsil edition omits Guru Har Sahai even though the Ferozepur
+# district contains its area. Reconstruct the missing polygon from that
+# district's uncovered space; the official town point must lie inside it.
+guru_id = 'in-t-guru-har-sahai'
+if not any(feature['properties']['sourceId'] == guru_id for feature in tehsils):
+    ferozepur = next(feature for feature in districts if feature['properties']['name'] == 'Ferozepur')
+    local_tehsils = [feature for feature in tehsils if feature['properties']['district'] == 'Ferozepur']
+    uncovered = geometry(ferozepur).difference(unary_union([geometry(feature) for feature in local_tehsils]))
+    parts = list(uncovered.geoms) if uncovered.geom_type == 'MultiPolygon' else [uncovered]
+    missing = max(parts, key=lambda part: part.area)
+    if not 0.04 < missing.area < 0.05 or not missing.covers(Point(74.3998, 30.7113)):
+        raise ValueError('The expected Guru Har Sahai coverage is missing or has moved')
+    template = next(feature for feature in local_tehsils if feature['properties']['sourceId'] == 'in-t-235')
+    source_url = 'https://ferozepur.nic.in/administrative-setup/'
+    guru = {
+        'type': 'Feature',
+        'id': f'punjab-t-{guru_id}',
+        'properties': {
+            **template['properties'],
+            'id': f'punjab-t-{guru_id}',
+            'sourceId': guru_id,
+            'sourceName': 'Guru Har Sahai',
+            'name': 'Guru Har Sahai',
+            'source': 'Reconstructed from the uncovered Ferozepur district area',
+            'note': 'Official tehsil listed by Ferozepur district; map outline reconstructed from uncovered district space, not independently surveyed.',
+            'geometryAdjustment': 'Reconstructed from uncovered Ferozepur district coverage; official boundary not independently verified.',
+            'geometrySourceUrl': source_url,
+        },
+        'geometry': None,
+    }
+    set_geometry(guru, missing)
+    tehsils.append(guru)
+    ferozepur['properties']['sourceTehsils'] = sorted(set(ferozepur['properties']['sourceTehsils']) | {guru_id})
+    source_row = next(row for row in payload['analysis']['changes'] if row.get('sourceId') == 'in-t-235')
+    payload['analysis']['changes'].append({
+        **source_row,
+        'currentTehsil': 'Guru Har Sahai',
+        'sourceId': guru_id,
+        'proposedTehsil': 'Guru Har Sahai',
+        'reason': 'Restore the official Guru Har Sahai tehsil omitted by the source tehsil geometry.',
+        'method': 'Approximate outline from Ferozepur district area not covered by the other source tehsils.',
+    })
+
+# Lahore's source tehsils leave visible strips inside their parent district.
+# Join each uncovered face to the Lahore tehsil sharing the most boundary.
+lahore = next(feature for feature in districts if feature['properties']['name'] == 'Lahore')
+lahore_tehsils = [feature for feature in tehsils if feature['properties']['district'] == 'Lahore']
+uncovered = geometry(lahore).difference(unary_union([geometry(feature) for feature in lahore_tehsils]))
+parts = list(uncovered.geoms) if uncovered.geom_type == 'MultiPolygon' else [uncovered]
+for piece in sorted((part for part in parts if part.area > 1e-7), key=lambda part: part.area, reverse=True):
+    owner = max(lahore_tehsils, key=lambda feature: piece.boundary.intersection(geometry(feature).boundary).length)
+    shared = piece.boundary.intersection(geometry(owner).boundary).length
+    if shared <= 1e-7:
+        raise ValueError(f'A Lahore coverage gap does not touch a tehsil: area={piece.area}, bounds={piece.bounds}')
+    set_geometry(owner, unary_union([geometry(owner), piece]))
+    owner['properties']['geometryAdjustment'] = 'Unassigned space inside Lahore district joined to the adjoining source tehsil.'
+remaining = geometry(lahore).difference(unary_union([geometry(feature) for feature in lahore_tehsils]))
+if remaining.area > 1e-6:
+    raise ValueError(f'Lahore still has uncovered tehsil area: {remaining.area}')
+
 name_rows = json.loads((ROOT / 'scripts/punjab-tehsil-heritage-names.json').read_text(encoding='utf-8'))['rows']
-if len(name_rows) != 180 or len({row['sourceId'] for row in name_rows}) != 180:
-    raise ValueError('Heritage review must contain exactly 180 unique Punjab tehsils')
+if len(name_rows) != 181 or len({row['sourceId'] for row in name_rows}) != 181:
+    raise ValueError('Name registry must contain 180 reviewed and one restored Punjab tehsil')
 review_by_id = {row['sourceId']: row for row in name_rows}
 source_ids = {feature['properties']['sourceId'] for feature in tehsils}
 if source_ids != set(review_by_id):
@@ -186,7 +246,7 @@ for tehsil in tehsils:
     source = props.get('sourceName') or props['name']
     if source != row['oldName'] or display_districts.get(props['district'], props['district']) != row['proposedDistrict']:
         raise ValueError(f"Review source or district mismatch for {props['sourceId']}")
-    if row['decision'] not in {'Retained', 'Renamed'}:
+    if row['decision'] not in {'Retained', 'Renamed', 'Added'}:
         raise ValueError(f"Unknown review decision for {props['sourceId']}")
     if not all(row[key].strip() for key in ('newName', 'meaning', 'history')) or any(
         mark in row['newName'] for mark in ('-', '·')
@@ -197,10 +257,12 @@ for tehsil in tehsils:
         name=row['newName'],
         nameMeaning=row['meaning'],
         namingReason=row['history'],
-        namingStatus='renamed' if row['decision'] == 'Renamed' else 'source',
-        namingProvenance='User-provided United Panjab heritage review',
+        namingStatus={'Renamed': 'renamed', 'Retained': 'source', 'Added': 'restored'}[row['decision']],
+        namingProvenance=row.get('provenance', 'User-provided United Panjab heritage review'),
     )
     props.pop('namingSourceUrl', None)
+    if row.get('sourceUrl'):
+        props['namingSourceUrl'] = row['sourceUrl']
 
 tehsil_names = {feature['properties']['sourceId']: feature['properties']['name'] for feature in tehsils}
 for row in payload['analysis']['changes']:
@@ -218,10 +280,12 @@ for row in payload['analysis']['changes']:
     if row['proposedDistrict'] in capitals:
         row['proposedCapital'] = capitals[row['proposedDistrict']]
 
-payload['overview']['provinces'][next(
+punjab_overview = payload['overview']['provinces'][next(
     i for i, province in enumerate(payload['overview']['provinces'])
     if province['id'] == 'punjab'
-)]['detailCounts']['district'] = len(districts)
+ )]
+punjab_overview['detailCounts']['district'] = len(districts)
+punjab_overview['detailCounts']['tehsil'] = len(tehsils)
 
 decisions = payload['analysis']['decisions']
 for index, decision in enumerate(decisions):
@@ -237,10 +301,12 @@ note = ('The proposed Punjab districts include full Attock as Panja Sahib, a Tax
 if note not in decisions:
     decisions.append(note)
 decisions[:] = [decision for decision in decisions if not decision.startswith((
-    'All 180 Punjab source tehsils have proposed', 'Punjab tehsil labels use established source place names'
+    'All 180 Punjab source tehsils have proposed', 'Punjab tehsil labels use established source place names',
+    'All 180 Punjab tehsil labels, meanings and short histories follow',
 ))]
-tehsil_note = ('All 180 Punjab tehsil labels, meanings and short histories follow the user-provided heritage review. '
-               'Nineteen proposed tehsil names differ from their source labels; source boundaries and identifiers remain unchanged.')
+tehsil_note = ('Names and short histories for 180 Punjab source tehsils follow the user-provided heritage review; '
+               'the omitted Guru Har Sahai tehsil is restored from uncovered Ferozepur district space. '
+               'Lahore tehsil coverage gaps are joined to adjoining tehsils. These geometry repairs are approximate, not surveyed boundaries.')
 if tehsil_note not in decisions:
     decisions.append(tehsil_note)
 

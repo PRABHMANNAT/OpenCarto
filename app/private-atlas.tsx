@@ -2701,15 +2701,21 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                     </div>
                     <div className="ua-profile-heading">
                       <small>
-                        {inspected.properties?.namingStatus === 'renamed'
-                          ? 'TEHSIL · PROPOSED NAME'
-                          : 'TEHSIL · ESTABLISHED PLACE NAME'}
+                        {inspected.properties?.namingStatus === 'restored'
+                          ? 'TEHSIL · RESTORED AREA'
+                          : inspected.properties?.namingStatus === 'renamed'
+                            ? 'TEHSIL · PROPOSED NAME'
+                            : 'TEHSIL · ESTABLISHED PLACE NAME'}
                       </small>
                       <h2>{String(inspected.properties?.name || 'Tehsil')}</h2>
                     </div>
                     <div className="ua-tehsil-profile-content">
                       <p>
-                        <strong>Old name:</strong>{' '}
+                        <strong>
+                          {inspected.properties?.namingStatus === 'restored'
+                            ? 'Official name:'
+                            : 'Old name:'}
+                        </strong>{' '}
                         {String(inspected.properties?.sourceName || '')}
                       </p>
                       <p>
@@ -2728,8 +2734,27 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                             '',
                         )}
                       </p>
+                      {inspected.properties?.geometryAdjustment && (
+                        <p>{String(inspected.properties.geometryAdjustment)}</p>
+                      )}
+                      {inspected.properties?.namingSourceUrl && (
+                        <a
+                          href={String(inspected.properties.namingSourceUrl)}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Tehsil source ↗
+                        </a>
+                      )}
                       <small>
-                        {String(inspected.properties?.namingProvenance || 'User-provided heritage review')}. Source boundary and identifier are retained.
+                        {String(
+                          inspected.properties?.namingProvenance ||
+                            'User-provided heritage review',
+                        )}
+                        .{' '}
+                        {inspected.properties?.namingStatus === 'restored'
+                          ? 'The source layer had no identifier for this tehsil.'
+                          : 'Source identifier is retained for reference.'}
                       </small>
                       <button type="button" onClick={() => setInspected(null)}>
                         Back to Punjab tehsils

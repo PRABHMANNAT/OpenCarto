@@ -1,5 +1,5 @@
 {
-  "description": "Reviewed Punjab tehsil labels supplied by the user; naming data only, no boundary changes.",
+  "description": "180 user-reviewed Punjab tehsil labels plus one restored official tehsil omitted by the source layer.",
   "rows": [
     {
       "sourceId": "in-t-238",
@@ -495,6 +495,17 @@
       "meaning": "Pur means town; associated with a figure named Gurdas",
       "history": "Historic Majha-region district headquarters with cross-border heritage.",
       "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-guru-har-sahai",
+      "oldName": "Guru Har Sahai",
+      "proposedDistrict": "Ferozepur",
+      "newName": "Guru Har Sahai",
+      "meaning": "Named for the historic Sodhi figure Guru Har Sahai.",
+      "history": "Ferozepur district lists Guru Har Sahai as its third tehsil. Its map area was missing from the source tehsil layer.",
+      "decision": "Added",
+      "provenance": "Ferozepur district administration and historic gazetteer",
+      "sourceUrl": "https://ferozepur.nic.in/administrative-setup/"
     },
     {
       "sourceId": "PK61101",
