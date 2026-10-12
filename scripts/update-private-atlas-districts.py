@@ -340,6 +340,7 @@ for spec in division_specs:
         'properties': {
             'id': 'punjab-div-' + division_name.lower().replace(' ', '-'),
             'name': division_name,
+            'color': spec['color'],
             'province': 'punjab',
             'capital': spec['headquarters'],
             'memberDistricts': spec['districts'],

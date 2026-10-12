@@ -1,6 +1,7 @@
 [
   {
     "name": "Rawalpindi",
+    "color": "#AFC7B1",
     "headquarters": "Rawalpindi",
     "districts": [
       "Rawalpindi",
@@ -14,16 +15,19 @@
   },
   {
     "name": "Lahore",
+    "color": "#A9C7DD",
     "headquarters": "Lahore",
     "districts": ["Lahore", "Sacha Sauda", "Nankana Sahib", "Bulleh Shah"]
   },
   {
     "name": "Sandalbar",
+    "color": "#E5B48F",
     "headquarters": "Sandalbar city",
     "districts": ["Sandalbar", "Jhang", "Toba Tek Singh", "Harappa", "Nanaksar"]
   },
   {
     "name": "Kartarpur",
+    "color": "#C4AED2",
     "headquarters": "Amritsar",
     "districts": [
       "Kartarpur Sahib",
@@ -36,6 +40,7 @@
   },
   {
     "name": "Jalandhar",
+    "color": "#D8A6AD",
     "headquarters": "Jalandhar",
     "districts": [
       "Jalandhar",
@@ -46,6 +51,7 @@
   },
   {
     "name": "Anandpur Sahib",
+    "color": "#C2C58F",
     "headquarters": "Mohali",
     "districts": [
       "Sri Anandpur Sahib",
@@ -56,16 +62,19 @@
   },
   {
     "name": "Ludhiana",
+    "color": "#93C2BE",
     "headquarters": "Ludhiana",
     "districts": ["Ludhiana", "Moga", "Barnala"]
   },
   {
     "name": "Patiala",
+    "color": "#DCC89F",
     "headquarters": "Patiala",
     "districts": ["Patiala", "Mansa", "Sangrur"]
   },
   {
     "name": "Ranjitgarh",
+    "color": "#ABB6D7",
     "headquarters": "Ranjitgarh",
     "districts": [
       "Ranjitgarh",
@@ -77,11 +86,13 @@
   },
   {
     "name": "Sargodha",
+    "color": "#9EBA9A",
     "headquarters": "Sargodha",
     "districts": ["Sargodha", "Khushab", "Chenab"]
   },
   {
     "name": "Bathinda",
+    "color": "#BDD5E3",
     "headquarters": "Bathinda",
     "districts": [
       "Bathinda",

@@ -275,6 +275,7 @@ try {
     );
     assert.ok(division, spec.name + ' division exists');
     assert.equal(division.properties.capital, spec.headquarters);
+    assert.equal(division.properties.color, spec.color);
     assert.deepEqual(division.properties.memberDistricts, spec.districts);
     const props = division.properties;
     assert.ok(props.areaKm2 > 0);
@@ -316,6 +317,10 @@ try {
     for (const field of ['url', 'sourceUrl', 'author', 'license', 'licenseUrl'])
       assert.ok(props.photo[field]);
   }
+  assert.equal(
+    new Set(punjabDivisions.map((feature) => feature.properties.color)).size,
+    11,
+  );
   assert.equal(
     punjabDivisions.reduce(
       (total, feature) => total + feature.properties.tehsilCount,

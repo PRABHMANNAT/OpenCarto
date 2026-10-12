@@ -1641,7 +1641,8 @@ function AtlasMap({
         : detail,
     );
     const colored =
-      selected === 'punjab' && (level === 'district' || level === 'tehsil');
+      selected === 'punjab' &&
+      (level === 'division' || level === 'district' || level === 'tehsil');
     m.setPaintProperty(
       'detail-fill',
       'fill-color',

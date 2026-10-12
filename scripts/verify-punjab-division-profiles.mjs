@@ -66,6 +66,22 @@ try {
   assert.equal(response.status(), 200);
   const divisions = (await response.json()).features;
   assert.equal(divisions.length, 11);
+  assert.deepEqual(
+    divisions.map((division) => division.properties.color),
+    [
+      '#AFC7B1',
+      '#A9C7DD',
+      '#E5B48F',
+      '#C4AED2',
+      '#D8A6AD',
+      '#C2C58F',
+      '#93C2BE',
+      '#DCC89F',
+      '#ABB6D7',
+      '#9EBA9A',
+      '#BDD5E3',
+    ],
+  );
   const headquartersToggle = page.getByRole('button', {
     name: 'HQ cities on',
   });
