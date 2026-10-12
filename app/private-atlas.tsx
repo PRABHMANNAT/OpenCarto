@@ -68,6 +68,8 @@ type Photo = {
   license: string;
   licenseUrl: string;
   sourceUrl: string;
+  date?: string;
+  retrieved?: string;
 };
 type Province = {
   id: string;
@@ -199,6 +201,7 @@ type DivisionInfo = {
   wikiUrl: string;
   photo: Photo;
   areaNote: string;
+  hypotheticalDemographics?: HypotheticalDemographics;
 };
 type DistrictInfo = {
   id: string;
@@ -207,7 +210,177 @@ type DistrictInfo = {
   division: string;
   areaKm2: number;
   tehsilCount: number;
+  hypotheticalDemographics?: HypotheticalDemographics;
+  populationRank?: number;
+  scenarioZone?: string;
+  keyCities?: string[];
+  density?: number;
+  photos?: Photo[];
+  summary?: string;
+  wikiUrl?: string;
+  reason?: string;
+  sourceName?: string;
 };
+function DistrictProfile({
+  district,
+  areaRank,
+  onBack,
+  onEdit,
+}: {
+  district: DistrictInfo;
+  areaRank: number;
+  onBack: () => void;
+  onEdit: () => void;
+}) {
+  const scenario = district.hypotheticalDemographics;
+  return (
+    <article
+      className="ua-profile ua-single-district"
+      aria-label={`${district.name} district profile`}
+    >
+      <div className="ua-breadcrumb">
+        <button type="button" onClick={onBack}>
+          Punjab districts
+        </button>
+        <ChevronRight size={13} />
+        <span>{district.name}</span>
+      </div>
+      <div className="ua-profile-heading">
+        <small>PROPOSED DISTRICT · ALTERNATIVE WORLD</small>
+        <h2>{district.name}</h2>
+        <p>
+          {district.division} division · {district.scenarioZone}
+        </p>
+      </div>
+      <div className="ua-division-content">
+        <PhotoGallery
+          key={district.id}
+          photos={district.photos || []}
+          subject="district"
+        />
+        <p className="ua-data-note">
+          Real location photographs from current Wikimedia listings. Dates and
+          credits are shown for each image; these are not images of the
+          fictional world.
+        </p>
+        <dl className="ua-division-facts">
+          <div>
+            <dt>Headquarters</dt>
+            <dd>{district.capital}</dd>
+          </div>
+          <div>
+            <dt>Mapped area</dt>
+            <dd>{format(district.areaKm2)} km²</dd>
+          </div>
+          <div>
+            <dt>Area rank</dt>
+            <dd>#{areaRank} of 49</dd>
+          </div>
+          <div>
+            <dt>Mapped tehsils</dt>
+            <dd>{district.tehsilCount}</dd>
+          </div>
+          {scenario && (
+            <>
+              <div>
+                <dt>Estimated population · fictional</dt>
+                <dd>
+                  {formatPopulation(scenario.total)} (
+                  {scenario.total.toLocaleString('en-IN')})
+                </dd>
+              </div>
+              <div>
+                <dt>Population rank · fictional</dt>
+                <dd>#{district.populationRank} of 49</dd>
+              </div>
+              <div>
+                <dt>Density · fictional</dt>
+                <dd>{format(district.density || 0)} people / km²</dd>
+              </div>
+            </>
+          )}
+        </dl>
+        <h3>Overview and geography</h3>
+        <p>
+          {district.summary ||
+            `${district.name} is a proposed district of Punjab, administered from ${district.capital}.`}
+        </p>
+        {district.wikiUrl && (
+          <p className="ua-data-note">
+            <a href={district.wikiUrl} target="_blank" rel="noreferrer">
+              Read the real location on Wikipedia
+            </a>{' '}
+            · Summary adapted from Wikipedia, CC BY-SA 4.0. Historical source
+            boundaries may differ from this proposed district.
+          </p>
+        )}
+        <h3>Name and proposed boundaries</h3>
+        <p>{district.reason}</p>
+        <p>
+          Source district: {district.sourceName}. Area and density use the
+          proposed geometry.
+        </p>
+        <h3>Headquarters and local centres</h3>
+        <p>{district.keyCities?.join(' · ')}</p>
+        <p className="ua-data-note">
+          Illustrative local centres, not a measured city population ranking.
+        </p>
+        {scenario && (
+          <section className="ua-scenario-population">
+            <h3>Religion and population · fictional scenario</h3>
+            <p className="ua-data-note">{scenario.note}</p>
+            {scenario.religions.map((r, i) => {
+              const share = (r.population / scenario.total) * 100;
+              return (
+                <div className="ua-demographic" key={r.name}>
+                  <strong>{r.name}</strong>
+                  <span>
+                    {formatPopulation(r.population)} · {share.toFixed(1)}%
+                  </span>
+                  <div
+                    style={{
+                      height: 6,
+                      background: '#e9edee',
+                      borderRadius: 4,
+                      margin: '6px 0 14px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${share}%`,
+                        height: '100%',
+                        background: [
+                          '#628BAC',
+                          '#D8B387',
+                          '#86B5AA',
+                          '#C4AED2',
+                          '#D8A6AD',
+                          '#C2C58F',
+                          '#93C2BE',
+                        ][i],
+                        borderRadius: 4,
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </section>
+        )}
+        <p className="ua-data-note">
+          Development and economic rankings are not assigned: this scenario does
+          not include a comparable development index.
+        </p>
+        <button type="button" onClick={onBack}>
+          Show all Punjab districts
+        </button>
+        <button type="button" onClick={onEdit}>
+          Edit this district
+        </button>
+      </div>
+    </article>
+  );
+}
 const empty: FeatureCollection = { type: 'FeatureCollection', features: [] };
 const title = 'United Subcontinent — Alternative Political Geography';
 const atlasColorsStorageKey = 'private-atlas-map-colors-v1';
@@ -360,7 +533,13 @@ function featureBounds(feature: Feature | undefined): number[] | null {
       if ('coordinates' in part) collect(part.coordinates);
   return Number.isFinite(bounds[0]) ? bounds : null;
 }
-function PhotoGallery({ photos }: { photos: Photo[] }) {
+function PhotoGallery({
+  photos,
+  subject = 'province',
+}: {
+  photos: Photo[];
+  subject?: string;
+}) {
   const [index, setIndex] = useState(0),
     photo = photos[index];
   if (!photo) return null;
@@ -388,6 +567,14 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
               </a>{' '}
               · cropped
             </span>
+            {photo.retrieved && (
+              <span>
+                {photo.date
+                  ? `Photo date: ${photo.date} · `
+                  : 'Capture date not documented · '}
+                Source checked {photo.retrieved}
+              </span>
+            )}
           </figcaption>
         </figure>
       </div>
@@ -395,7 +582,7 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
         <div className="ua-photo-controls">
           <button
             type="button"
-            aria-label="Previous province photograph"
+            aria-label={`Previous ${subject} photograph`}
             onClick={() =>
               setIndex((i) => (i + photos.length - 1) % photos.length)
             }
@@ -407,7 +594,7 @@ function PhotoGallery({ photos }: { photos: Photo[] }) {
           </span>
           <button
             type="button"
-            aria-label="Next province photograph"
+            aria-label={`Next ${subject} photograph`}
             onClick={() => setIndex((i) => (i + 1) % photos.length)}
           >
             <ChevronRight size={13} />
@@ -525,6 +712,14 @@ function DivisionPanel({
                 <dt>Mapped tehsils / subdistricts</dt>
                 <dd>{info.tehsilCount}</dd>
               </div>
+              {info.hypotheticalDemographics && (
+                <div>
+                  <dt>Estimated population · fictional</dt>
+                  <dd>
+                    {formatPopulation(info.hypotheticalDemographics.total)}
+                  </dd>
+                </div>
+              )}
             </dl>
             <button
               type="button"
@@ -553,7 +748,8 @@ function DivisionPanel({
             </table>
             <p className="ua-data-note">
               {info.areaNote} Tehsil counts reflect the map’s retained source
-              coverage. A combined division population is not available.
+              coverage. Population, when shown, sums the fictional district
+              allocations.
             </p>
             <h3>Featured landmark</h3>
             <p>{info.landmark}</p>
@@ -636,9 +832,11 @@ function DivisionPanel({
 function DistrictOverviewPanel({
   districts,
   loading,
+  onSelect,
 }: {
   districts: Feature[];
   loading: boolean;
+  onSelect: (id: string) => void;
 }) {
   const records = districts.map(
     (feature) => feature.properties as DistrictInfo,
@@ -665,6 +863,42 @@ function DistrictOverviewPanel({
           <p>Loading district statistics…</p>
         ) : (
           <>
+            <h3>Population · fictional scenario</h3>
+            <p>
+              Punjab: <strong>7.96 crore</strong> · Sikhism 6.1 crore · Hinduism
+              1.6 crore · Islam 17 lakh · other communities 9 lakh.
+            </p>
+            <p className="ua-data-note">
+              Illustrative alternative-world estimates, not real census figures.
+              Select a district to see its allocation and source profile.
+            </p>
+            <details>
+              <summary>District population ranking · fictional</summary>
+              <ol className="ua-area-ranking">
+                {[...records]
+                  .sort(
+                    (a, b) =>
+                      (b.hypotheticalDemographics?.total || 0) -
+                      (a.hypotheticalDemographics?.total || 0),
+                  )
+                  .map((d, i) => (
+                    <li key={d.id}>
+                      <button type="button" onClick={() => onSelect(d.id)}>
+                        <b>{i + 1}</b>
+                        <span>
+                          <strong>{d.name}</strong>
+                          <small>{d.capital}</small>
+                        </span>
+                        <em>
+                          {formatPopulation(
+                            d.hypotheticalDemographics?.total || 0,
+                          )}
+                        </em>
+                      </button>
+                    </li>
+                  ))}
+              </ol>
+            </details>
             <div className="ua-ranking-highlights">
               <div>
                 <small>Largest district</small>
@@ -2138,7 +2372,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
   const currentEditingDistrictId =
     editingDistrictId ||
     String(displayedDetail.features[0]?.properties?.id || '');
-  const focusedDistrict = displayedDetail.features.find(
+  const focusedDistrict = districtSource.features.find(
     (feature) => feature.properties?.id === focusedDistrictId,
   );
   const rankedDistrictSource = useMemo(
@@ -2814,7 +3048,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                       }
                     >
                       <option value="">All Punjab districts</option>
-                      {[...displayedDetail.features]
+                      {[...districtSource.features]
                         .sort((a, b) =>
                           String(a.properties?.name).localeCompare(
                             String(b.properties?.name),
@@ -3080,7 +3314,26 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                   }}
                   onError={setError}
                   mapRef={map}
-                  detail={displayedDetail}
+                  detail={
+                    focusedDistrict
+                      ? {
+                          type: 'FeatureCollection',
+                          features: [
+                            {
+                              ...focusedDistrict,
+                              properties: {
+                                ...focusedDistrict.properties,
+                                color:
+                                  displayedDetail.features.find(
+                                    (f) =>
+                                      f.properties?.id === focusedDistrictId,
+                                  )?.properties?.color || '#AFC7B1',
+                              },
+                            },
+                          ],
+                        }
+                      : displayedDetail
+                  }
                   districtOutlines={styledPunjabDistricts}
                   tehsilColorMode={tehsilColorMode}
                   precise={precise}
@@ -3346,120 +3599,21 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                     }
                   />
                 ) : focusedDistrict ? (
-                  <section className="ua-single-district">
-                    <div className="ua-breadcrumb">
-                      <button type="button" onClick={national}>
-                        United Subcontinent
-                      </button>
-                      <ChevronRight size={13} />
-                      <button
-                        type="button"
-                        onClick={() => setFocusedDistrictId('')}
-                      >
-                        Punjab
-                      </button>
-                      <ChevronRight size={13} />
-                      <span>{String(focusedDistrict.properties?.name)}</span>
-                    </div>
-                    <div className="ua-profile-heading">
-                      <small>DISTRICT · PROPOSED VIEW</small>
-                      <h2>{String(focusedDistrict.properties?.name)}</h2>
-                    </div>
-                    <div className="ua-single-district-content">
-                      <span
-                        className="ua-district-swatch"
-                        style={{
-                          background: String(
-                            focusedDistrict.properties?.color || '#8bb9c9',
-                          ),
-                        }}
-                      />
-                      <p>
-                        {String(
-                          focusedDistrict.properties?.division || 'Punjab',
-                        )}{' '}
-                        division
-                      </p>
-                      <dl className="ua-division-facts">
-                        <div>
-                          <dt>Capital / headquarters</dt>
-                          <dd>
-                            {String(
-                              focusedDistrictStats?.properties?.capital ||
-                                focusedDistrict.properties?.capital ||
-                                'Not available',
-                            )}
-                          </dd>
-                        </div>
-                        <div>
-                          <dt>Total area</dt>
-                          <dd>
-                            {format(
-                              Number(
-                                focusedDistrictStats?.properties?.areaKm2 ||
-                                  focusedDistrict.properties?.areaKm2,
-                              ),
-                            )}{' '}
-                            km²
-                          </dd>
-                        </div>
-                        <div>
-                          <dt>Area rank</dt>
-                          <dd>
-                            #{focusedDistrictAreaRank} of{' '}
-                            {districtSource.features.length}
-                          </dd>
-                        </div>
-                        <div>
-                          <dt>Mapped tehsils</dt>
-                          <dd>
-                            {Number(
-                              focusedDistrictStats?.properties?.tehsilCount ||
-                                focusedDistrict.properties?.tehsilCount,
-                            )}
-                          </dd>
-                        </div>
-                        <div>
-                          <dt>Development rank</dt>
-                          <dd>Not available</dd>
-                        </div>
-                      </dl>
-                      {Array.isArray(
-                        focusedDistrict.properties?.mergedFrom,
-                      ) && (
-                        <p>
-                          Merged from:{' '}
-                          {focusedDistrict.properties.mergedFrom.join(', ')}
-                        </p>
-                      )}
-                      <p>
-                        {String(
-                          focusedDistrict.properties?.reason ||
-                            'District boundary shown from the atlas source geometry.',
-                        )}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setFocusedDistrictId('')}
-                      >
-                        Show all Punjab districts
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditingDistrictId(focusedDistrictId);
-                          setFocusedDistrictId('');
-                          setDistrictEditing(true);
-                        }}
-                      >
-                        Edit this district
-                      </button>
-                    </div>
-                  </section>
+                  <DistrictProfile
+                    district={focusedDistrict.properties as DistrictInfo}
+                    areaRank={focusedDistrictAreaRank}
+                    onBack={() => setFocusedDistrictId('')}
+                    onEdit={() => {
+                      setEditingDistrictId(focusedDistrictId);
+                      setFocusedDistrictId('');
+                      setDistrictEditing(true);
+                    }}
+                  />
                 ) : selected === 'punjab' && level === 'district' ? (
                   <DistrictOverviewPanel
                     districts={districtSource.features}
                     loading={detailLoading}
+                    onSelect={setFocusedDistrictId}
                   />
                 ) : selected === 'punjab' &&
                   level === 'tehsil' &&

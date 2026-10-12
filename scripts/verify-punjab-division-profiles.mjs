@@ -205,9 +205,9 @@ try {
   const districtFacts = await page
     .locator('.ua-single-district .ua-division-facts')
     .innerText();
-  assert.match(districtFacts, /Capital \/ headquarters\s+Rawalpindi/);
+  assert.match(districtFacts, /Headquarters\s+Rawalpindi/);
   assert.match(districtFacts, /Area rank\s+#\d+ of 49/);
-  assert.match(districtFacts, /Development rank\s+Not available/);
+  assert.match(districtFacts, /Estimated population · fictional/);
   await page.getByLabel('Administrative detail view').selectOption('division');
   await page.setViewportSize({ width: 390, height: 844 });
   await page
