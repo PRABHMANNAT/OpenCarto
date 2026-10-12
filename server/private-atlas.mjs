@@ -2,11 +2,14 @@ import { createDecipheriv } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 let payloadPromise;
 function settings() {
   const key = process.env.PRIVATE_ATLAS_DATA_KEY;
   if (!key || !/^[0-9a-f]{64}$/i.test(key))
-    throw Error('Custom atlas server is not configured');
+    throw Object.assign(Error('Custom atlas server is not configured'), {
+      code: 'ATLAS_CONFIGURATION_MISSING',
+    });
   return { key };
 }
 function sameOrigin(req) {
@@ -24,9 +27,7 @@ function sameOrigin(req) {
 }
 async function payload(key) {
   if (!payloadPromise)
-    payloadPromise = readFile(
-      fileURLToPath(new URL('./private-atlas.enc', import.meta.url)),
-    )
+    payloadPromise = readDataset()
       .then((encoded) => {
         if (encoded.subarray(0, 4).toString() !== 'UAT1')
           throw Error('Invalid custom atlas dataset');
@@ -50,6 +51,16 @@ async function payload(key) {
         throw error;
       });
   return payloadPromise;
+}
+async function readDataset() {
+  // Vercel bundles the handler into api/, but includeFiles retains server/.
+  // The adjacent path remains useful for an unbundled local server.
+  try {
+    return await readFile(resolve(process.cwd(), 'server/private-atlas.enc'));
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    return readFile(fileURLToPath(new URL('./private-atlas.enc', import.meta.url)));
+  }
 }
 function respond(res, status, value) {
   res.statusCode = status;
@@ -108,6 +119,12 @@ export async function privateAtlasHandler(req, res) {
     );
     return respond(res, 503, {
       error: 'The custom atlas is unavailable. Please try again later.',
+      code:
+        error?.code === 'ATLAS_CONFIGURATION_MISSING'
+          ? 'ATLAS_CONFIGURATION_MISSING'
+          : error?.code === 'ENOENT'
+            ? 'ATLAS_DATASET_MISSING'
+            : 'ATLAS_DATASET_UNREADABLE',
     });
   }
 }
