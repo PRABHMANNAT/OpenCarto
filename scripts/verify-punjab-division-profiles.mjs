@@ -66,6 +66,15 @@ try {
   assert.equal(response.status(), 200);
   const divisions = (await response.json()).features;
   assert.equal(divisions.length, 11);
+  const headquartersToggle = page.getByRole('button', {
+    name: 'HQ cities on',
+  });
+  await headquartersToggle.click();
+  await page.getByRole('button', { name: 'HQ cities off' }).waitFor();
+  await page.locator('.ua-map[data-headquarters-visible=false]').waitFor();
+  await page.getByRole('button', { name: 'HQ cities off' }).click();
+  await page.getByRole('button', { name: 'HQ cities on' }).waitFor();
+  await page.locator('.ua-map[data-headquarters-visible=true]').waitFor();
   const overview = await (
     await context.request.get(url + 'api/private-atlas?action=overview')
   ).json();
@@ -151,7 +160,7 @@ try {
   assert.equal(await page.locator('.ua-map-error').count(), 0);
   assert.deepEqual(errors, []);
   console.log(
-    'Verified all 11 division profiles, attributed images, headquarters marker clicks, polygon selection, full division PNG export and mobile layout.',
+    'Verified all 11 division profiles, attributed images, headquarters visibility control and marker clicks, polygon selection, full division PNG export and mobile layout.',
   );
 } catch (error) {
   await page

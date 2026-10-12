@@ -957,6 +957,7 @@ function AtlasMap({
   districtEditing,
   editingDistrictId,
   places,
+  headquarters,
   level,
   dark,
   labels,
@@ -982,6 +983,7 @@ function AtlasMap({
   districtEditing: boolean;
   editingDistrictId: string;
   places: boolean;
+  headquarters: boolean;
   level: Level;
   dark: boolean;
   labels: boolean;
@@ -1712,10 +1714,10 @@ function AtlasMap({
   useEffect(() => {
     const m = mapRef.current;
     if (!loaded || !m) return;
-    const headquarters: FeatureCollection = {
+    const headquartersFeatures: FeatureCollection = {
       type: 'FeatureCollection',
       features:
-        level === 'division'
+        level === 'division' && headquarters
           ? detail.features.flatMap((feature) => {
               const coordinates = feature.properties?.headquartersCoordinates;
               if (!Array.isArray(coordinates) || coordinates.length !== 2)
@@ -1734,7 +1736,7 @@ function AtlasMap({
           : [],
     };
     void (m.getSource('division-headquarters') as GeoJSONSource).setData(
-      headquarters,
+      headquartersFeatures,
     );
     m.setPaintProperty('division-headquarters-dots', 'circle-radius', [
       'case',
@@ -1743,11 +1745,16 @@ function AtlasMap({
       5,
     ]);
     m.setLayoutProperty(
+      'division-headquarters-dots',
+      'visibility',
+      headquarters ? 'visible' : 'none',
+    );
+    m.setLayoutProperty(
       'division-headquarters-names',
       'visibility',
-      labels ? 'visible' : 'none',
+      headquarters && labels ? 'visible' : 'none',
     );
-  }, [detail, level, inspectedAreaId, labels, loaded, mapRef]);
+  }, [detail, level, inspectedAreaId, headquarters, labels, loaded, mapRef]);
   useEffect(() => {
     const m = mapRef.current;
     if (!loaded || !m) return;
@@ -1867,6 +1874,7 @@ function AtlasMap({
       }
       data-map-style={mapStyle}
       data-district-id={focusedDistrictId}
+      data-headquarters-visible={headquarters}
       aria-busy={!loaded}
     />
   );
@@ -1894,6 +1902,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     [context, setContext] = useState(false),
     [labels, setLabels] = useState(true),
     [places, setPlaces] = useState(true),
+    [headquarters, setHeadquarters] = useState(true),
     [detail, setDetail] = useState<FeatureCollection>(empty),
     [districtSource, setDistrictSource] = useState<FeatureCollection>(empty),
     [detailLoading, setDetailLoading] = useState(false),
@@ -2801,6 +2810,16 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
               >
                 Places {places && selected ? 'on' : 'off'}
               </button>
+              {selected === 'punjab' && level === 'division' && (
+                <button
+                  type="button"
+                  aria-pressed={headquarters}
+                  title="Division headquarters city points and labels"
+                  onClick={() => setHeadquarters((visible) => !visible)}
+                >
+                  HQ cities {headquarters ? 'on' : 'off'}
+                </button>
+              )}
               <button
                 type="button"
                 aria-label={dark ? 'Use light map theme' : 'Use dark map theme'}
@@ -2870,6 +2889,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                   districtEditing={districtEditing}
                   editingDistrictId={currentEditingDistrictId}
                   places={places}
+                  headquarters={headquarters}
                   level={level}
                   dark={dark}
                   labels={labels}
