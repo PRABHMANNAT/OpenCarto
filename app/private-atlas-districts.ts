@@ -160,6 +160,15 @@ export function mergeDistrictFeatures(
         name: group.name,
         bbox,
         sourceId: sourceIds.join(' + '),
+        areaKm2: features.reduce(
+          (total, feature) => total + Number(feature.properties?.areaKm2 || 0),
+          0,
+        ),
+        tehsilCount: features.reduce(
+          (total, feature) =>
+            total + Number(feature.properties?.tehsilCount || 0),
+          0,
+        ),
         mergedFrom: names,
         reason: `Merged ${names.join(' and ')} for this editable proposal; original source boundaries are retained in the atlas dataset.`,
       },

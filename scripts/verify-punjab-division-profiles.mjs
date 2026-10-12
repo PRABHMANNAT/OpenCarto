@@ -82,6 +82,17 @@ try {
       '#BDD5E3',
     ],
   );
+  assert.equal(await page.locator('.ua-area-ranking li').count(), 11);
+  const divisionRanking = await page
+    .locator('.ua-area-ranking em')
+    .allTextContents();
+  const rankedAreas = divisionRanking.map((text) =>
+    Number(text.replace(/[^0-9.]/g, '')),
+  );
+  assert.deepEqual(
+    rankedAreas,
+    [...rankedAreas].sort((a, b) => b - a),
+  );
   const headquartersToggle = page.getByRole('button', {
     name: 'HQ cities on',
   });
@@ -111,6 +122,10 @@ try {
       (await profile.locator('.ua-division-facts').innerText()).includes(
         info.capital,
       ),
+    );
+    assert.match(
+      await profile.locator('.ua-division-facts').innerText(),
+      /Area rank\s+#\d+ of 11/,
     );
     assert.equal(await profile.locator('tbody tr').count(), info.districtCount);
     const rows = await profile.locator('tbody').innerText();
@@ -160,6 +175,40 @@ try {
   await page
     .getByRole('button', { name: 'Download map', exact: true })
     .waitFor();
+  await page.getByLabel('Administrative detail view').selectOption('district');
+  const districtOverview = page.getByRole('article', {
+    name: 'Punjab district rankings and directory',
+  });
+  await districtOverview.waitFor();
+  await districtOverview
+    .locator('.ua-district-area-ranking li')
+    .first()
+    .waitFor();
+  assert.equal(
+    await districtOverview.locator('.ua-district-area-ranking li').count(),
+    49,
+  );
+  assert.equal(
+    await districtOverview.locator('.ua-district-directory tbody tr').count(),
+    49,
+  );
+  const directoryNames = await districtOverview
+    .locator('.ua-district-directory tbody td:first-child')
+    .allTextContents();
+  assert.deepEqual(
+    directoryNames,
+    [...directoryNames].sort((a, b) => a.localeCompare(b)),
+  );
+  await page
+    .getByLabel('Show separate Punjab district')
+    .selectOption('punjab-d-rawalpindi');
+  const districtFacts = await page
+    .locator('.ua-single-district .ua-division-facts')
+    .innerText();
+  assert.match(districtFacts, /Capital \/ headquarters\s+Rawalpindi/);
+  assert.match(districtFacts, /Area rank\s+#\d+ of 49/);
+  assert.match(districtFacts, /Development rank\s+Not available/);
+  await page.getByLabel('Administrative detail view').selectOption('division');
   await page.setViewportSize({ width: 390, height: 844 });
   await page
     .getByLabel('Choose Punjab division')
@@ -176,7 +225,7 @@ try {
   assert.equal(await page.locator('.ua-map-error').count(), 0);
   assert.deepEqual(errors, []);
   console.log(
-    'Verified all 11 division profiles, attributed images, headquarters visibility control and marker clicks, polygon selection, full division PNG export and mobile layout.',
+    'Verified all 11 division profiles and area rankings, all 49 district rankings and capital-directory rows, selected district statistics, attributed images, headquarters controls, full division PNG export and mobile layout.',
   );
 } catch (error) {
   await page

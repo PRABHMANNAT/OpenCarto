@@ -323,6 +323,14 @@ def area_km2(value):
 province_area = area_km2(geometry(punjab['province']['features'][0]))
 if len(division_specs) != 11 or len(district_by_name) != len(districts):
     raise ValueError('Expected eleven requested divisions and uniquely named Punjab districts')
+for district in districts:
+    district['properties'].update(
+        areaKm2=area_km2(division_member_geometry(district)),
+        tehsilCount=sum(
+            tehsil['properties']['district'] == district['properties']['name']
+            for tehsil in tehsils
+        ),
+    )
 for spec in division_specs:
     division_name = spec['name']
     profile = division_profiles[division_name]

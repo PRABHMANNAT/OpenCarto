@@ -691,6 +691,96 @@
   color: #607785;
   font-size: 11px;
 }
+.ua-ranking-highlights {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 16px 0 20px;
+}
+.ua-ranking-highlights > div {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid #dce5df;
+  border-radius: 8px;
+  background: #f5f8f5;
+}
+.ua-ranking-highlights small,
+.ua-ranking-highlights strong,
+.ua-ranking-highlights span {
+  display: block;
+}
+.ua-ranking-highlights small {
+  color: #71858f;
+  font-size: 9px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.ua-ranking-highlights strong {
+  margin: 5px 0 2px;
+  overflow-wrap: anywhere;
+  color: #29495e;
+  font-size: 12px;
+}
+.ua-ranking-highlights span {
+  color: #607785;
+  font-size: 10px;
+}
+.ua-area-ranking {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ua-area-ranking button,
+.ua-area-ranking li > div {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr) auto;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #e0e7e2;
+  border-radius: 7px;
+  background: #fff;
+  text-align: left;
+}
+.ua-area-ranking b {
+  color: #7b8d96;
+  font-size: 11px;
+  text-align: center;
+}
+.ua-area-ranking span,
+.ua-area-ranking strong,
+.ua-area-ranking small {
+  display: block;
+  min-width: 0;
+}
+.ua-area-ranking strong {
+  color: #29495e;
+  font-size: 11px;
+}
+.ua-area-ranking small {
+  margin-top: 2px;
+  color: #748791;
+  font-size: 9px;
+}
+.ua-area-ranking em {
+  color: #405d6d;
+  font-size: 10px;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.ua-district-directory th:last-child,
+.ua-district-directory td:last-child {
+  text-align: right;
+}
+.ua-district-overview .ua-profile-heading p {
+  margin: 0;
+  color: #607785;
+  font-size: 11px;
+}
 .ua-accent {
   display: block;
   width: 39px;

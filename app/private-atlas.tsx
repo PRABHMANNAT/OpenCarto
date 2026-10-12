@@ -200,6 +200,14 @@ type DivisionInfo = {
   photo: Photo;
   areaNote: string;
 };
+type DistrictInfo = {
+  id: string;
+  name: string;
+  capital: string;
+  division: string;
+  areaKm2: number;
+  tehsilCount: number;
+};
 const empty: FeatureCollection = { type: 'FeatureCollection', features: [] };
 const title = 'United Subcontinent — Alternative Political Geography';
 const atlasColorsStorageKey = 'private-atlas-map-colors-v1';
@@ -426,6 +434,23 @@ function DivisionPanel({
   onHeadquarters: (coordinates: number[]) => void;
 }) {
   const info = active?.properties as DivisionInfo | undefined;
+  const ranked = [...divisions].sort(
+    (a, b) =>
+      Number(b.properties?.areaKm2 || 0) - Number(a.properties?.areaKm2 || 0),
+  );
+  const mostDistricts = [...divisions].sort(
+    (a, b) =>
+      Number(b.properties?.districtCount || 0) -
+      Number(a.properties?.districtCount || 0),
+  )[0];
+  const mostTehsils = [...divisions].sort(
+    (a, b) =>
+      Number(b.properties?.tehsilCount || 0) -
+      Number(a.properties?.tehsilCount || 0),
+  )[0];
+  const activeAreaRank = info
+    ? ranked.findIndex((feature) => feature.properties?.id === info.id) + 1
+    : 0;
   return (
     <article
       className="ua-profile ua-division-profile"
@@ -481,6 +506,12 @@ function DivisionPanel({
               <div>
                 <dt>Total area</dt>
                 <dd>{format(info.areaKm2)} km²</dd>
+              </div>
+              <div>
+                <dt>Area rank</dt>
+                <dd>
+                  #{activeAreaRank} of {divisions.length}
+                </dd>
               </div>
               <div>
                 <dt>Share of Punjab area</dt>
@@ -552,24 +583,154 @@ function DivisionPanel({
             Select a division or its headquarters point to open its profile.
             Headquarters are marked with burgundy dots.
           </p>
-          <div className="ua-division-list">
-            {divisions.map((feature) => (
-              <button
-                type="button"
-                key={String(feature.properties?.id)}
-                onClick={() => onPick(feature)}
-              >
-                <strong>{String(feature.properties?.name)} Division</strong>
-                <span>HQ: {String(feature.properties?.capital)}</span>
-                <small>
-                  {Number(feature.properties?.districtCount)} districts ·{' '}
-                  {Number(feature.properties?.tehsilCount)} mapped tehsils
-                </small>
-              </button>
-            ))}
+          <div className="ua-ranking-highlights">
+            <div>
+              <small>Largest division</small>
+              <strong>{String(ranked[0]?.properties?.name)}</strong>
+              <span>{format(Number(ranked[0]?.properties?.areaKm2))} km²</span>
+            </div>
+            <div>
+              <small>Smallest division</small>
+              <strong>{String(ranked.at(-1)?.properties?.name)}</strong>
+              <span>
+                {format(Number(ranked.at(-1)?.properties?.areaKm2))} km²
+              </span>
+            </div>
+            <div>
+              <small>Most districts</small>
+              <strong>{String(mostDistricts?.properties?.name)}</strong>
+              <span>{Number(mostDistricts?.properties?.districtCount)}</span>
+            </div>
+            <div>
+              <small>Most tehsils</small>
+              <strong>{String(mostTehsils?.properties?.name)}</strong>
+              <span>{Number(mostTehsils?.properties?.tehsilCount)}</span>
+            </div>
           </div>
+          <h3>Division area ranking</h3>
+          <ol className="ua-area-ranking">
+            {ranked.map((feature, index) => (
+              <li key={String(feature.properties?.id)}>
+                <button type="button" onClick={() => onPick(feature)}>
+                  <b>{index + 1}</b>
+                  <span>
+                    <strong>{String(feature.properties?.name)}</strong>
+                    <small>HQ: {String(feature.properties?.capital)}</small>
+                  </span>
+                  <em>{format(Number(feature.properties?.areaKm2))} km²</em>
+                </button>
+              </li>
+            ))}
+          </ol>
+          <p className="ua-data-note">
+            Areas are measured from the proposed district unions. Comparable
+            population and development rankings are not available for these
+            proposed divisions.
+          </p>
         </div>
       )}
+    </article>
+  );
+}
+
+function DistrictOverviewPanel({
+  districts,
+  loading,
+}: {
+  districts: Feature[];
+  loading: boolean;
+}) {
+  const records = districts.map(
+    (feature) => feature.properties as DistrictInfo,
+  );
+  const ranked = [...records].sort((a, b) => b.areaKm2 - a.areaKm2);
+  const alphabetical = [...records].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+  const mostTehsils = [...records].sort(
+    (a, b) => b.tehsilCount - a.tehsilCount,
+  )[0];
+  return (
+    <article
+      className="ua-profile ua-district-overview"
+      aria-label="Punjab district rankings and directory"
+    >
+      <div className="ua-profile-heading">
+        <span className="ua-kicker">PUNJAB · PROPOSED DISTRICTS</span>
+        <h2>Punjab districts</h2>
+        <p>{records.length} districts with mapped area and headquarters</p>
+      </div>
+      <div className="ua-division-content">
+        {loading ? (
+          <p>Loading district statistics…</p>
+        ) : (
+          <>
+            <div className="ua-ranking-highlights">
+              <div>
+                <small>Largest district</small>
+                <strong>{ranked[0]?.name}</strong>
+                <span>{format(Number(ranked[0]?.areaKm2))} km²</span>
+              </div>
+              <div>
+                <small>Smallest district</small>
+                <strong>{ranked.at(-1)?.name}</strong>
+                <span>{format(Number(ranked.at(-1)?.areaKm2))} km²</span>
+              </div>
+              <div>
+                <small>Most tehsils</small>
+                <strong>{mostTehsils?.name}</strong>
+                <span>{mostTehsils?.tehsilCount} mapped</span>
+              </div>
+              <div>
+                <small>Development rank</small>
+                <strong>Not available</strong>
+                <span>No comparable index</span>
+              </div>
+            </div>
+            <h3>District area ranking</h3>
+            <ol className="ua-area-ranking ua-district-area-ranking">
+              {ranked.map((district, index) => (
+                <li key={district.id}>
+                  <div>
+                    <b>{index + 1}</b>
+                    <span>
+                      <strong>{district.name}</strong>
+                      <small>{district.division} Division</small>
+                    </span>
+                    <em>{format(district.areaKm2)} km²</em>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <h3>District directory</h3>
+            <p className="ua-data-note">
+              All district names are listed alphabetically with their proposed
+              administrative headquarters.
+            </p>
+            <table className="ua-division-districts ua-district-directory">
+              <thead>
+                <tr>
+                  <th>District</th>
+                  <th>Capital / HQ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {alphabetical.map((district) => (
+                  <tr key={district.id}>
+                    <td>{district.name}</td>
+                    <td>{district.capital}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="ua-data-note">
+              Area uses WGS84 ellipsoidal polygon measurement. Tehsil counts
+              reflect retained map coverage. No comparable district development
+              index has been established for this proposed geography.
+            </p>
+          </>
+        )}
+      </div>
     </article>
   );
 }
@@ -1980,6 +2141,24 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
   const focusedDistrict = displayedDetail.features.find(
     (feature) => feature.properties?.id === focusedDistrictId,
   );
+  const rankedDistrictSource = useMemo(
+    () =>
+      [...districtSource.features].sort(
+        (a, b) =>
+          Number(b.properties?.areaKm2 || 0) -
+          Number(a.properties?.areaKm2 || 0),
+      ),
+    [districtSource],
+  );
+  const focusedDistrictStats = districtSource.features.find(
+    (feature) => feature.properties?.id === focusedDistrictId,
+  );
+  const focusedDistrictAreaRank = focusedDistrictStats
+    ? rankedDistrictSource.findIndex(
+        (feature) =>
+          feature.properties?.id === focusedDistrictStats.properties?.id,
+      ) + 1
+    : 0;
   const inspectedArea =
     level !== 'province' && !inspected?.properties?.kind
       ? displayedDetail.features.find(
@@ -3201,6 +3380,50 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                         )}{' '}
                         division
                       </p>
+                      <dl className="ua-division-facts">
+                        <div>
+                          <dt>Capital / headquarters</dt>
+                          <dd>
+                            {String(
+                              focusedDistrictStats?.properties?.capital ||
+                                focusedDistrict.properties?.capital ||
+                                'Not available',
+                            )}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>Total area</dt>
+                          <dd>
+                            {format(
+                              Number(
+                                focusedDistrictStats?.properties?.areaKm2 ||
+                                  focusedDistrict.properties?.areaKm2,
+                              ),
+                            )}{' '}
+                            km²
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>Area rank</dt>
+                          <dd>
+                            #{focusedDistrictAreaRank} of{' '}
+                            {districtSource.features.length}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>Mapped tehsils</dt>
+                          <dd>
+                            {Number(
+                              focusedDistrictStats?.properties?.tehsilCount ||
+                                focusedDistrict.properties?.tehsilCount,
+                            )}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>Development rank</dt>
+                          <dd>Not available</dd>
+                        </div>
+                      </dl>
                       {Array.isArray(
                         focusedDistrict.properties?.mergedFrom,
                       ) && (
@@ -3233,6 +3456,11 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                       </button>
                     </div>
                   </section>
+                ) : selected === 'punjab' && level === 'district' ? (
+                  <DistrictOverviewPanel
+                    districts={districtSource.features}
+                    loading={detailLoading}
+                  />
                 ) : selected === 'punjab' &&
                   level === 'tehsil' &&
                   inspected &&

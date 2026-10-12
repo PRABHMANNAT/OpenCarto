@@ -339,6 +339,14 @@ try {
   for (const district of punjabDistricts) {
     const spec = plannedDistricts.get(district.properties.name);
     assert.ok(spec, district.properties.name + ' is assigned once');
+    assert.ok(district.properties.capital);
+    assert.ok(district.properties.areaKm2 > 0);
+    assert.equal(
+      district.properties.tehsilCount,
+      punjabTehsils.filter(
+        (feature) => feature.properties.district === district.properties.name,
+      ).length,
+    );
     assert.equal(district.properties.division, spec.name);
     assert.equal(district.properties.divisionCapital, spec.headquarters);
     const division = punjabDivisions.find(
