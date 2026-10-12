@@ -1,5 +1,5 @@
 {
-  "description": "180 user-reviewed Punjab tehsils, including 34 later Western Panjab name reviews, plus one restored official tehsil omitted by the source layer.",
+  "description": "180 user-reviewed Punjab tehsils plus one restored official tehsil; subsequent requested locality and heritage renames are sourced per row.",
   "rows": [
     {
       "sourceId": "in-t-238",
@@ -14,11 +14,12 @@
       "sourceId": "PK61201",
       "oldName": "Ahmadpur Sial",
       "proposedDistrict": "Jhang",
-      "newName": "Sial",
-      "meaning": "Name of the long-established Sial community of the Jhang region.",
-      "history": "Shortens Ahmadpur Sial while retaining its regionally distinctive Sial identifier.",
+      "newName": "Garh Maharaja",
+      "meaning": "Established town name in Ahmadpur Sial tehsil.",
+      "history": "Garh Maharaja is an existing town in the source Ahmadpur Sial tehsil, documented by the Jhang district government.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://jhang.punjab.gov.pk/higher_jng"
     },
     {
       "sourceId": "in-t-255",
@@ -215,10 +216,12 @@
       "sourceId": "PK60801",
       "oldName": "Chak Jhumra",
       "proposedDistrict": "Sandalbar",
-      "newName": "Chak Jhumra",
-      "meaning": "Chak means settlement or village; Jhumra is local name",
-      "history": "Planned canal-colony settlement with a recognized Faisalabad-region identity.",
-      "decision": "Retained"
+      "newName": "Salarwala",
+      "meaning": "Established settlement in Chak Jhumra tehsil.",
+      "history": "Punjab government lists a college and vocational training institute at Salarwala under Chak Jhumra.",
+      "decision": "Renamed",
+      "sourceUrl": "https://www.punjab.gov.pk/faisalabad_vti",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK60501",
@@ -261,11 +264,12 @@
       "sourceId": "PK60502",
       "oldName": "Choa Saidan Shah",
       "proposedDistrict": "Katas",
-      "newName": "Katas",
-      "meaning": "Name of the historic Katas Raj Hindu temple complex.",
-      "history": "The Katas Raj temples lie in Choa Saidan Shah Tehsil; a geographically located sacred-heritage label.",
+      "newName": "Malot",
+      "meaning": "Historic Salt Range locality near Choa Saidan Shah.",
+      "history": "The Choi Malot locality is documented on the Choa Saidan Shah road. This replaces the earlier Katas tehsil label with another real local name.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://epd.punjab.gov.pk/katasraj_air_quality"
     },
     {
       "sourceId": "PK61401",
@@ -280,10 +284,12 @@
       "sourceId": "PK63401",
       "oldName": "Daska",
       "proposedDistrict": "Babe Di Ber",
-      "newName": "Daska",
-      "meaning": "Established Sialkot-area town-name; etymology uncertain",
-      "history": "Distinct industrial and agricultural service center in the Sialkot region.",
-      "decision": "Retained"
+      "newName": "Motra",
+      "meaning": "Established locality in the Daska area.",
+      "history": "Punjab government identifies Motra on Daska Road and in its Daska forest range. The proposal uses that local name.",
+      "decision": "Renamed",
+      "sourceUrl": "https://fw.punjab.gov.pk/location",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "in-t-214",
@@ -298,10 +304,12 @@
       "sourceId": "PK62601",
       "oldName": "Depalpur",
       "proposedDistrict": "Harappa",
-      "newName": "Depalpur",
-      "meaning": "Pur means town; Depal element has uncertain derivation",
-      "history": "Ancient settlement of the Okara area with precolonial heritage.",
-      "decision": "Retained"
+      "newName": "Shergarh",
+      "meaning": "Established town and ridge-area name.",
+      "history": "Okara district describes the Shergarh ridge in the source Depalpur area. The proposal uses the existing local town name.",
+      "decision": "Renamed",
+      "sourceUrl": "https://okara.punjab.gov.pk/agriculture",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "in-t-204",
@@ -362,21 +370,23 @@
       "sourceId": "PK60802",
       "oldName": "Faisalabad City",
       "proposedDistrict": "Sandalbar",
-      "newName": "Lyallpur",
-      "meaning": "Historic pre-1979 name of Faisalabad, derived from Sir James Lyall.",
-      "history": "Former name of Faisalabad, named for British administrator Sir James Lyall; a historically attested city-name, not an ancient Sikh name.",
+      "newName": "Sandalbar",
+      "meaning": "Historic Bar tract of central Punjab.",
+      "history": "Sandalbar is the established regional name used for the proposed district. This replaces the colonial Lyallpur label for the source Faisalabad City tehsil.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://faisalabad.punjab.gov.pk/district_profile"
     },
     {
       "sourceId": "PK60803",
       "oldName": "Faisalabad Sadar",
       "proposedDistrict": "Sandalbar",
-      "newName": "Rachna",
-      "meaning": "Name of the Ravi-Chenab Doab (river-interfluve).",
-      "history": "Faisalabad lies in the Rachna Doab; a traditional landscape label for the larger rural tehsil.",
+      "newName": "Dijkot",
+      "meaning": "Established town in Faisalabad Sadar.",
+      "history": "Punjab government lists Dijkot as a health and municipal centre in the source Faisalabad Sadar tehsil.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://punjab.gov.pk/node/903"
     },
     {
       "sourceId": "in-t-242",
@@ -445,11 +455,12 @@
       "sourceId": "PK51101",
       "oldName": "Ghazi",
       "proposedDistrict": "Haripur",
-      "newName": "Sindhu",
-      "meaning": "Ancient Sanskrit-derived name for the Indus River.",
-      "history": "The Indus forms a defining geographic boundary of the Ghazi area; proposed river-based district label, not an old Ghazi town name.",
+      "newName": "Tarbela",
+      "meaning": "Established Indus-side settlement name.",
+      "history": "WAPDA places Tarbela Dam in the source Ghazi tehsil of Haripur. The proposal uses this familiar local name.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://wapda.gov.pk/?wpdmpro=tender-no-400-invitation-for-e-bid-superintending-engineer-bwstarbela-dam-project-wapda-tarbela-tehsil-ghazi-district-haripur-kpk"
     },
     {
       "sourceId": "in-t-240",
@@ -473,19 +484,23 @@
       "sourceId": "PK63001",
       "oldName": "Gujar Khan",
       "proposedDistrict": "Rawalpindi",
-      "newName": "Gujar Khan",
-      "meaning": "Town-name referring to Gujjar/Gujar identity and Khan title",
-      "history": "Recognizable Potohar market city south of Rawalpindi.",
-      "decision": "Retained"
+      "newName": "Daultala",
+      "meaning": "Established settlement in the Gujar Khan area.",
+      "history": "Daultala is a documented local settlement within the source Gujar Khan tehsil. The proposal uses a real local name rather than an invented title.",
+      "decision": "Renamed",
+      "sourceUrl": "https://pwd.punjab.gov.pk/gujar_khan",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK60901",
       "oldName": "Gujranwala",
       "proposedDistrict": "Ranjitgarh",
-      "newName": "Gujranwala",
-      "meaning": "Traditional name linked to Gujjar settlements",
-      "history": "Birthplace of Maharaja Ranjit Singh; district Ranjitgarh already honors him.",
-      "decision": "Retained"
+      "newName": "Ranjitgarh",
+      "meaning": "Commemorative name honouring Maharaja Ranjit Singh.",
+      "history": "Gujranwala district documents Maharaja Ranjit Singh’s family home and rule. The proposed tehsil shares the district’s respectful commemorative name.",
+      "decision": "Renamed",
+      "sourceUrl": "https://gujranwala.punjab.gov.pk/important-places",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK61001",
@@ -521,11 +536,12 @@
       "sourceId": "PK61101",
       "oldName": "Hafizabad",
       "proposedDistrict": "Rori Sahib",
-      "newName": "Nanakpur",
-      "meaning": "Town of Guru Nanak; taken from Mohalla Guru Nanakpur.",
-      "history": "The city’s historic Gurdwara Rori Sahib / Chhevin Patshahi is recorded in Mohalla Guru Nanakpur; proposed extension of a neighborhood name.",
+      "newName": "Rori Sahib",
+      "meaning": "Commemorative name of the historic gurdwara.",
+      "history": "This proposed tehsil matches the proposed district name. The historic Gurdwara Rori Sahib is at Eminabad in Gujranwala, outside this tehsil; this is a symbolic tribute.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://etpb.gov.pk/shrines/gurdwaras/functional/"
     },
     {
       "sourceId": "PK51102",
@@ -550,10 +566,12 @@
       "sourceId": "PK50102",
       "oldName": "Havelian",
       "proposedDistrict": "Haripur",
-      "newName": "Havelian",
-      "meaning": "Havelis, meaning mansions or large houses",
-      "history": "Recognized Hazara town; preserve locality after proposed transfer to Haripur.",
-      "decision": "Retained"
+      "newName": "Sultanpur",
+      "meaning": "Established village name near Havelian.",
+      "history": "Election Commission records Sultanpur with a Havelian postal address. This proposal uses an attested local place-name.",
+      "decision": "Renamed",
+      "sourceUrl": "https://ecp.gov.pk/storage/uploads/32872.pdf",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK60104",
@@ -659,10 +677,12 @@
       "sourceId": "PK63002",
       "oldName": "Kahuta",
       "proposedDistrict": "Rawalpindi",
-      "newName": "Kahuta",
-      "meaning": "Established Potohar locality-name; etymology uncertain",
-      "history": "Recognized hill-town south-east of Rawalpindi.",
-      "decision": "Retained"
+      "newName": "Narar",
+      "meaning": "Established village name in Kahuta tehsil.",
+      "history": "Punjab local government records Narar in the source Kahuta area. The proposal uses its local name.",
+      "decision": "Renamed",
+      "sourceUrl": "https://lgcd.punjab.gov.pk/system/files/Rawalpindi_9.pdf",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK60503",
@@ -677,11 +697,12 @@
       "sourceId": "PK63003",
       "oldName": "Kallar Sayaddan",
       "proposedDistrict": "Rawalpindi",
-      "newName": "Kallar",
-      "meaning": "Refers to saline or alkaline ground in regional usage.",
-      "history": "Shortens the locally familiar tehsil name without replacing it with a shrine.",
+      "newName": "Choa Khalsa",
+      "meaning": "Established village name with Khalsa heritage.",
+      "history": "Choa Khalsa is a documented village in the source Kallar Sayaddan tehsil. The proposal preserves a local Sikh-associated name.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://download1.fbr.gov.pk/SROs/20241101Rawalpindi1728.pdf"
     },
     {
       "sourceId": "PK63502",
@@ -806,11 +827,12 @@
       "sourceId": "PK63004",
       "oldName": "Kotli Sattian",
       "proposedDistrict": "Rawalpindi",
-      "newName": "Sattian",
-      "meaning": "Local Satti clan/community name.",
-      "history": "Reflects the locally rooted Satti community in this hill tract.",
+      "newName": "Karore",
+      "meaning": "Established Kotli Sattian-area village name.",
+      "history": "Karore is a documented settlement in the source Kotli Sattian tehsil.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://biserawalpindi.edu.pk/Content/Gazette/G-SSC2K22A.PDF"
     },
     {
       "sourceId": "lahore-t-0",
@@ -853,10 +875,12 @@
       "sourceId": "PK50103",
       "oldName": "Lora",
       "proposedDistrict": "Haripur",
-      "newName": "Lora",
-      "meaning": "Established Hazara locality-name; etymology unclear",
-      "history": "Recognizable hill tehsil of Abbottabad area proposed for Haripur.",
-      "decision": "Retained"
+      "newName": "Phallah",
+      "meaning": "Established Lora-area locality name.",
+      "history": "Phallah is a documented locality in the source Lora tehsil. The proposal retains a single local name.",
+      "decision": "Renamed",
+      "sourceUrl": "https://www.lgkp.gov.pk/wp-content/uploads/2022/06/Abbottabad.pdf",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "in-t-227",
@@ -971,10 +995,12 @@
       "sourceId": "PK63302",
       "oldName": "Muridke",
       "proposedDistrict": "Sacha Sauda",
-      "newName": "Muridke",
-      "meaning": "Established town-name; murid means disciple",
-      "history": "Recognized Lahore-Sheikhupura urban corridor town.",
-      "decision": "Retained"
+      "newName": "Narang Mandi",
+      "meaning": "Established market-town name.",
+      "history": "Sheikhupura district lists Narang Mandi as a town inside the source Muridke tehsil.",
+      "decision": "Renamed",
+      "sourceUrl": "https://sheikhupura.punjab.gov.pk/district_setup",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK63005",
@@ -1025,10 +1051,12 @@
       "sourceId": "PK62501",
       "oldName": "Narowal",
       "proposedDistrict": "Kartarpur Sahib",
-      "newName": "Narowal",
-      "meaning": "Established historic locality-name; origin uncertain",
-      "history": "Historic district center; proposed district Kartarpur includes Shakargarh.",
-      "decision": "Retained"
+      "newName": "Baddomalhi",
+      "meaning": "Established town in the Narowal area.",
+      "history": "Baddomalhi is recorded as a health-centre locality within the source Narowal tehsil.",
+      "decision": "Renamed",
+      "sourceUrl": "https://www.epi.gov.pk/wp-content/uploads/2021/09/list-of-epi-centres-punjab.pdf",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK61602",
@@ -1101,10 +1129,12 @@
       "sourceId": "PK62702",
       "oldName": "Pakpattan",
       "proposedDistrict": "Nanaksar",
-      "newName": "Pakpattan",
-      "meaning": "Pak means pure or holy; pattan means ferry or river crossing",
-      "history": "Name itself commemorates Baba Farid's city; district Nanaksar is different.",
-      "decision": "Retained"
+      "newName": "Ajodhan",
+      "meaning": "Earlier name of Pakpattan.",
+      "history": "Pakpattan district history records Ajodhan as the earlier name of the town. The proposal restores that historical name to this tehsil.",
+      "decision": "Renamed",
+      "sourceUrl": "https://pakpattan.punjab.gov.pk/our-history",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK63402",
@@ -1155,10 +1185,12 @@
       "sourceId": "PK61404",
       "oldName": "Pattoki",
       "proposedDistrict": "Bulleh Shah",
-      "newName": "Pattoki",
-      "meaning": "Established Kasur-region town-name; derivation uncertain",
-      "history": "Known orchard and agricultural town on Lahore-Multan route.",
-      "decision": "Retained"
+      "newName": "Bhai Pheru",
+      "meaning": "Historic local name associated with Phool Nagar.",
+      "history": "Punjab government lists Bhai Pheru and Phool Nagar within Pattoki tehsil. This proposal uses the area’s familiar heritage name.",
+      "decision": "Renamed",
+      "sourceUrl": "https://pwd.punjab.gov.pk/node/256",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "in-t-226",
@@ -1220,11 +1252,12 @@
       "sourceId": "PK60106",
       "oldName": "Pindi Gheb",
       "proposedDistrict": "Panja Sahib",
-      "newName": "Gheb",
-      "meaning": "Local Gheb-region toponym retained from Pindi Gheb.",
-      "history": "A shorter regional name; Pindi Gheb remains the town and headquarters.",
+      "newName": "Khaur",
+      "meaning": "Established Attock-area town name.",
+      "history": "Attock district records the historic Khaur oil well, and provincial offices list Khaur within Pindi Gheb.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://attock.punjab.gov.pk/district_profile"
     },
     {
       "sourceId": "PK63504",
@@ -1239,10 +1272,12 @@
       "sourceId": "PK61604",
       "oldName": "Quaidabad",
       "proposedDistrict": "Khushab",
-      "newName": "Quaidabad",
-      "meaning": "Abad means settlement; Quaid means leader",
-      "history": "Existing Khushab-region town; recognized civic name retained.",
-      "decision": "Retained"
+      "newName": "Bandial",
+      "meaning": "Established local community and settlement name.",
+      "history": "Bandial is documented in the Quaidabad area. The proposal takes a local name instead of the source tehsil title.",
+      "decision": "Renamed",
+      "sourceUrl": "https://ecp.gov.pk/storage/files/1/gpa.pdf",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "in-t-229",
@@ -1302,10 +1337,12 @@
       "sourceId": "PK62603",
       "oldName": "Renala Khurd",
       "proposedDistrict": "Harappa",
-      "newName": "Renala Khurd",
-      "meaning": "Khurd means smaller settlement; Renala is local name",
-      "history": "Recognizable planned canal-colony agricultural town in Okara area.",
-      "decision": "Retained"
+      "newName": "Chuchak",
+      "meaning": "Established settlement and revenue-area name.",
+      "history": "Chuchak is documented within the source Renala Khurd tehsil. The proposal uses this local place-name.",
+      "decision": "Renamed",
+      "sourceUrl": "https://pdma.punjab.gov.pk/system/files/District-Disaster-Management-Plan-2025%20Okara.pdf",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "in-t-264",
@@ -1329,10 +1366,12 @@
       "sourceId": "PK63303",
       "oldName": "Safdarabad",
       "proposedDistrict": "Sacha Sauda",
-      "newName": "Safdarabad",
-      "meaning": "Abad means settlement; Safdar is a personal/title element",
-      "history": "Established Sheikhupura-area agricultural town; no local heritage name superior.",
-      "decision": "Retained"
+      "newName": "Dhaban Singh",
+      "meaning": "Historic personal and settlement name associated with Safdarabad.",
+      "history": "Safdarabad was historically known as Mandi Dhaban Singh. The proposal restores its distinctive earlier local name in shortened form.",
+      "decision": "Renamed",
+      "sourceUrl": "https://www.dawn.com/news/790228",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK63102",
@@ -1437,11 +1476,12 @@
       "sourceId": "PK62403",
       "oldName": "Shah Kot",
       "proposedDistrict": "Nankana Sahib",
-      "newName": "Shahkot",
-      "meaning": "Conventional spelling of the source town-name.",
-      "history": "Keeps a recognizable Nankana-area town while removing an unnecessary space.",
+      "newName": "Panwan",
+      "meaning": "Established town in Shah Kot tehsil.",
+      "history": "Punjab government lists Panwan as a local service centre within the source Shah Kot tehsil.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://pwd.punjab.gov.pk/shahkot"
     },
     {
       "sourceId": "in-t-209",
@@ -1465,11 +1505,12 @@
       "sourceId": "PK62502",
       "oldName": "Shakargarh",
       "proposedDistrict": "Kartarpur Sahib",
-      "newName": "Kartarpur",
-      "meaning": "Town of the Creator, founded by Guru Nanak.",
-      "history": "Gurdwara Darbar Sahib Kartarpur is in Shakargarh Tehsil; the shrine town supplies the proposed tehsil name.",
+      "newName": "Kartarpur Sahib",
+      "meaning": "The historic Guru Nanak settlement and gurdwara.",
+      "history": "Kartarpur Sahib is in the source Shakargarh tehsil and gives the proposed district its name.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://narowal.punjab.gov.pk/"
     },
     {
       "sourceId": "lahore-t-3",
@@ -1484,38 +1525,45 @@
       "sourceId": "PK63304",
       "oldName": "Sharak Pur",
       "proposedDistrict": "Sacha Sauda",
-      "newName": "Sharqpur",
-      "meaning": "Well-established spelling of this historic town; sharq means east.",
-      "history": "Preserves the original town and Mughal-era landscape without an unrelated shrine name.",
+      "newName": "Sehjowal",
+      "meaning": "Established village name in Sharqpur tehsil.",
+      "history": "The Sheikhupura district disaster plan lists Sehjowal among the villages of the source Sharak Pur tehsil.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://pdma.punjab.gov.pk/system/files/DDMA%20PLAN%2C%20Sheikhupura%20%28Updated%20May-2025%29.pdf"
     },
     {
       "sourceId": "PK63305",
       "oldName": "Sheikhupura",
       "proposedDistrict": "Sacha Sauda",
-      "newName": "Sheikhupura",
-      "meaning": "Town named for Sheikhu, Jahangir's nickname",
-      "history": "Historic city with Hiran Minar; Sacha Sauda is a separate site in district.",
-      "decision": "Retained"
+      "newName": "Sacha Sauda",
+      "meaning": "Historic Guru Nanak-associated gurdwara name.",
+      "history": "The Sacha Sauda shrine is in the source Sheikhupura tehsil area. The tehsil now shares the proposed district’s heritage name.",
+      "decision": "Renamed",
+      "sourceUrl": "https://lgcd.punjab.gov.pk/Lahore_Division",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK61203",
       "oldName": "Shorkot",
       "proposedDistrict": "Jhang",
-      "newName": "Shorkot",
-      "meaning": "Kot means fort; Shor is an older locality-name",
-      "history": "Historic walled settlement in the Jhang region.",
-      "decision": "Retained"
+      "newName": "Raipur",
+      "meaning": "Established village name in the Shorkot area.",
+      "history": "Jhang district records Raipur village in Shorkot as the birthplace of scientist Har Gobind Khorana. The local name replaces the source tehsil label.",
+      "decision": "Renamed",
+      "sourceUrl": "https://jhang.punjab.gov.pk/important-personalities",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK63404",
       "oldName": "Sialkot",
       "proposedDistrict": "Babe Di Ber",
-      "newName": "Sialkot",
-      "meaning": "Ancient city-name; legends connect it with Sia or Salwan",
-      "history": "Prominent historic city; Babe Di Ber gurdwara must stay a landmark.",
-      "decision": "Retained"
+      "newName": "Babe Di Ber",
+      "meaning": "Historic Guru Nanak-associated gurdwara name.",
+      "history": "The gurdwara associated with Guru Nanak is in Sialkot. The tehsil now shares its proposed district’s heritage name.",
+      "decision": "Renamed",
+      "sourceUrl": "https://etpb.gov.pk/shrines/gurdwaras/functional/",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "PK63206",
@@ -1567,11 +1615,12 @@
       "sourceId": "PK60504",
       "oldName": "Tala Gang",
       "proposedDistrict": "Katas",
-      "newName": "Talagang",
-      "meaning": "Established Talagang name; exact etymology uncertain",
-      "history": "Standardize place-name; historic Potohar and Salt Range market center.",
+      "newName": "Tamman",
+      "meaning": "Established Talagang-area village name.",
+      "history": "Tamman is a documented settlement in the source Tala Gang tehsil. The proposal uses its genuine local name.",
       "decision": "Renamed",
-      "provenance": "User-provided Western Panjab rename list"
+      "provenance": "Project review of requested tehsil renames",
+      "sourceUrl": "https://ecp.gov.pk/storage/files/1/Form%20Submission%20Centers%20in%20Punjab%207-10-22.pdf"
     },
     {
       "sourceId": "in-t-246",
@@ -1652,10 +1701,12 @@
       "sourceId": "PK62503",
       "oldName": "Zafarwal",
       "proposedDistrict": "Kartarpur Sahib",
-      "newName": "Zafarwal",
-      "meaning": "Wala means place of; Zafar means victory",
-      "history": "Established Narowal-region border town, recognizable in local geography.",
-      "decision": "Retained"
+      "newName": "Dhamthal",
+      "meaning": "Established village in the Zafarwal area.",
+      "history": "Dhamthal is a documented village and census locality in the source Zafarwal tehsil.",
+      "decision": "Renamed",
+      "sourceUrl": "https://narowal.punjab.gov.pk/index.php/6th-population-census",
+      "provenance": "Project review of requested tehsil renames"
     },
     {
       "sourceId": "in-t-234",

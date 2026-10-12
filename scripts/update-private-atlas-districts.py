@@ -147,6 +147,7 @@ district_names = {
     'Chiniot': 'Chenab',
 }
 district_notes = {
+    'punjab-d-gujranwala': ('Ranjitgarh is a proposed commemorative name honouring Maharaja Ranjit Singh, whose family home and Sikh rule are part of Gujranwala’s history.', 'https://gujranwala.punjab.gov.pk/important-places'),
     'punjab-d-sheikhupura': ('Sacha Sauda recalls the Guru Nanak tradition of selfless service at the historic shrine in the Sheikhupura area.', 'https://etpb.gov.pk/virtual-tour/gurdwara-sacha-sauda/'),
     'punjab-d-pakpattan': ('Nanaksar is a proposed symbolic name linking Guru Nanak’s travels with Pakpattan and the verses of Baba Farid preserved in Sikh scripture; it does not relocate a Nanaksar shrine.', 'https://sgpc.net/sri-guru-granth-sahib-2/'),
     'punjab-d-mandi-bahauddin': ('Kair Sahib recalls the local tradition of Gurdwara Kair Sahib at Jai Sukh Wala in the Mandi Bahauddin area.', 'https://www.worldgurudwaras.com/gurudwara-kair-sahib-at-jai-sukh-wala-district-mandi-bahauddin/'),
@@ -306,8 +307,9 @@ decisions[:] = [decision for decision in decisions if not decision.startswith((
     'Names and short histories for 180 Punjab source tehsils follow',
 ))]
 western_updates = sum(row.get('provenance') == 'User-provided Western Panjab rename list' for row in name_rows)
+locality_updates = sum(row.get('provenance') == 'Project review of requested tehsil renames' for row in name_rows)
 tehsil_note = (f'Names and short histories for 180 Punjab source tehsils follow the user-provided reviews, '
-               f'including {western_updates} later Western Panjab name entries. '
+               f'including {western_updates} earlier Western Panjab entries and {locality_updates} later sourced locality and heritage updates. '
                'The omitted Guru Har Sahai tehsil is restored from uncovered Ferozepur district space. '
                'Lahore tehsil coverage gaps are joined to adjoining tehsils. These geometry repairs are approximate, not surveyed boundaries.')
 if tehsil_note not in decisions:

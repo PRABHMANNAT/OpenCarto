@@ -418,8 +418,26 @@ try {
     reviewRows.filter(
       (row) => row.provenance === 'User-provided Western Panjab rename list',
     ).length,
-    34,
+    21,
   );
+  assert.equal(
+    reviewRows.filter(
+      (row) => row.provenance === 'Project review of requested tehsil renames',
+    ).length,
+    32,
+  );
+  for (const [district, tehsil] of [
+    ['Rori Sahib', 'Rori Sahib'],
+    ['Babe Di Ber', 'Babe Di Ber'],
+    ['Dinga', 'Dinga'],
+    ['Kair Sahib', 'Kair Sahib'],
+    ['Ranjitgarh', 'Ranjitgarh'],
+    ['Sacha Sauda', 'Sacha Sauda'],
+    ['Sandalbar', 'Sandalbar'],
+    ['Kartarpur Sahib', 'Kartarpur Sahib'],
+  ]) {
+    assert.ok(reviewRows.some((row) => row.proposedDistrict === district && row.newName === tehsil));
+  }
   let documentedRenames = 0;
   for (const feature of punjabTehsils) {
     const props = feature.properties;
@@ -461,7 +479,7 @@ try {
       props.sourceId + ' proposed tehsil is in the research audit',
     );
   }
-  assert.equal(documentedRenames, 43);
+  assert.equal(documentedRenames, 62);
   const guruHarSahai = punjabTehsils.find(
     (feature) => feature.properties.sourceId === 'in-t-guru-har-sahai',
   );
