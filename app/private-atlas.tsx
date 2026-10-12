@@ -226,11 +226,13 @@ function DistrictProfile({
   areaRank,
   onBack,
   onEdit,
+  onIsolate,
 }: {
   district: DistrictInfo;
   areaRank: number;
   onBack: () => void;
   onEdit: () => void;
+  onIsolate?: () => void;
 }) {
   const scenario = district.hypotheticalDemographics;
   return (
@@ -374,6 +376,11 @@ function DistrictProfile({
         <button type="button" onClick={onBack}>
           Show all Punjab districts
         </button>
+        {onIsolate && (
+          <button type="button" onClick={onIsolate}>
+            Show only this district
+          </button>
+        )}
         <button type="button" onClick={onEdit}>
           Edit this district
         </button>
@@ -2270,6 +2277,13 @@ function AtlasMap({
       }
       data-map-style={mapStyle}
       data-district-id={focusedDistrictId}
+      data-detail-count={
+        focusedDistrictId
+          ? detail.features.filter(
+              (feature) => feature.properties?.id === focusedDistrictId,
+            ).length
+          : detail.features.length
+      }
       data-headquarters-visible={headquarters}
       aria-busy={!loaded}
     />
@@ -2375,6 +2389,13 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
   const focusedDistrict = districtSource.features.find(
     (feature) => feature.properties?.id === focusedDistrictId,
   );
+  const districtProfile =
+    focusedDistrict ||
+    (selected === 'punjab' && level === 'district'
+      ? districtSource.features.find(
+          (feature) => feature.properties?.id === inspected?.properties?.id,
+        )
+      : undefined);
   const rankedDistrictSource = useMemo(
     () =>
       [...districtSource.features].sort(
@@ -2384,9 +2405,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       ),
     [districtSource],
   );
-  const focusedDistrictStats = districtSource.features.find(
-    (feature) => feature.properties?.id === focusedDistrictId,
-  );
+  const focusedDistrictStats = districtProfile;
   const focusedDistrictAreaRank = focusedDistrictStats
     ? rankedDistrictSource.findIndex(
         (feature) =>
@@ -3356,8 +3375,12 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                         (district) => district.properties?.id === id,
                       )
                     ) {
-                      setFocusedDistrictId(id);
-                      setInspected(null);
+                      setInspected(
+                        districtSource.features.find(
+                          (district) => district.properties?.id === id,
+                        ) || feature,
+                      );
+                      sidebar.current?.scrollTo({ top: 0 });
                       return;
                     }
                     setInspected(
@@ -3598,13 +3621,28 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                       })
                     }
                   />
-                ) : focusedDistrict ? (
+                ) : districtProfile ? (
                   <DistrictProfile
-                    district={focusedDistrict.properties as DistrictInfo}
+                    district={districtProfile.properties as DistrictInfo}
                     areaRank={focusedDistrictAreaRank}
-                    onBack={() => setFocusedDistrictId('')}
+                    onBack={() => {
+                      setFocusedDistrictId('');
+                      setInspected(null);
+                    }}
+                    onIsolate={
+                      !focusedDistrictId
+                        ? () => {
+                            setFocusedDistrictId(
+                              String(districtProfile.properties?.id),
+                            );
+                            setInspected(null);
+                          }
+                        : undefined
+                    }
                     onEdit={() => {
-                      setEditingDistrictId(focusedDistrictId);
+                      setEditingDistrictId(
+                        String(districtProfile.properties?.id),
+                      );
                       setFocusedDistrictId('');
                       setDistrictEditing(true);
                     }}
@@ -3613,7 +3651,14 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                   <DistrictOverviewPanel
                     districts={districtSource.features}
                     loading={detailLoading}
-                    onSelect={setFocusedDistrictId}
+                    onSelect={(id) => {
+                      setInspected(
+                        districtSource.features.find(
+                          (district) => district.properties?.id === id,
+                        ) || null,
+                      );
+                      sidebar.current?.scrollTo({ top: 0 });
+                    }}
                   />
                 ) : selected === 'punjab' &&
                   level === 'tehsil' &&
