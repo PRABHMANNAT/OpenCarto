@@ -275,6 +275,81 @@
 .ua-level select:disabled {
   opacity: 0.6;
 }
+.ua-district-picker select {
+  max-width: 165px;
+}
+.ua-style-picker select {
+  max-width: 155px;
+}
+.ua-color-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  color: #687c86;
+  font-size: 11px;
+}
+.ua-color-control input[type='color'] {
+  width: 31px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid #d9e1dc;
+  border-radius: 7px;
+  background: #fff;
+  cursor: pointer;
+}
+.ua-color-control input[type='color']:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.ua-controls .ua-color-reset {
+  padding: 6px;
+  color: #607785;
+}
+.ua-single-district-content {
+  padding: 8px 24px 28px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.ua-single-district-content .ua-district-swatch {
+  display: block;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #506375;
+  border-radius: 8px;
+  margin: 5px 0 15px;
+}
+.ua-single-district-content button {
+  margin: 10px 8px 0 0;
+}
+.ua-tehsil-profile-content {
+  padding: 8px 25px 32px;
+  color: #405d6d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.ua-tehsil-profile-content h3 {
+  margin: 22px 0 6px;
+  color: #193a50;
+  font:
+    20px/1.3 Georgia,
+    'Times New Roman',
+    serif;
+}
+.ua-tehsil-profile-content p {
+  margin: 9px 0;
+}
+.ua-tehsil-profile-content a,
+.ua-tehsil-profile-content small {
+  display: block;
+  margin-top: 14px;
+}
+.ua-tehsil-profile-content small {
+  color: #738895;
+}
+.ua-tehsil-profile-content button {
+  margin-top: 18px;
+}
 .ua-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 385px;

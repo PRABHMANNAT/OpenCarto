@@ -206,6 +206,70 @@ try {
         .querySelector('.ua-map-caption')
         ?.textContent.includes('Loading'),
   );
+  const tehsilColorMode = page.getByLabel('Punjab tehsil color mode');
+  assert.equal(await tehsilColorMode.inputValue(), 'district');
+  assert.ok(
+    (await page.locator('.ua-map-caption').innerText()).includes(
+      'color by district',
+    ),
+  );
+  await tehsilColorMode.selectOption('tehsil');
+  assert.ok(
+    (await page.locator('.ua-map-caption').innerText()).includes(
+      'color by tehsil',
+    ),
+  );
+  await tehsilColorMode.selectOption('district');
+  await page.waitForTimeout(400); // MapLibre applies paged source changes asynchronously.
+  const tehsilCanvas = page.locator('.ua-map canvas').first();
+  const tehsilBounds = await tehsilCanvas.boundingBox();
+  for (const [x, y] of [
+    [0.5, 0.5],
+    [0.35, 0.5],
+    [0.65, 0.5],
+    [0.5, 0.35],
+    [0.5, 0.65],
+  ]) {
+    await tehsilCanvas.click({
+      position: { x: tehsilBounds.width * x, y: tehsilBounds.height * y },
+    });
+    if (
+      (await page.getByLabel('Punjab tehsil name history').count()) &&
+      (await page.getByLabel('Punjab palette color').isEnabled())
+    )
+      break;
+  }
+  const tehsilProfile = page.getByLabel('Punjab tehsil name history');
+  assert.ok(
+    await tehsilProfile.count(),
+    'selecting a tehsil opens its sidebar history',
+  );
+  const tehsilText = await tehsilProfile.innerText();
+  assert.ok(
+    tehsilText.includes('Old name:') && tehsilText.includes('Meaning:'),
+  );
+  assert.match(tehsilText, /Old name:\s+\S/);
+  assert.ok(tehsilText.includes('Name and history'));
+  const palettePicker = page.getByLabel('Punjab palette color');
+  assert.ok(await palettePicker.isEnabled());
+  assert.equal(await palettePicker.locator('option').count(), 46);
+  await palettePicker.selectOption('#D79DA0');
+  await page.waitForFunction(
+    () =>
+      document.querySelector('input[aria-label="Area fill color"]')?.value ===
+      '#d79da0',
+  );
+  await tehsilColorMode.selectOption('tehsil');
+  await palettePicker.selectOption('#A9C7DD');
+  await page.waitForFunction(
+    () =>
+      document.querySelector('input[aria-label="Area fill color"]')?.value ===
+      '#a9c7dd',
+  );
+  await tehsilColorMode.selectOption('district');
+  await tehsilProfile
+    .getByRole('button', { name: 'Back to Punjab tehsils' })
+    .click();
   await page
     .getByRole('button', { name: 'National overview', exact: true })
     .click();

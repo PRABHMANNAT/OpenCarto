@@ -24,14 +24,9 @@ export function defaultDistrictEdits(): DistrictEdits {
   return {
     groups: [
       {
-        id: 'punjab-d-panja-sahib',
-        members: ['punjab-d-panja-sahib', 'punjab-d-attock'],
-        name: 'Panja Sahib',
-      },
-      {
         id: 'punjab-d-katas-raj-salt-range',
         members: ['punjab-d-katas-raj-salt-range', 'punjab-d-chakwal'],
-        name: 'Katas Raj',
+        name: 'Katas',
       },
       {
         id: 'punjab-d-kartarpur-ravi',
@@ -71,8 +66,22 @@ export function readDistrictEdits(): DistrictEdits {
         )
       )
         return fallback;
+      if (
+        group.id === 'punjab-d-panja-sahib' &&
+        group.members.length === 2 &&
+        group.members[1] === 'punjab-d-attock'
+      )
+        continue; // Full Attock is now part of Panja Sahib in the atlas data.
       group.members.forEach((id: string) => used.add(id));
-      groups.push({ id: group.id, members: group.members, name: group.name });
+      groups.push({
+        id: group.id,
+        members: group.members,
+        name:
+          group.id === 'punjab-d-katas-raj-salt-range' &&
+          group.name === 'Katas Raj'
+            ? 'Katas'
+            : group.name,
+      });
     }
     const names = Object.fromEntries(
       Object.entries(saved.names).filter(
@@ -166,20 +175,56 @@ export function mergeDistrictFeatures(
   };
 }
 
-function paletteColor(index: number) {
-  const hue = (index * 137.508 + 198) % 360;
-  const saturation = 0.55;
-  const lightness = index % 3 === 0 ? 0.62 : index % 3 === 1 ? 0.69 : 0.57;
-  const a = saturation * Math.min(lightness, 1 - lightness);
-  const channel = (n: number) => {
-    const k = (n + hue / 30) % 12;
-    return Math.round(
-      255 * (lightness - a * Math.max(-1, Math.min(k - 3, 9 - k, 1))),
-    )
-      .toString(16)
-      .padStart(2, '0');
-  };
-  return `#${channel(0)}${channel(8)}${channel(4)}`;
+export const punjabPalette = [
+  { name: 'Sage', color: '#AFC7B1' },
+  { name: 'Sky', color: '#A9C7DD' },
+  { name: 'Apricot', color: '#E5B48F' },
+  { name: 'Lilac', color: '#C4AED2' },
+  { name: 'Rose', color: '#D8A6AD' },
+  { name: 'Olive', color: '#C2C58F' },
+  { name: 'Teal', color: '#93C2BE' },
+  { name: 'Sand', color: '#DCC89F' },
+  { name: 'Periwinkle', color: '#ABB6D7' },
+  { name: 'Moss', color: '#9EBA9A' },
+  { name: 'Powder Blue', color: '#BDD5E3' },
+  { name: 'Peach', color: '#E8C3AA' },
+  { name: 'Lavender', color: '#D7C5E2' },
+  { name: 'Blush', color: '#E3BDC3' },
+  { name: 'Butter', color: '#E5D792' },
+  { name: 'Seafoam', color: '#B7D8C5' },
+  { name: 'Clay', color: '#CFA68C' },
+  { name: 'Slate Blue', color: '#91AEC8' },
+  { name: 'Pistachio', color: '#D1DAB2' },
+  { name: 'Dusty Pink', color: '#CA97A5' },
+  { name: 'Turquoise', color: '#A0D0D0' },
+  { name: 'Honey', color: '#DCC078' },
+  { name: 'Violet', color: '#B49FC4' },
+  { name: 'Mint', color: '#A5D2B5' },
+  { name: 'Terracotta', color: '#D69D88' },
+  { name: 'Denim', color: '#9AAED0' },
+  { name: 'Celadon', color: '#C3D5C5' },
+  { name: 'Mauve', color: '#C8B0BB' },
+  { name: 'Oat', color: '#E2D5B6' },
+  { name: 'Dusk', color: '#B2B8C9' },
+  { name: 'Fern', color: '#B3C392' },
+  { name: 'Cornflower', color: '#AFBDDD' },
+  { name: 'Salmon', color: '#E0AE9D' },
+  { name: 'Orchid', color: '#CEB3D5' },
+  { name: 'Warm Rose', color: '#DEBCC0' },
+  { name: 'Lemon', color: '#D8DCA1' },
+  { name: 'Lagoon', color: '#8FB9B3' },
+  { name: 'Caramel', color: '#D4B18A' },
+  { name: 'Heather', color: '#B7AFCB' },
+  { name: 'Avocado', color: '#A8BAA0' },
+  { name: 'Ice Blue', color: '#C5DBDC' },
+  { name: 'Coral', color: '#D79DA0' },
+  { name: 'Amber', color: '#E3C69A' },
+  { name: 'Wisteria', color: '#C2B5D9' },
+  { name: 'Aqua', color: '#AFCDD1' },
+] as const;
+
+export function paletteColor(index: number): string {
+  return punjabPalette[index % punjabPalette.length].color;
 }
 
 export function styleDistrictFeatures(
@@ -187,7 +232,14 @@ export function styleDistrictFeatures(
   source: FeatureCollection,
   edits: DistrictEdits,
 ): FeatureCollection {
-  const ids = source.features.map(districtId).sort();
+  const ids = [...merged.features]
+    .sort(
+      (a, b) =>
+        String(edits.names[districtId(a)] || a.properties?.name).localeCompare(
+          String(edits.names[districtId(b)] || b.properties?.name),
+        ) || districtId(a).localeCompare(districtId(b)),
+    )
+    .map(districtId);
   return {
     type: 'FeatureCollection',
     features: merged.features.map((feature) => {
@@ -204,6 +256,57 @@ export function styleDistrictFeatures(
   };
 }
 
+export type TehsilColorMode = 'district' | 'tehsil';
+
+export function styleTehsilFeatures(
+  tehsils: FeatureCollection,
+  districts: FeatureCollection,
+  edits: DistrictEdits,
+  mode: TehsilColorMode,
+): FeatureCollection {
+  const styledDistricts = styleDistrictFeatures(
+    mergeDistrictFeatures(districts, edits.groups),
+    districts,
+    edits,
+  );
+  const displayedNames = districtDisplayNames(districts, edits);
+  const districtByName = new Map(
+    styledDistricts.features.map((feature) => [
+      String(feature.properties?.name),
+      feature,
+    ]),
+  );
+  const tehsilIds = [...tehsils.features]
+    .sort(
+      (a, b) =>
+        String(a.properties?.name).localeCompare(String(b.properties?.name)) ||
+        districtId(a).localeCompare(districtId(b)),
+    )
+    .map(districtId);
+  const tehsilOrder = new Map(tehsilIds.map((id, index) => [id, index]));
+  return {
+    type: 'FeatureCollection',
+    features: tehsils.features.map((feature) => {
+      const districtName =
+        displayedNames[String(feature.properties?.district || '')] ||
+        String(feature.properties?.district || '');
+      const parent = districtByName.get(districtName);
+      return {
+        ...feature,
+        properties: {
+          ...feature.properties,
+          district: districtName,
+          parentDistrictId: String(parent?.properties?.id || ''),
+          color:
+            mode === 'district'
+              ? String(parent?.properties?.color || '#ffffff')
+              : paletteColor(tehsilOrder.get(districtId(feature)) || 0),
+        },
+      };
+    }),
+  };
+}
+
 export function districtDisplayNames(
   source: FeatureCollection,
   edits: DistrictEdits,
@@ -211,7 +314,7 @@ export function districtDisplayNames(
   const originalNames: Record<string, string> = {
     'punjab-d-panja-sahib': 'Panja Sahib',
     'punjab-d-attock': 'Attock',
-    'punjab-d-katas-raj-salt-range': 'Katas Raj–Salt Range',
+    'punjab-d-katas-raj-salt-range': 'Katas',
     'punjab-d-chakwal': 'Chakwal',
     'punjab-d-kartarpur-ravi': 'Kartarpur–Ravi',
     'punjab-d-narowal': 'Narowal',

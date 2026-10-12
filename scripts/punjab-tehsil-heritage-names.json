@@ -1,0 +1,1625 @@
+{
+  "description": "Reviewed Punjab tehsil labels supplied by the user; naming data only, no boundary changes.",
+  "rows": [
+    {
+      "sourceId": "in-t-238",
+      "oldName": "Abohar",
+      "proposedDistrict": "Fazilka",
+      "newName": "Abohar",
+      "meaning": "Established locality; precise etymology debated",
+      "history": "Recognizable commercial center of southwestern Punjab near the Rajasthan border.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61201",
+      "oldName": "Ahmadpur Sial",
+      "proposedDistrict": "Jhang",
+      "newName": "Ahmadpur Sial",
+      "meaning": "Ahmad's town associated with the Sial community",
+      "history": "Retains a distinctive Jhang-area settlement and Sial clan name.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-255",
+      "oldName": "Ajnala",
+      "proposedDistrict": "Amritsar",
+      "newName": "Ajnala",
+      "meaning": "Long-established Punjabi place-name; origin uncertain",
+      "history": "Historic Ajnala town; Guru Ka Bagh is a separate Sikh pilgrimage site in the tehsil.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "lahore-t-8",
+      "oldName": "Allama Iqbal",
+      "proposedDistrict": "Lahore",
+      "newName": "Allama Iqbal",
+      "meaning": "Title and name of Punjabi poet Muhammad Iqbal",
+      "history": "Established Lahore administrative zone commemorating the important Urdu-Persian poet.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-222",
+      "oldName": "Amloh",
+      "proposedDistrict": "Fatehgarh Sahib",
+      "newName": "Amloh",
+      "meaning": "Established place-name; origin uncertain",
+      "history": "Historic Fatehgarh Sahib-area town; its known civic name is clearer than a shrine substitution.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-256",
+      "oldName": "Amritsar -I",
+      "proposedDistrict": "Amritsar",
+      "newName": "Amritsar I",
+      "meaning": "Amritsar means pool of nectar; I marks a subdivision",
+      "history": "Keep the geographic municipal designation, not a religious monument's name.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "in-t-257",
+      "oldName": "Amritsar- II",
+      "proposedDistrict": "Amritsar",
+      "newName": "Amritsar II",
+      "meaning": "Amritsar means pool of nectar; II marks a subdivision",
+      "history": "Akal Takht is a major Sikh institution within the city, not this whole tehsil.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "in-t-262",
+      "oldName": "Anandpur Sahib",
+      "proposedDistrict": "Sri Anandpur Sahib",
+      "newName": "Anandpur Sahib",
+      "meaning": "City of bliss; Sahib is an honorific",
+      "history": "Birthplace of the Khalsa in 1699; the city already has an iconic Sikh name.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62701",
+      "oldName": "Arif Wala",
+      "proposedDistrict": "Nanaksar",
+      "newName": "Arifwala",
+      "meaning": "Place associated with a person called Arif",
+      "history": "Established Pakpattan-area town; standardize its common spelling only.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "PK61204",
+      "oldName": "Athara Hazari",
+      "proposedDistrict": "Jhang",
+      "newName": "Athara Hazari",
+      "meaning": "Literally eighteen thousand, by local numeric usage",
+      "history": "Established Jhang-region locality; the original basis for its number requires research.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60101",
+      "oldName": "Attock",
+      "proposedDistrict": "Panja Sahib",
+      "newName": "Attock",
+      "meaning": "Ancient crossing-town name; precise derivation disputed",
+      "history": "Important Indus crossing and historic fort; keep its highly recognizable name.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-258",
+      "oldName": "Baba Bakala",
+      "proposedDistrict": "Amritsar",
+      "newName": "Baba Bakala",
+      "meaning": "Bakala of the revered Baba, in local Sikh usage",
+      "history": "Associated with Guru Tegh Bahadur's identification as the ninth Sikh Guru.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-232",
+      "oldName": "Bagha Purana",
+      "proposedDistrict": "Moga",
+      "newName": "Bagha Purana",
+      "meaning": "Historic Punjabi town-name; exact derivation uncertain",
+      "history": "Well-known settlement and market in Moga; no compelling replacement needed.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-219",
+      "oldName": "Balachaur",
+      "proposedDistrict": "Shahid Bhagat Singh Nagar",
+      "newName": "Balachaur",
+      "meaning": "Established town-name; exact derivation uncertain",
+      "history": "Long-standing Shivalik foothills town of Shaheed Bhagat Singh Nagar.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-275",
+      "oldName": "Barnala",
+      "proposedDistrict": "Barnala",
+      "newName": "Barnala",
+      "meaning": "Established Malwa town-name; origin uncertain",
+      "history": "Historic town with Phulkian-era connections; a shrine name would obscure the city.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-220",
+      "oldName": "Bassi Pathana",
+      "proposedDistrict": "Fatehgarh Sahib",
+      "newName": "Bassi Pathana",
+      "meaning": "Bassi settlement associated with Pathans",
+      "history": "Historic Fatehgarh Sahib town; keep its locally recognized place-name.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-203",
+      "oldName": "Batala",
+      "proposedDistrict": "Gurdaspur",
+      "newName": "Batala",
+      "meaning": "Old town-name; precise derivation uncertain",
+      "history": "Important Punjabi city associated with Guru Nanak's marriage and Kandh Sahib.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-245",
+      "oldName": "Bathinda",
+      "proposedDistrict": "Bathinda",
+      "newName": "Bathinda",
+      "meaning": "Ancient regional city-name; etymology disputed",
+      "history": "Historic Qila Mubarak fort and major Malwa city; well-known name retained.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63201",
+      "oldName": "Bhalwal",
+      "proposedDistrict": "Sargodha",
+      "newName": "Bhalwal",
+      "meaning": "Established town-name; origin uncertain",
+      "history": "Sargodha-area commercial center with a distinct civic identity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60601",
+      "oldName": "Bhawana",
+      "proposedDistrict": "Chenab",
+      "newName": "Bhawana",
+      "meaning": "Established town-name; origin uncertain",
+      "history": "Chenab-region town within today's Chiniot area; preserve local familiarity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63207",
+      "oldName": "Bhera",
+      "proposedDistrict": "Sargodha",
+      "newName": "Bhera",
+      "meaning": "Ancient trading town-name; derivation debated",
+      "history": "Historic walled-market settlement in the Salt Range foothills.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-205",
+      "oldName": "Bhulath",
+      "proposedDistrict": "Kapurthala",
+      "newName": "Bhulath",
+      "meaning": "Established Kapurthala-area place-name; origin uncertain",
+      "history": "Retains the recognizable Beas-side agricultural town.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-248",
+      "oldName": "Budhlada",
+      "proposedDistrict": "Mansa",
+      "newName": "Budhlada",
+      "meaning": "Established Malwa town-name; derivation uncertain",
+      "history": "Important agricultural and rail-connected town of Mansa area.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60801",
+      "oldName": "Chak Jhumra",
+      "proposedDistrict": "Sandalbar",
+      "newName": "Chak Jhumra",
+      "meaning": "Chak means settlement or village; Jhumra is local name",
+      "history": "Planned canal-colony settlement with a recognized Faisalabad-region identity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60501",
+      "oldName": "Chakwal",
+      "proposedDistrict": "Katas",
+      "newName": "Chakwal",
+      "meaning": "Historic local city-name; derivation debated",
+      "history": "Administrative center of Salt Range and nearby Katas Raj heritage.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-265",
+      "oldName": "Chamkaur Sahib",
+      "proposedDistrict": "Rupnagar",
+      "newName": "Chamkaur Sahib",
+      "meaning": "Chamkaur town with the honorific Sahib",
+      "history": "Site of the 1704-05 Battle of Chamkaur and martyrdom of elder Sahibzadas.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63101",
+      "oldName": "Chichawatni",
+      "proposedDistrict": "Harappa",
+      "newName": "Chichawatni",
+      "meaning": "Established town-name; etymology uncertain",
+      "history": "Known for Chichawatni forest and the Ravi-side agricultural zone.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60602",
+      "oldName": "Chiniot",
+      "proposedDistrict": "Chenab",
+      "newName": "Chiniot",
+      "meaning": "Old form Chandniot is documented; exact derivation disputed",
+      "history": "Historic Chenab-side town noted for woodwork and Umar Hayat Mahal.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60502",
+      "oldName": "Choa Saidan Shah",
+      "proposedDistrict": "Katas",
+      "newName": "Choa Saidan Shah",
+      "meaning": "Choa means spring; linked to Sayyid Shah",
+      "history": "The Katas Raj temple complex is here, but Choa Saidan Shah is the town-name.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61401",
+      "oldName": "Chunian",
+      "proposedDistrict": "Bulleh Shah",
+      "newName": "Chunian",
+      "meaning": "Old Kasur-region settlement-name; origin uncertain",
+      "history": "Historic urban center of Kasur area rather than a single-site label.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63401",
+      "oldName": "Daska",
+      "proposedDistrict": "Babe Di Ber",
+      "newName": "Daska",
+      "meaning": "Established Sialkot-area town-name; etymology uncertain",
+      "history": "Distinct industrial and agricultural service center in the Sialkot region.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-214",
+      "oldName": "Dasua",
+      "proposedDistrict": "Hoshiarpur",
+      "newName": "Dasua",
+      "meaning": "Old regional name, also spelt Dasuya; origin uncertain",
+      "history": "Recognized settlement of Hoshiarpur's plains and Shivalik approach.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62601",
+      "oldName": "Depalpur",
+      "proposedDistrict": "Harappa",
+      "newName": "Depalpur",
+      "meaning": "Pur means town; Depal element has uncertain derivation",
+      "history": "Ancient settlement of the Okara area with precolonial heritage.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-204",
+      "oldName": "Dera Baba Nanak",
+      "proposedDistrict": "Gurdaspur",
+      "newName": "Dera Baba Nanak",
+      "meaning": "Settlement or camp of Guru Nanak",
+      "history": "Important Sikh pilgrimage town facing Kartarpur across the Ravi.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-268",
+      "oldName": "Dera Bassi",
+      "proposedDistrict": "S A S Nagar",
+      "newName": "Dera Bassi",
+      "meaning": "Dera means camp or settlement; Bassi is a locality",
+      "history": "Major Chandigarh-periphery town; Nabha Sahib remains a shrine there.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-200",
+      "oldName": "Dhar Kalan",
+      "proposedDistrict": "Pathankot",
+      "newName": "Dhar Kalan",
+      "meaning": "Kalan means large or greater; Dhar is the place-name",
+      "history": "Recognizable hill-foot district subdivision near Pathankot.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-5996",
+      "oldName": "DHARAMKOT",
+      "proposedDistrict": "Moga",
+      "newName": "Dharamkot",
+      "meaning": "Dharam means righteousness; kot means fort",
+      "history": "Established Moga-area town; normalize typography rather than change identity.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "in-t-270",
+      "oldName": "Dhuri",
+      "proposedDistrict": "Sangrur",
+      "newName": "Dhuri",
+      "meaning": "Established Malwa town-name; origin uncertain",
+      "history": "Well-recognized Sangrur-area junction and administrative center.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61301",
+      "oldName": "Dina",
+      "proposedDistrict": "Jhelum",
+      "newName": "Dina",
+      "meaning": "Established Jhelum-region city-name; etymology uncertain",
+      "history": "Rohtas Fort and Gurdwara Chowa Sahib are nearby heritage places, not the town-name.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60802",
+      "oldName": "Faisalabad City",
+      "proposedDistrict": "Sandalbar",
+      "newName": "Lyallpur",
+      "meaning": "Lyallpur = settlement named for British administrator Sir James Lyall.",
+      "history": "Restore the documented old civic name for the historic clock-tower city.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "PK60803",
+      "oldName": "Faisalabad Sadar",
+      "proposedDistrict": "Sandalbar",
+      "newName": "Faisalabad Sadar",
+      "meaning": "Faisalabad honors King Faisal; Sadar means central/outer district",
+      "history": "Retain established administrative unit to distinguish it from the urban core.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-242",
+      "oldName": "Faridkot",
+      "proposedDistrict": "Faridkot",
+      "newName": "Faridkot",
+      "meaning": "Fort of Farid; linked in tradition with Baba Farid",
+      "history": "Historic town and princely-state center; don't replace with Jand Sahib gurdwara.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60102",
+      "oldName": "Fateh Jang",
+      "proposedDistrict": "Panja Sahib",
+      "newName": "Fateh Jang",
+      "meaning": "Fateh means victory; jang means battle",
+      "history": "Recognizable Attock-region locality with historic rural identity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-221",
+      "oldName": "Fatehgarh Sahib",
+      "proposedDistrict": "Fatehgarh Sahib",
+      "newName": "Fatehgarh Sahib",
+      "meaning": "Fortress of victory; Sahib is an honorific",
+      "history": "Commemorates martyrdom of Guru Gobind Singh's younger Sahibzadas at Sirhind.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-237",
+      "oldName": "Fazilka",
+      "proposedDistrict": "Fazilka",
+      "newName": "Fazilka",
+      "meaning": "Established town-name; derivation contested",
+      "history": "Historic border-area market town and administrative center.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63301",
+      "oldName": "Ferozewala",
+      "proposedDistrict": "Sacha Sauda",
+      "newName": "Ferozewala",
+      "meaning": "Place associated with Feroz; wala means belonging to",
+      "history": "Existing Sheikhupura-area settlement in the Lahore metropolitan belt.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-235",
+      "oldName": "Firozpur",
+      "proposedDistrict": "Ferozepur",
+      "newName": "Firozpur",
+      "meaning": "Pur means town; Firoz is a personal-name element",
+      "history": "Established Sutlej frontier city with Hussainiwala national memorial.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-217",
+      "oldName": "Garhshankar",
+      "proposedDistrict": "Hoshiarpur",
+      "newName": "Garhshankar",
+      "meaning": "Garh means fort; Shankar is a Hindu divine name",
+      "history": "Historic foothills town with long-established recognizable identity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK51101",
+      "oldName": "Ghazi",
+      "proposedDistrict": "Haripur",
+      "newName": "Ghazi",
+      "meaning": "Arabic-derived title meaning victor or warrior",
+      "history": "Established Haripur-area tehsil; the name is locally known despite its origin.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-240",
+      "oldName": "Gidderbaha",
+      "proposedDistrict": "Sri Muktsar Sahib",
+      "newName": "Gidderbaha",
+      "meaning": "Established Malwa town-name; exact origin uncertain",
+      "history": "Keep the recognizable town in the Muktsar region, rather than a shrine label.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63501",
+      "oldName": "Gojra",
+      "proposedDistrict": "Toba Tek Singh",
+      "newName": "Gojra",
+      "meaning": "Established central-Punjab town-name; origin uncertain",
+      "history": "Important agricultural and rail-linked Toba Tek Singh-area town.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63001",
+      "oldName": "Gujar Khan",
+      "proposedDistrict": "Rawalpindi",
+      "newName": "Gujar Khan",
+      "meaning": "Town-name referring to Gujjar/Gujar identity and Khan title",
+      "history": "Recognizable Potohar market city south of Rawalpindi.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60901",
+      "oldName": "Gujranwala",
+      "proposedDistrict": "Ranjitgarh",
+      "newName": "Gujranwala",
+      "meaning": "Traditional name linked to Gujjar settlements",
+      "history": "Birthplace of Maharaja Ranjit Singh; district Ranjitgarh already honors him.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61001",
+      "oldName": "Gujrat",
+      "proposedDistrict": "Dinga",
+      "newName": "Gujrat",
+      "meaning": "Established city-name linked with Gujjar identity",
+      "history": "Keep the famous city and market despite the district's proposed heritage rename.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-202",
+      "oldName": "Gurdaspur",
+      "proposedDistrict": "Gurdaspur",
+      "newName": "Gurdaspur",
+      "meaning": "Pur means town; associated with a figure named Gurdas",
+      "history": "Historic Majha-region district headquarters with cross-border heritage.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61101",
+      "oldName": "Hafizabad",
+      "proposedDistrict": "Rori Sahib",
+      "newName": "Hafizabad",
+      "meaning": "Abad means settlement; Hafiz is a title/name",
+      "history": "Established rice-growing city; Rori Sahib is the proposed district identity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK51102",
+      "oldName": "Haripur",
+      "proposedDistrict": "Haripur",
+      "newName": "Haripur",
+      "meaning": "Town of Hari; honors Sikh general Hari Singh Nalwa",
+      "history": "Sikh-era founded town, administrative center of proposed Hazara-border tehsils.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60103",
+      "oldName": "Hasan Abdal",
+      "proposedDistrict": "Panja Sahib",
+      "newName": "Panja Sahib",
+      "meaning": "Panja = hand/palm; Sahib is a reverential honorific.",
+      "history": "Exceptional exception: the tehsil hosts Gurdwara Panja Sahib, one of Sikhism's principal pilgrimage sites.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "PK50102",
+      "oldName": "Havelian",
+      "proposedDistrict": "Haripur",
+      "newName": "Havelian",
+      "meaning": "Havelis, meaning mansions or large houses",
+      "history": "Recognized Hazara town; preserve locality after proposed transfer to Haripur.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60104",
+      "oldName": "Hazro",
+      "proposedDistrict": "Panja Sahib",
+      "newName": "Hazro",
+      "meaning": "Established Attock-region locality; name origin uncertain",
+      "history": "Distinct commercial town of the fertile Chhachh plain.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-216",
+      "oldName": "Hoshiarpur",
+      "proposedDistrict": "Hoshiarpur",
+      "newName": "Hoshiarpur",
+      "meaning": "Pur means town; Hoshiar is a name/descriptor",
+      "history": "Established Doaba-Shivalik district center noted for crafts and Sikh history.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-230",
+      "oldName": "Jagraon",
+      "proposedDistrict": "Ludhiana",
+      "newName": "Jagraon",
+      "meaning": "Established Malwa city-name; exact origin debated",
+      "history": "Historic trade center; Mehdiana Sahib remains a nearby religious landmark.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-243",
+      "oldName": "Jaitu",
+      "proposedDistrict": "Faridkot",
+      "newName": "Jaitu",
+      "meaning": "Established Faridkot-region town-name; origin uncertain",
+      "history": "Center of the Jaito Morcha and Gurdwara Gangsar Sahib; retain the town name.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-236",
+      "oldName": "Jalalabad",
+      "proposedDistrict": "Fazilka",
+      "newName": "Jalalabad",
+      "meaning": "Abad means settlement; Jalal means majesty",
+      "history": "Recognized Fazilka-area town; keep its geographic identity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-212",
+      "oldName": "Jalandhar - I",
+      "proposedDistrict": "Jalandhar",
+      "newName": "Jalandhar I",
+      "meaning": "Jalandhar is the ancient Doaba city; I marks subdivision",
+      "history": "Administrative identifier is preferable to imposing a separate shrine name.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "in-t-213",
+      "oldName": "Jalandhar - II",
+      "proposedDistrict": "Jalandhar",
+      "newName": "Jalandhar II",
+      "meaning": "Jalandhar is the ancient Doaba city; II marks subdivision",
+      "history": "Administrative identifier preserves a clear split within one urban region.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "PK60105",
+      "oldName": "Jand",
+      "proposedDistrict": "Panja Sahib",
+      "newName": "Jand",
+      "meaning": "Name of the jand or prosopis tree in Punjabi usage",
+      "history": "Established Potohar town in proposed Panja Sahib District.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60804",
+      "oldName": "Jaranwala",
+      "proposedDistrict": "Sandalbar",
+      "newName": "Jaranwala",
+      "meaning": "Wala means place associated with; jaran root uncertain",
+      "history": "Distinct populous town in the Rachna Doab agricultural area.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61202",
+      "oldName": "Jhang",
+      "proposedDistrict": "Jhang",
+      "newName": "Jhang",
+      "meaning": "Historic Chenab region-name; etymology debated",
+      "history": "Punjabi Heer-Ranjha literary landscape and major riverine center.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61302",
+      "oldName": "Jhelum",
+      "proposedDistrict": "Jhelum",
+      "newName": "Jhelum",
+      "meaning": "Name shared with the ancient Jhelum/Hydaspes River",
+      "history": "Region of Rohtas Fort and Guru Nanak-associated Chowa Sahib.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63002",
+      "oldName": "Kahuta",
+      "proposedDistrict": "Rawalpindi",
+      "newName": "Kahuta",
+      "meaning": "Established Potohar locality-name; etymology uncertain",
+      "history": "Recognized hill-town south-east of Rawalpindi.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60503",
+      "oldName": "Kallar Kahar",
+      "proposedDistrict": "Katas",
+      "newName": "Kallar Kahar",
+      "meaning": "Kallar denotes saline soil; Kahar is a local name",
+      "history": "Salt Range town and lake near major archaeological landscapes.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63003",
+      "oldName": "Kallar Sayaddan",
+      "proposedDistrict": "Rawalpindi",
+      "newName": "Kallar Sayaddan",
+      "meaning": "Kallar means saline ground; Sayaddan refers to Sayyid community",
+      "history": "Established Potohar rural town, distinct from nearby Taxila.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63502",
+      "oldName": "Kamalia",
+      "proposedDistrict": "Toba Tek Singh",
+      "newName": "Kamalia",
+      "meaning": "Established town-name; origin disputed",
+      "history": "Historic urban center of Toba Tek Singh agricultural belt.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60902",
+      "oldName": "Kamoke",
+      "proposedDistrict": "Ranjitgarh",
+      "newName": "Kamoke",
+      "meaning": "Established Gujranwala-area place-name; origin uncertain",
+      "history": "Large town on Lahore-Gujranwala transport corridor.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-206",
+      "oldName": "Kapurthala",
+      "proposedDistrict": "Kapurthala",
+      "newName": "Kapurthala",
+      "meaning": "Established historic royal-state name; derivation disputed",
+      "history": "Known for Jagatjit Palace, architecture and the former princely state.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61402",
+      "oldName": "Kasur",
+      "proposedDistrict": "Bulleh Shah",
+      "newName": "Kasur",
+      "meaning": "Old city-name; traditions associate it with Kusha, son of Rama",
+      "history": "Major Punjabi heritage city and burial place of Sufi poet Bulleh Shah.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-261",
+      "oldName": "Khadur Sahib",
+      "proposedDistrict": "Tarn Taran",
+      "newName": "Khadur Sahib",
+      "meaning": "Khadur is the settlement; Sahib an honorific",
+      "history": "Important Sikh center associated especially with Guru Angad Dev Ji.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-223",
+      "oldName": "Khamanon",
+      "proposedDistrict": "Fatehgarh Sahib",
+      "newName": "Khamanon",
+      "meaning": "Established Fatehgarh-area place-name; origin uncertain",
+      "history": "Identifiable town along routes between Ludhiana and Chandigarh.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-225",
+      "oldName": "Khanna",
+      "proposedDistrict": "Ludhiana",
+      "newName": "Khanna",
+      "meaning": "Established town-name; derivation uncertain",
+      "history": "Major grain and trade market in Ludhiana region.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK51103",
+      "oldName": "Khanpur",
+      "proposedDistrict": "Haripur",
+      "newName": "Khanpur",
+      "meaning": "Town of Khan, a personal/title element",
+      "history": "Recognizable Haripur-area settlement; district assignment follows uploaded file.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-266",
+      "oldName": "Kharar",
+      "proposedDistrict": "S A S Nagar",
+      "newName": "Kharar",
+      "meaning": "Historic town-name; derivation uncertain",
+      "history": "Major city in Mohali-Chandigarh urban region; retain familiar identity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61002",
+      "oldName": "Kharian",
+      "proposedDistrict": "Dinga",
+      "newName": "Kharian",
+      "meaning": "Established Gujrat-region town-name; origin uncertain",
+      "history": "Major urban and cantonment center in the Upper Punjab area.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61601",
+      "oldName": "Khushab",
+      "proposedDistrict": "Khushab",
+      "newName": "Khushab",
+      "meaning": "Persian elements khush + ab, pleasant or sweet water",
+      "history": "Historic district town associated with Soon Valley and Salt Range foothills.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63202",
+      "oldName": "Kot Momin",
+      "proposedDistrict": "Sargodha",
+      "newName": "Kot Momin",
+      "meaning": "Kot means fort or settlement; Momin is a name",
+      "history": "Established agricultural tehsil of Sargodha region.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61403",
+      "oldName": "Kot Radha Kishen",
+      "proposedDistrict": "Bulleh Shah",
+      "newName": "Kot Radha Kishan",
+      "meaning": "Kot = fortified settlement; Radha and Kishan are devotional Hindu names.",
+      "history": "Retain historic Hindu-associated name with corrected common spelling.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "PK63004",
+      "oldName": "Kotli Sattian",
+      "proposedDistrict": "Rawalpindi",
+      "newName": "Kotli Sattian",
+      "meaning": "Kotli means small fortified settlement; Sattian is local clan name",
+      "history": "Hill and forested tehsil of the Rawalpindi region.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "lahore-t-0",
+      "oldName": "Lahore Cantt",
+      "proposedDistrict": "Lahore",
+      "newName": "Lahore Cantt",
+      "meaning": "Cantt is abbreviation of cantonment or military station",
+      "history": "Established Lahore cantonment municipal zone.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "lahore-t-6",
+      "oldName": "Lahore City",
+      "proposedDistrict": "Lahore",
+      "newName": "Lahore City",
+      "meaning": "Urban core of Lahore; name's origin is debated",
+      "history": "The walled city contains Guru Ram Das's birthplace and Sikh-Mughal monuments.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60603",
+      "oldName": "Lalian",
+      "proposedDistrict": "Chenab",
+      "newName": "Lalian",
+      "meaning": "Established Chiniot-region town-name; origin uncertain",
+      "history": "Identifiable agricultural and market tehsil in the Chenab belt.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-273",
+      "oldName": "Lehra",
+      "proposedDistrict": "Sangrur",
+      "newName": "Lehra",
+      "meaning": "Established Malwa town-name; precise origin unclear",
+      "history": "Local Sangrur-area identity associated with Lehragaga region.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK50103",
+      "oldName": "Lora",
+      "proposedDistrict": "Haripur",
+      "newName": "Lora",
+      "meaning": "Established Hazara locality-name; etymology unclear",
+      "history": "Recognizable hill tehsil of Abbottabad area proposed for Haripur.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-227",
+      "oldName": "Ludhiana (East)",
+      "proposedDistrict": "Ludhiana",
+      "newName": "Ludhiana East",
+      "meaning": "Ludhiana is city-name; East marks its subdivision",
+      "history": "Keep readable directional municipal names rather than Manji Sahib shrine label.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "in-t-228",
+      "oldName": "Ludhiana (West)",
+      "proposedDistrict": "Ludhiana",
+      "newName": "Ludhiana West",
+      "meaning": "Ludhiana is city-name; West marks its subdivision",
+      "history": "Retain established urban split; map Manji Sahib as a separate gurdwara.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "PK62001",
+      "oldName": "Malakwal",
+      "proposedDistrict": "Kair Sahib",
+      "newName": "Malakwal",
+      "meaning": "Established Mandi Bahauddin-region town-name; derivation uncertain",
+      "history": "Recognized railway-market center within proposed Kair Sahib district.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-269",
+      "oldName": "Malerkotla",
+      "proposedDistrict": "Sangrur",
+      "newName": "Malerkotla",
+      "meaning": "Kotla means small fort; Maler refers to old settlement",
+      "history": "Historic princely city; its nawab defended the younger Sahibzadas.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-239",
+      "oldName": "Malout",
+      "proposedDistrict": "Sri Muktsar Sahib",
+      "newName": "Malout",
+      "meaning": "Established Muktsar-region town-name; etymology uncertain",
+      "history": "Known commercial center of the southern Malwa cotton belt.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62002",
+      "oldName": "Mandi Bahauddin",
+      "proposedDistrict": "Kair Sahib",
+      "newName": "Mandi Bahauddin",
+      "meaning": "Mandi means market; Bahauddin is a personal name",
+      "history": "Established large market city; district's proposed Kair Sahib name adds shrine context.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-249",
+      "oldName": "Mansa",
+      "proposedDistrict": "Mansa",
+      "newName": "Mansa",
+      "meaning": "Established Malwa town-name; origin uncertain",
+      "history": "Recognizable district center; Sulisar Sahib is a specific gurdwara.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "lahore-t-2",
+      "oldName": "Model Town",
+      "proposedDistrict": "Lahore",
+      "newName": "Model Town",
+      "meaning": "Literally planned or model residential neighborhood",
+      "history": "Prominent early planned Lahore neighborhood; original name remains descriptive.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-233",
+      "oldName": "Moga",
+      "proposedDistrict": "Moga",
+      "newName": "Moga",
+      "meaning": "Established city-name; derivation uncertain",
+      "history": "Major agricultural, education and market hub of Malwa.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-274",
+      "oldName": "Moonak",
+      "proposedDistrict": "Sangrur",
+      "newName": "Moonak",
+      "meaning": "Established southern-Malwa place-name; derivation uncertain",
+      "history": "Recognizable Sangrur-area agricultural town.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-215",
+      "oldName": "Mukerian",
+      "proposedDistrict": "Hoshiarpur",
+      "newName": "Mukerian",
+      "meaning": "Established Hoshiarpur locality-name; origin uncertain",
+      "history": "Important town near Beas river and Himalayan foothills.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-241",
+      "oldName": "Muktsar",
+      "proposedDistrict": "Sri Muktsar Sahib",
+      "newName": "Muktsar",
+      "meaning": "Mukta + sar, pool of liberation",
+      "history": "Commemorates the Forty Mukte and battle of Khidrana; itself a sacred city name.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63302",
+      "oldName": "Muridke",
+      "proposedDistrict": "Sacha Sauda",
+      "newName": "Muridke",
+      "meaning": "Established town-name; murid means disciple",
+      "history": "Recognized Lahore-Sheikhupura urban corridor town.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63005",
+      "oldName": "Murree",
+      "proposedDistrict": "Rawalpindi",
+      "newName": "Murree",
+      "meaning": "Established hill-station name; derivation disputed",
+      "history": "Historic Himalayan foothill resort and established Potohar district center.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-252",
+      "oldName": "Nabha",
+      "proposedDistrict": "Patiala",
+      "newName": "Nabha",
+      "meaning": "Established historic princely-state name; origin unclear",
+      "history": "Distinct Phulkian Sikh royal state and heritage town.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-210",
+      "oldName": "Nakodar",
+      "proposedDistrict": "Jalandhar",
+      "newName": "Nakodar",
+      "meaning": "Established Doaba town-name; derivation unclear",
+      "history": "Historic town with prominent Indo-Islamic tomb architecture.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-263",
+      "oldName": "Nangal",
+      "proposedDistrict": "Sri Anandpur Sahib",
+      "newName": "Nangal",
+      "meaning": "Established town-name; origin uncertain",
+      "history": "Industrial township of the Sutlej valley near Bhakra dam.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62401",
+      "oldName": "Nankana Sahib",
+      "proposedDistrict": "Nankana Sahib",
+      "newName": "Nankana Sahib",
+      "meaning": "Town named for Guru Nanak, with Sahib honorific",
+      "history": "Birthplace of Guru Nanak; Janam Asthan is the specific gurdwara complex.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62501",
+      "oldName": "Narowal",
+      "proposedDistrict": "Kartarpur Sahib",
+      "newName": "Narowal",
+      "meaning": "Established historic locality-name; origin uncertain",
+      "history": "Historic district center; proposed district Kartarpur includes Shakargarh.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61602",
+      "oldName": "Naushera",
+      "proposedDistrict": "Khushab",
+      "newName": "Naushera",
+      "meaning": "Nau + shahr, meaning new town",
+      "history": "Existing Khushab-area valley town, distinct from KP's Nowshera.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-218",
+      "oldName": "Nawanshahr",
+      "proposedDistrict": "Shahid Bhagat Singh Nagar",
+      "newName": "Nawanshahr",
+      "meaning": "Nawan + shahr, meaning new town",
+      "history": "Established headquarters of Shaheed Bhagat Singh Nagar district.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-231",
+      "oldName": "Nihal Singhwala",
+      "proposedDistrict": "Moga",
+      "newName": "Nihal Singhwala",
+      "meaning": "Wala means settlement associated with Nihal Singh",
+      "history": "Recognized Moga tehsil; Nanaksar Sahib names a different religious site.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "lahore-t-7",
+      "oldName": "Nishter",
+      "proposedDistrict": "Lahore",
+      "newName": "Nishtar",
+      "meaning": "Administrative name honoring Abdur Rab Nishtar",
+      "history": "Established Lahore urban zone; use more common spelling Nishtar.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "PK61603",
+      "oldName": "Noorpur",
+      "proposedDistrict": "Khushab",
+      "newName": "Noorpur",
+      "meaning": "Nur or noor means light; pur means town",
+      "history": "Known Soon Valley/Khushab region town; keep geographic identity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60903",
+      "oldName": "Nowshera Virkan",
+      "proposedDistrict": "Ranjitgarh",
+      "newName": "Nowshera Virkan",
+      "meaning": "New settlement associated with the Virk community",
+      "history": "Known Gujranwala rural center with distinct Virk identity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62602",
+      "oldName": "Okara",
+      "proposedDistrict": "Harappa",
+      "newName": "Okara",
+      "meaning": "Historic local name; etymology debated",
+      "history": "Large agricultural city; Harappa is a separate ancient site near Sahiwal.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62702",
+      "oldName": "Pakpattan",
+      "proposedDistrict": "Nanaksar",
+      "newName": "Pakpattan",
+      "meaning": "Pak means pure or holy; pattan means ferry or river crossing",
+      "history": "Name itself commemorates Baba Farid's city; district Nanaksar is different.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63402",
+      "oldName": "Pasrur",
+      "proposedDistrict": "Babe Di Ber",
+      "newName": "Pasrur",
+      "meaning": "Established Sialkot-area place-name; derivation uncertain",
+      "history": "Historic agricultural and craft center; site of an old fort.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-201",
+      "oldName": "Pathankot",
+      "proposedDistrict": "Pathankot",
+      "newName": "Pathankot",
+      "meaning": "Kot means fort; name associated with Pathan/Pathania traditions",
+      "history": "Important gateway to the Himalayan foothills and former princely territories.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-253",
+      "oldName": "Patiala",
+      "proposedDistrict": "Patiala",
+      "newName": "Patiala",
+      "meaning": "Traditionally Patti or territory of Ala Singh",
+      "history": "Principal historic city of the Phulkian Sikh state.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-251",
+      "oldName": "Patran",
+      "proposedDistrict": "Patiala",
+      "newName": "Patran",
+      "meaning": "Established Patiala-area town-name; etymology uncertain",
+      "history": "Important southern-Patiala agricultural town.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-260",
+      "oldName": "Patti",
+      "proposedDistrict": "Tarn Taran",
+      "newName": "Patti",
+      "meaning": "Patti means territorial share or division",
+      "history": "Historic Majha town and Sikh-era regional center.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61404",
+      "oldName": "Pattoki",
+      "proposedDistrict": "Bulleh Shah",
+      "newName": "Pattoki",
+      "meaning": "Established Kasur-region town-name; derivation uncertain",
+      "history": "Known orchard and agricultural town on Lahore-Multan route.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-226",
+      "oldName": "Payal",
+      "proposedDistrict": "Ludhiana",
+      "newName": "Payal",
+      "meaning": "Payal also means anklet; place-name derivation uncertain",
+      "history": "Historic Ludhiana-region tehsil; Degsar is a named Sikh heritage site.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-208",
+      "oldName": "Phagwara",
+      "proposedDistrict": "Kapurthala",
+      "newName": "Phagwara",
+      "meaning": "Established industrial-city name; derivation unclear",
+      "history": "Major urban center in Kapurthala's detached geographic area.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62003",
+      "oldName": "Phalia",
+      "proposedDistrict": "Kair Sahib",
+      "newName": "Phalia",
+      "meaning": "Established old town-name; etymology uncertain",
+      "history": "Recognized market town in former Mandi Bahauddin territory.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-211",
+      "oldName": "Phillaur",
+      "proposedDistrict": "Jalandhar",
+      "newName": "Phillaur",
+      "meaning": "Established Doaba town-name; derivation uncertain",
+      "history": "Historic fort and Sutlej-side railway junction.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61303",
+      "oldName": "Pind Dadan Khan",
+      "proposedDistrict": "Jhelum",
+      "newName": "Pind Dadan Khan",
+      "meaning": "Pind means village; named after Dadan Khan",
+      "history": "Salt Range town near Khewra and historic trade routes.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61102",
+      "oldName": "Pindi Bhattian",
+      "proposedDistrict": "Rori Sahib",
+      "newName": "Pindi Bhattian",
+      "meaning": "Pindi means settlement; Bhattian relates to Bhatti community",
+      "history": "Historic Hafizabad-region center with clan and commercial heritage.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60106",
+      "oldName": "Pindi Gheb",
+      "proposedDistrict": "Panja Sahib",
+      "newName": "Pindi Gheb",
+      "meaning": "Pindi means settlement; Gheb is local regional name",
+      "history": "Established Attock-area market center, distinct from Taxila.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63504",
+      "oldName": "Pir Mahal",
+      "proposedDistrict": "Toba Tek Singh",
+      "newName": "Pir Mahal",
+      "meaning": "Pir means spiritual elder; mahal means palace/estate",
+      "history": "Recognizable Toba Tek Singh-area tehsil town.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61604",
+      "oldName": "Quaidabad",
+      "proposedDistrict": "Khushab",
+      "newName": "Quaidabad",
+      "meaning": "Abad means settlement; Quaid means leader",
+      "history": "Existing Khushab-region town; recognized civic name retained.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-229",
+      "oldName": "Raikot",
+      "proposedDistrict": "Ludhiana",
+      "newName": "Raikot",
+      "meaning": "Rai is a title; kot means fort",
+      "history": "Linked with Muslim chieftain Rai Kalha, who aided Guru Gobind Singh.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "lahore-t-9",
+      "oldName": "Raiwind",
+      "proposedDistrict": "Lahore",
+      "newName": "Raiwind",
+      "meaning": "Historic town-name; derivation uncertain",
+      "history": "Lahore-region railway town and major religious-gathering site.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-254",
+      "oldName": "Rajpura",
+      "proposedDistrict": "Patiala",
+      "newName": "Rajpura",
+      "meaning": "Raj means ruler/king; pura means town",
+      "history": "Major transport and industrial gateway in Patiala region.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-244",
+      "oldName": "Rampura Phul",
+      "proposedDistrict": "Bathinda",
+      "newName": "Rampura Phul",
+      "meaning": "Rampura is a town-name; Phul relates to Phulkian ancestry",
+      "history": "Historic Malwa market center connected with the Phulkian lineage.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "lahore-t-4",
+      "oldName": "Ravi",
+      "proposedDistrict": "Lahore",
+      "newName": "Ravi",
+      "meaning": "Name of a major river of Punjab; ancient Iravati",
+      "history": "Appropriate existing geographic name for Lahore riverside zone.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63006",
+      "oldName": "Rawalpindi",
+      "proposedDistrict": "Rawalpindi",
+      "newName": "Rawalpindi",
+      "meaning": "Pindi means settlement; Rawal element is debated",
+      "history": "Historic Potohar metropolis and important colonial-era cantonment.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62603",
+      "oldName": "Renala Khurd",
+      "proposedDistrict": "Harappa",
+      "newName": "Renala Khurd",
+      "meaning": "Khurd means smaller settlement; Renala is local name",
+      "history": "Recognizable planned canal-colony agricultural town in Okara area.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-264",
+      "oldName": "Rup Nagar",
+      "proposedDistrict": "Rupnagar",
+      "newName": "Rupnagar",
+      "meaning": "Rup means beauty or form; nagar means town",
+      "history": "Historic Rupnagar city with archaeological and Sikh heritage.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "lahore-t-1",
+      "oldName": "Saddar",
+      "proposedDistrict": "Lahore",
+      "newName": "Saddar",
+      "meaning": "Administrative term for headquarters or central area",
+      "history": "Common established name for Lahore's central/cantonment-related zone.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63303",
+      "oldName": "Safdarabad",
+      "proposedDistrict": "Sacha Sauda",
+      "newName": "Safdarabad",
+      "meaning": "Abad means settlement; Safdar is a personal/title element",
+      "history": "Established Sheikhupura-area agricultural town; no local heritage name superior.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63102",
+      "oldName": "Sahiwal",
+      "proposedDistrict": "Harappa",
+      "newName": "Sahiwal",
+      "meaning": "Established city-name, linked to the Sahi people by local tradition.",
+      "history": "Major Punjab city near the ancient Harappan archaeological site; distinct from Sargodha Sahiwal.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63203",
+      "oldName": "Sahiwal",
+      "proposedDistrict": "Sargodha",
+      "newName": "Sahiwal",
+      "meaning": "Established town-name, linked to the Sahi people by local tradition.",
+      "history": "An old Sargodha-region river town, distinct from Sahiwal city near Harappa.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-250",
+      "oldName": "Samana",
+      "proposedDistrict": "Patiala",
+      "newName": "Samana",
+      "meaning": "Historic old city-name; origin uncertain",
+      "history": "Early conquest by Banda Singh Bahadur in 1709; significant Sikh history.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63403",
+      "oldName": "Sambrial",
+      "proposedDistrict": "Babe Di Ber",
+      "newName": "Sambrial",
+      "meaning": "Established Sialkot-region place-name; origin uncertain",
+      "history": "Important industrial and export-linked urban center.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-224",
+      "oldName": "Samrala",
+      "proposedDistrict": "Ludhiana",
+      "newName": "Samrala",
+      "meaning": "Historic local town-name; origin unclear",
+      "history": "Sikh heritage at nearby Machhiwara; Charan Kanwal is a gurdwara, not city.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62402",
+      "oldName": "Sangla Hill",
+      "proposedDistrict": "Nankana Sahib",
+      "newName": "Sangla Hill",
+      "meaning": "Name of a local hill/rock feature at Sangla",
+      "history": "Recognized Nankana-region town with old railway and stone-quarry associations.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-271",
+      "oldName": "Sangrur",
+      "proposedDistrict": "Sangrur",
+      "newName": "Sangrur",
+      "meaning": "Established Malwa town-name; origin uncertain",
+      "history": "Historic Jind princely-state administrative center and civic identity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61003",
+      "oldName": "Sarai Alamgir",
+      "proposedDistrict": "Dinga",
+      "newName": "Sarai Alamgir",
+      "meaning": "Sarai means travelers' inn; Alamgir was a Mughal imperial title",
+      "history": "Mughal-period road/inn settlement in the Gujrat-Jhelum corridor.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-247",
+      "oldName": "Sardulgarh",
+      "proposedDistrict": "Mansa",
+      "newName": "Sardulgarh",
+      "meaning": "Garh means fort; Sardul is a personal name",
+      "history": "Historic Mansa-region town associated with a Sikh-state naming tradition.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63204",
+      "oldName": "Sargodha",
+      "proposedDistrict": "Sargodha",
+      "newName": "Sargodha",
+      "meaning": "Established modern city name; derivation debated",
+      "history": "Important canal-colony city and regional administrative center.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-267",
+      "oldName": "SAS Nagar (Mohali)",
+      "proposedDistrict": "S A S Nagar",
+      "newName": "Mohali",
+      "meaning": "Mohali is a known historic village/city name; origin uncertain.",
+      "history": "The city is universally recognized as Mohali; Amb Sahib is a gurdwara.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "PK62403",
+      "oldName": "Shah Kot",
+      "proposedDistrict": "Nankana Sahib",
+      "newName": "Shah Kot",
+      "meaning": "Shah means king; kot means fort",
+      "history": "Established Shahkot tehsil of Nankana Sahib area, separate from Indian Shahkot.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-209",
+      "oldName": "Shahkot",
+      "proposedDistrict": "Jalandhar",
+      "newName": "Shahkot",
+      "meaning": "Shah means king; kot means fort",
+      "history": "Established Jalandhar district town; shares name with different Pakistan locality.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63205",
+      "oldName": "Shahpur",
+      "proposedDistrict": "Sargodha",
+      "newName": "Shahpur",
+      "meaning": "Shah means king; pur means town",
+      "history": "Historic Sargodha-area regional headquarters dating to colonial administration.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62502",
+      "oldName": "Shakargarh",
+      "proposedDistrict": "Kartarpur Sahib",
+      "newName": "Shakargarh",
+      "meaning": "Garh means fort; Shakar is a local name element",
+      "history": "Kartarpur Gurdwara is within this larger tehsil; keep Shakargarh for location clarity.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "lahore-t-3",
+      "oldName": "Shalimar",
+      "proposedDistrict": "Lahore",
+      "newName": "Shalimar",
+      "meaning": "Celebrated garden-name; exact derivation debated",
+      "history": "Lahore zone named for Shalimar Gardens built under Mughal emperor Shah Jahan.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63304",
+      "oldName": "Sharak Pur",
+      "proposedDistrict": "Sacha Sauda",
+      "newName": "Sharqpur",
+      "meaning": "Sharq = east; pur = settlement or town.",
+      "history": "Standardize established Sharqpur town-name in Sheikhupura area.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "PK63305",
+      "oldName": "Sheikhupura",
+      "proposedDistrict": "Sacha Sauda",
+      "newName": "Sheikhupura",
+      "meaning": "Town named for Sheikhu, Jahangir's nickname",
+      "history": "Historic city with Hiran Minar; Sacha Sauda is a separate site in district.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61203",
+      "oldName": "Shorkot",
+      "proposedDistrict": "Jhang",
+      "newName": "Shorkot",
+      "meaning": "Kot means fort; Shor is an older locality-name",
+      "history": "Historic walled settlement in the Jhang region.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63404",
+      "oldName": "Sialkot",
+      "proposedDistrict": "Babe Di Ber",
+      "newName": "Sialkot",
+      "meaning": "Ancient city-name; legends connect it with Sia or Salwan",
+      "history": "Prominent historic city; Babe Di Ber gurdwara must stay a landmark.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63206",
+      "oldName": "Sillanwali",
+      "proposedDistrict": "Sargodha",
+      "newName": "Sillanwali",
+      "meaning": "Wali or wala means belonging to; Sillan origin uncertain",
+      "history": "Recognized agricultural tehsil town in Sargodha region.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK61304",
+      "oldName": "Sohawa",
+      "proposedDistrict": "Jhelum",
+      "newName": "Sohawa",
+      "meaning": "Established Jhelum-region locality-name; origin uncertain",
+      "history": "Hill and highway town on Grand Trunk Road south of Rawalpindi.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-207",
+      "oldName": "Sultanpur Lodhi",
+      "proposedDistrict": "Kapurthala",
+      "newName": "Sultanpur Lodhi",
+      "meaning": "Sultanpur means sultan's town; Lodhi refers to dynasty",
+      "history": "Guru Nanak worked and lived here before the Sultanpur enlightenment tradition.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60805",
+      "oldName": "Summundri",
+      "proposedDistrict": "Sandalbar",
+      "newName": "Samundri",
+      "meaning": "Historic canal-town name Samundri; etymology uncertain",
+      "history": "Use standard spelling; important Faisalabad agricultural town.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "in-t-272",
+      "oldName": "Sunam",
+      "proposedDistrict": "Sangrur",
+      "newName": "Sunam",
+      "meaning": "Historic Malwa town-name; etymology debated",
+      "history": "Birthplace of freedom fighter Udham Singh and major regional town.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60504",
+      "oldName": "Tala Gang",
+      "proposedDistrict": "Katas",
+      "newName": "Talagang",
+      "meaning": "Established Talagang name; exact etymology uncertain",
+      "history": "Standardize place-name; historic Potohar and Salt Range market center.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "in-t-246",
+      "oldName": "Talwandi Sabo",
+      "proposedDistrict": "Bathinda",
+      "newName": "Talwandi Sabo",
+      "meaning": "Talwandi is a settlement; Sabo is the local qualifier",
+      "history": "Houses Takht Sri Damdama Sahib; retain recognizable town and Takht separately.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK60806",
+      "oldName": "Tandlian Wala",
+      "proposedDistrict": "Sandalbar",
+      "newName": "Tandlianwala",
+      "meaning": "Wala means place of; Tandlian is local element",
+      "history": "Standardize single-word spelling of established canal-colony town.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "in-t-276",
+      "oldName": "Tapa",
+      "proposedDistrict": "Barnala",
+      "newName": "Tapa",
+      "meaning": "Established Barnala-region town-name; origin uncertain",
+      "history": "Recognizable Malwa agricultural market town; Dhilwan is another locality.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-259",
+      "oldName": "Tarn Taran",
+      "proposedDistrict": "Tarn Taran",
+      "newName": "Tarn Taran",
+      "meaning": "A metaphor for ferrying souls across the worldly ocean",
+      "history": "Guru Arjan founded the important Sikh pilgrimage town and sarovar.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63007",
+      "oldName": "Taxila",
+      "proposedDistrict": "Taxila",
+      "newName": "Taxila",
+      "meaning": "Ancient Takshashila: cut stone or rock of Taksha",
+      "history": "Major Gandhara metropolis and Buddhist scholarly centre; established name.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK63503",
+      "oldName": "Toba Tek Singh",
+      "proposedDistrict": "Toba Tek Singh",
+      "newName": "Toba Tek Singh",
+      "meaning": "Toba means pond or watering place; Tek Singh is a person",
+      "history": "Named in memory of the Sikh figure Tek Singh and his public water service.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "lahore-t-5",
+      "oldName": "Wahga",
+      "proposedDistrict": "Lahore",
+      "newName": "Wagah",
+      "meaning": "Wagah is an established border-village name; origin uncertain.",
+      "history": "Use internationally familiar Wagah spelling for the border crossing.",
+      "decision": "Renamed"
+    },
+    {
+      "sourceId": "PK60904",
+      "oldName": "Wazirabad",
+      "proposedDistrict": "Ranjitgarh",
+      "newName": "Wazirabad",
+      "meaning": "Abad means settlement; wazir means minister",
+      "history": "Important historic industrial town near the Chenab River.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "PK62503",
+      "oldName": "Zafarwal",
+      "proposedDistrict": "Kartarpur Sahib",
+      "newName": "Zafarwal",
+      "meaning": "Wala means place of; Zafar means victory",
+      "history": "Established Narowal-region border town, recognizable in local geography.",
+      "decision": "Retained"
+    },
+    {
+      "sourceId": "in-t-234",
+      "oldName": "Zira",
+      "proposedDistrict": "Ferozepur",
+      "newName": "Zira",
+      "meaning": "Established historic Ferozepur-area town-name; origin uncertain",
+      "history": "Retain prominent Malwa agricultural town and tehsil name.",
+      "decision": "Retained"
+    }
+  ]
+}

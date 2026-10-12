@@ -173,9 +173,15 @@ try {
   const expected = [
     'Panja Sahib',
     'Kartarpur–Ravi',
-    'Katas Raj–Salt Range',
+    'Katas',
     'Sri Anandpur Sahib',
     'Yazman–Cholistan',
+    'Sacha Sauda',
+    'Nanaksar',
+    'Kair Sahib',
+    'Babe Di Ber',
+    'Rori Sahib',
+    'Chenab',
   ];
   for (const name of expected)
     assert.ok(
@@ -183,6 +189,7 @@ try {
       name + ' assignment documented',
     );
   const punjabDistricts = [];
+  const punjabTehsils = [];
   for (const id of [
     'punjab',
     'bahawalpur',
@@ -238,6 +245,8 @@ try {
         assert.ok(d.features.length <= 20);
         if (id === 'punjab' && level === 'district')
           punjabDistricts.push(...d.features);
+        if (id === 'punjab' && level === 'tehsil')
+          punjabTehsils.push(...d.features);
         total += d.features.length;
         offset = d.next;
         if (offset === null) assert.equal(total, d.total);
@@ -260,8 +269,8 @@ try {
     originalDistricts,
     edits,
   );
-  assert.equal(punjabDistricts.length, 52);
-  assert.equal(styledDistricts.features.length, 49);
+  assert.equal(punjabDistricts.length, 49);
+  assert.equal(styledDistricts.features.length, 47);
   assert.deepEqual(
     [
       'punjab-d-panja-sahib',
@@ -273,19 +282,198 @@ try {
         styledDistricts.features.find((feature) => feature.properties.id === id)
           ?.properties.name,
     ),
-    ['Panja Sahib', 'Katas Raj', 'Kartarpur Sahib', 'Bulleh Shah'],
+    ['Panja Sahib', 'Katas', 'Kartarpur Sahib', 'Bulleh Shah'],
   );
-  assert.equal(
-    new Set(styledDistricts.features.map((feature) => feature.properties.color))
-      .size,
-    49,
-    'Each displayed district starts with a distinct color',
+  const palette = [
+    '#AFC7B1',
+    '#A9C7DD',
+    '#E5B48F',
+    '#C4AED2',
+    '#D8A6AD',
+    '#C2C58F',
+    '#93C2BE',
+    '#DCC89F',
+    '#ABB6D7',
+    '#9EBA9A',
+    '#BDD5E3',
+    '#E8C3AA',
+    '#D7C5E2',
+    '#E3BDC3',
+    '#E5D792',
+    '#B7D8C5',
+    '#CFA68C',
+    '#91AEC8',
+    '#D1DAB2',
+    '#CA97A5',
+    '#A0D0D0',
+    '#DCC078',
+    '#B49FC4',
+    '#A5D2B5',
+    '#D69D88',
+    '#9AAED0',
+    '#C3D5C5',
+    '#C8B0BB',
+    '#E2D5B6',
+    '#B2B8C9',
+    '#B3C392',
+    '#AFBDDD',
+    '#E0AE9D',
+    '#CEB3D5',
+    '#DEBCC0',
+    '#D8DCA1',
+    '#8FB9B3',
+    '#D4B18A',
+    '#B7AFCB',
+    '#A8BAA0',
+    '#C5DBDC',
+    '#D79DA0',
+    '#E3C69A',
+    '#C2B5D9',
+    '#AFCDD1',
+  ];
+  assert.deepEqual(
+    districtEditor.punjabPalette.map((entry) => entry.color),
+    palette,
   );
-  for (const id of ['punjab-d-attock', 'punjab-d-chakwal', 'punjab-d-narowal'])
+  const sortedDistricts = [...styledDistricts.features].sort((a, b) =>
+    a.properties.name.localeCompare(b.properties.name),
+  );
+  assert.deepEqual(
+    sortedDistricts.map((feature) => feature.properties.color),
+    sortedDistricts.map((_, index) => palette[index % palette.length]),
+    'Punjab districts follow the supplied palette in name order',
+  );
+  const tehsilsByDistrict = districtEditor.styleTehsilFeatures(
+    { type: 'FeatureCollection', features: punjabTehsils },
+    originalDistricts,
+    edits,
+    'district',
+  );
+  const districtColors = new Map(
+    sortedDistricts.map((feature) => [
+      feature.properties.id,
+      feature.properties.color,
+    ]),
+  );
+  for (const feature of tehsilsByDistrict.features)
+    assert.equal(
+      feature.properties.color,
+      districtColors.get(feature.properties.parentDistrictId),
+    );
+  const individuallyColoredTehsils = districtEditor.styleTehsilFeatures(
+    { type: 'FeatureCollection', features: punjabTehsils },
+    originalDistricts,
+    edits,
+    'tehsil',
+  );
+  const sortedTehsils = [...individuallyColoredTehsils.features].sort(
+    (a, b) =>
+      a.properties.name.localeCompare(b.properties.name) ||
+      a.properties.id.localeCompare(b.properties.id),
+  );
+  assert.deepEqual(
+    sortedTehsils.map((feature) => feature.properties.color),
+    sortedTehsils.map((_, index) => palette[index % palette.length]),
+    'Individual tehsils follow the same repeating palette',
+  );
+  for (const id of [
+    'punjab-d-attock',
+    'punjab-d-chakwal',
+    'punjab-d-narowal',
+    'punjab-d-havelian-lora',
+    'punjab-d-okara',
+    'punjab-d-malerkotla',
+  ])
     assert.ok(
       !styledDistricts.features.some((feature) => feature.properties.id === id),
       id + ' is merged into the requested district',
     );
+  for (const [id, name] of Object.entries({
+    'punjab-d-taxila': 'Taxila',
+    'punjab-d-haripur-hazara': 'Haripur',
+    'punjab-d-sahiwal': 'Harappa',
+    'punjab-d-sangrur': 'Sangrur',
+    'punjab-d-gujrat': 'Dinga',
+    'punjab-d-gujranwala': 'Ranjitgarh',
+    'punjab-d-faisalabad': 'Sandalbar',
+    'punjab-d-pakpattan': 'Nanaksar',
+    'punjab-d-sheikhupura': 'Sacha Sauda',
+    'punjab-d-mandi-bahauddin': 'Kair Sahib',
+    'punjab-d-sialkot': 'Babe Di Ber',
+    'punjab-d-hafizabad': 'Rori Sahib',
+    'punjab-d-chiniot': 'Chenab',
+  }))
+    assert.equal(
+      styledDistricts.features.find((feature) => feature.properties.id === id)
+        ?.properties.name,
+      name,
+    );
+  assert.equal(punjabTehsils.length, 180);
+  const reviewRows = JSON.parse(
+    await fs.readFile('scripts/punjab-tehsil-heritage-names.json', 'utf8'),
+  ).rows;
+  const reviewed = new Map(reviewRows.map((row) => [row.sourceId, row]));
+  assert.equal(reviewed.size, 180);
+  let documentedRenames = 0;
+  for (const feature of punjabTehsils) {
+    const props = feature.properties;
+    const row = reviewed.get(props.sourceId);
+    assert.ok(row, props.sourceId + ' appears in the supplied review');
+    assert.ok(props.sourceName, props.sourceId + ' retains its old name');
+    assert.ok(
+      !/[·-]/.test(props.name),
+      props.sourceId + ' has one genuine name',
+    );
+    assert.equal(props.sourceName, row.oldName);
+    assert.equal(props.name, row.newName);
+    const displayedDistrict = {
+      Chakwal: 'Katas',
+      Narowal: 'Kartarpur Sahib',
+      'Kartarpur–Ravi': 'Kartarpur Sahib',
+    }[props.district] || props.district;
+    assert.equal(displayedDistrict, row.proposedDistrict);
+    assert.equal(props.nameMeaning, row.meaning);
+    assert.equal(props.namingReason, row.history);
+    assert.equal(props.namingProvenance, 'User-provided United Panjab heritage review');
+    assert.equal(props.namingStatus, row.decision === 'Renamed' ? 'renamed' : 'source');
+    if (props.namingStatus === 'renamed') documentedRenames++;
+    assert.ok(
+      analysis.changes.some(
+        (row) =>
+          row.provinceId === 'punjab' &&
+          row.sourceId === props.sourceId &&
+          row.proposedTehsil === props.name,
+      ),
+      props.sourceId + ' proposed tehsil is in the research audit',
+    );
+  }
+  assert.equal(documentedRenames, 19);
+  const taxila = punjabDistricts.find(
+    (feature) => feature.properties.id === 'punjab-d-taxila',
+  );
+  const rawalpindi = punjabDistricts.find(
+    (feature) => feature.properties.id === 'punjab-d-rawalpindi',
+  );
+  const taxilaTehsil = punjabTehsils.find(
+    (feature) => feature.properties.sourceId === 'PK63007',
+  );
+  assert.equal(taxilaTehsil.properties.district, 'Taxila');
+  assert.ok(contains(taxila.geometry, taxilaTehsil.properties.center));
+  assert.ok(!contains(rawalpindi.geometry, taxilaTehsil.properties.center));
+  for (const [sources, district] of [
+    [['PK60101', 'PK60103'], 'Panja Sahib'],
+    [['PK50102', 'PK50103', 'PK51101', 'PK51102', 'PK51103'], 'Haripur'],
+    [['PK62602', 'PK63102'], 'Harappa'],
+    [['in-t-269', 'in-t-271'], 'Sangrur'],
+  ])
+    for (const sourceId of sources)
+      assert.equal(
+        punjabTehsils.find(
+          (feature) => feature.properties.sourceId === sourceId,
+        )?.properties.district,
+        district,
+        sourceId + ' belongs to ' + district,
+      );
   assert.equal(
     (await call('detail&province=__proto__&level=district', { headers }))
       .status,
