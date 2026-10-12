@@ -303,9 +303,12 @@ if note not in decisions:
 decisions[:] = [decision for decision in decisions if not decision.startswith((
     'All 180 Punjab source tehsils have proposed', 'Punjab tehsil labels use established source place names',
     'All 180 Punjab tehsil labels, meanings and short histories follow',
+    'Names and short histories for 180 Punjab source tehsils follow',
 ))]
-tehsil_note = ('Names and short histories for 180 Punjab source tehsils follow the user-provided heritage review; '
-               'the omitted Guru Har Sahai tehsil is restored from uncovered Ferozepur district space. '
+western_updates = sum(row.get('provenance') == 'User-provided Western Panjab rename list' for row in name_rows)
+tehsil_note = (f'Names and short histories for 180 Punjab source tehsils follow the user-provided reviews, '
+               f'including {western_updates} later Western Panjab name entries. '
+               'The omitted Guru Har Sahai tehsil is restored from uncovered Ferozepur district space. '
                'Lahore tehsil coverage gaps are joined to adjoining tehsils. These geometry repairs are approximate, not surveyed boundaries.')
 if tehsil_note not in decisions:
     decisions.append(tehsil_note)

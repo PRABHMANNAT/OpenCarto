@@ -1,5 +1,5 @@
 {
-  "description": "180 user-reviewed Punjab tehsil labels plus one restored official tehsil omitted by the source layer.",
+  "description": "180 user-reviewed Punjab tehsils, including 34 later Western Panjab name reviews, plus one restored official tehsil omitted by the source layer.",
   "rows": [
     {
       "sourceId": "in-t-238",
@@ -14,10 +14,11 @@
       "sourceId": "PK61201",
       "oldName": "Ahmadpur Sial",
       "proposedDistrict": "Jhang",
-      "newName": "Ahmadpur Sial",
-      "meaning": "Ahmad's town associated with the Sial community",
-      "history": "Retains a distinctive Jhang-area settlement and Sial clan name.",
-      "decision": "Retained"
+      "newName": "Sial",
+      "meaning": "Name of the long-established Sial community of the Jhang region.",
+      "history": "Shortens Ahmadpur Sial while retaining its regionally distinctive Sial identifier.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-255",
@@ -32,10 +33,11 @@
       "sourceId": "lahore-t-8",
       "oldName": "Allama Iqbal",
       "proposedDistrict": "Lahore",
-      "newName": "Allama Iqbal",
-      "meaning": "Title and name of Punjabi poet Muhammad Iqbal",
-      "history": "Established Lahore administrative zone commemorating the important Urdu-Persian poet.",
-      "decision": "Retained"
+      "newName": "Sabzazar",
+      "meaning": "Green field or verdant place in Persian-Urdu usage.",
+      "history": "Sabzazar is a real neighborhood within Lahore’s Iqbal administrative zone; replaces a personality-named tehsil with a landscape-based name.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-222",
@@ -78,9 +80,10 @@
       "oldName": "Arif Wala",
       "proposedDistrict": "Nanaksar",
       "newName": "Arifwala",
-      "meaning": "Place associated with a person called Arif",
-      "history": "Established Pakpattan-area town; standardize its common spelling only.",
-      "decision": "Renamed"
+      "meaning": "Widely used joined spelling of this existing town.",
+      "history": "Keeps the important Pakpattan-region urban center identifiable.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK61204",
@@ -248,19 +251,21 @@
       "sourceId": "PK60602",
       "oldName": "Chiniot",
       "proposedDistrict": "Chenab",
-      "newName": "Chiniot",
-      "meaning": "Old form Chandniot is documented; exact derivation disputed",
-      "history": "Historic Chenab-side town noted for woodwork and Umar Hayat Mahal.",
-      "decision": "Retained"
+      "newName": "Chandniot",
+      "meaning": "Older documented form of Chiniot; traditional story links it to Chandan.",
+      "history": "Punjab district history documents Chandniot / Chandaniot as an earlier city name; founding legend is not established fact.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK60502",
       "oldName": "Choa Saidan Shah",
       "proposedDistrict": "Katas",
-      "newName": "Choa Saidan Shah",
-      "meaning": "Choa means spring; linked to Sayyid Shah",
-      "history": "The Katas Raj temple complex is here, but Choa Saidan Shah is the town-name.",
-      "decision": "Retained"
+      "newName": "Katas",
+      "meaning": "Name of the historic Katas Raj Hindu temple complex.",
+      "history": "The Katas Raj temples lie in Choa Saidan Shah Tehsil; a geographically located sacred-heritage label.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK61401",
@@ -347,28 +352,31 @@
       "sourceId": "PK61301",
       "oldName": "Dina",
       "proposedDistrict": "Jhelum",
-      "newName": "Dina",
-      "meaning": "Established Jhelum-region city-name; etymology uncertain",
-      "history": "Rohtas Fort and Gurdwara Chowa Sahib are nearby heritage places, not the town-name.",
-      "decision": "Retained"
+      "newName": "Chowa Sahib",
+      "meaning": "Revered spring, after the Guru Nanak-associated gurdwara.",
+      "history": "The Gurdwara Chowa Sahib lies at Rohtas Fort, near Dina; shrine name is deliberately used for the wider tehsil.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK60802",
       "oldName": "Faisalabad City",
       "proposedDistrict": "Sandalbar",
       "newName": "Lyallpur",
-      "meaning": "Lyallpur = settlement named for British administrator Sir James Lyall.",
-      "history": "Restore the documented old civic name for the historic clock-tower city.",
-      "decision": "Renamed"
+      "meaning": "Historic pre-1979 name of Faisalabad, derived from Sir James Lyall.",
+      "history": "Former name of Faisalabad, named for British administrator Sir James Lyall; a historically attested city-name, not an ancient Sikh name.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK60803",
       "oldName": "Faisalabad Sadar",
       "proposedDistrict": "Sandalbar",
-      "newName": "Faisalabad Sadar",
-      "meaning": "Faisalabad honors King Faisal; Sadar means central/outer district",
-      "history": "Retain established administrative unit to distinguish it from the urban core.",
-      "decision": "Retained"
+      "newName": "Rachna",
+      "meaning": "Name of the Ravi-Chenab Doab (river-interfluve).",
+      "history": "Faisalabad lies in the Rachna Doab; a traditional landscape label for the larger rural tehsil.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-242",
@@ -437,10 +445,11 @@
       "sourceId": "PK51101",
       "oldName": "Ghazi",
       "proposedDistrict": "Haripur",
-      "newName": "Ghazi",
-      "meaning": "Arabic-derived title meaning victor or warrior",
-      "history": "Established Haripur-area tehsil; the name is locally known despite its origin.",
-      "decision": "Retained"
+      "newName": "Sindhu",
+      "meaning": "Ancient Sanskrit-derived name for the Indus River.",
+      "history": "The Indus forms a defining geographic boundary of the Ghazi area; proposed river-based district label, not an old Ghazi town name.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-240",
@@ -482,10 +491,11 @@
       "sourceId": "PK61001",
       "oldName": "Gujrat",
       "proposedDistrict": "Dinga",
-      "newName": "Gujrat",
-      "meaning": "Established city-name linked with Gujjar identity",
-      "history": "Keep the famous city and market despite the district's proposed heritage rename.",
-      "decision": "Retained"
+      "newName": "Udanagri",
+      "meaning": "Traditional older name said to mean everlasting or sweet-smelling city.",
+      "history": "District Gujrat records Udanagri as a traditional predecessor name for Gujrat; the antiquity claim is traditional, not archaeological proof.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-202",
@@ -511,10 +521,11 @@
       "sourceId": "PK61101",
       "oldName": "Hafizabad",
       "proposedDistrict": "Rori Sahib",
-      "newName": "Hafizabad",
-      "meaning": "Abad means settlement; Hafiz is a title/name",
-      "history": "Established rice-growing city; Rori Sahib is the proposed district identity.",
-      "decision": "Retained"
+      "newName": "Nanakpur",
+      "meaning": "Town of Guru Nanak; taken from Mohalla Guru Nanakpur.",
+      "history": "The city’s historic Gurdwara Rori Sahib / Chhevin Patshahi is recorded in Mohalla Guru Nanakpur; proposed extension of a neighborhood name.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK51102",
@@ -530,9 +541,10 @@
       "oldName": "Hasan Abdal",
       "proposedDistrict": "Panja Sahib",
       "newName": "Panja Sahib",
-      "meaning": "Panja = hand/palm; Sahib is a reverential honorific.",
-      "history": "Exceptional exception: the tehsil hosts Gurdwara Panja Sahib, one of Sikhism's principal pilgrimage sites.",
-      "decision": "Renamed"
+      "meaning": "Revered handprint, referencing the gurdwara associated with Guru Nanak.",
+      "history": "The celebrated Panja Sahib shrine stands in Hasan Abdal; town retains its actual name.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK50102",
@@ -547,10 +559,11 @@
       "sourceId": "PK60104",
       "oldName": "Hazro",
       "proposedDistrict": "Panja Sahib",
-      "newName": "Hazro",
-      "meaning": "Established Attock-region locality; name origin uncertain",
-      "history": "Distinct commercial town of the fertile Chhachh plain.",
-      "decision": "Retained"
+      "newName": "Chhachh",
+      "meaning": "Established name of the fertile Chhachh alluvial plain.",
+      "history": "Hazro is a main urban center in the Chhachh region of Attock.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-216",
@@ -664,10 +677,11 @@
       "sourceId": "PK63003",
       "oldName": "Kallar Sayaddan",
       "proposedDistrict": "Rawalpindi",
-      "newName": "Kallar Sayaddan",
-      "meaning": "Kallar means saline ground; Sayaddan refers to Sayyid community",
-      "history": "Established Potohar rural town, distinct from nearby Taxila.",
-      "decision": "Retained"
+      "newName": "Kallar",
+      "meaning": "Refers to saline or alkaline ground in regional usage.",
+      "history": "Shortens the locally familiar tehsil name without replacing it with a shrine.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK63502",
@@ -754,10 +768,11 @@
       "sourceId": "PK61002",
       "oldName": "Kharian",
       "proposedDistrict": "Dinga",
-      "newName": "Kharian",
-      "meaning": "Established Gujrat-region town-name; origin uncertain",
-      "history": "Major urban and cantonment center in the Upper Punjab area.",
-      "decision": "Retained"
+      "newName": "Dinga",
+      "meaning": "Established historic Gujrat-region town name.",
+      "history": "Dinga, linked to a Guru Nanak-associated gurdwara, falls within the larger Kharian area; town Kharian retains its name.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK61601",
@@ -781,19 +796,21 @@
       "sourceId": "PK61403",
       "oldName": "Kot Radha Kishen",
       "proposedDistrict": "Bulleh Shah",
-      "newName": "Kot Radha Kishan",
-      "meaning": "Kot = fortified settlement; Radha and Kishan are devotional Hindu names.",
-      "history": "Retain historic Hindu-associated name with corrected common spelling.",
-      "decision": "Renamed"
+      "newName": "Radhakishan",
+      "meaning": "Shortened version of the place-name Radha Kishan; the precise naming history is uncertain.",
+      "history": "Retains the original personal-name roots while removing the generic Kot prefix.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK63004",
       "oldName": "Kotli Sattian",
       "proposedDistrict": "Rawalpindi",
-      "newName": "Kotli Sattian",
-      "meaning": "Kotli means small fortified settlement; Sattian is local clan name",
-      "history": "Hill and forested tehsil of the Rawalpindi region.",
-      "decision": "Retained"
+      "newName": "Sattian",
+      "meaning": "Local Satti clan/community name.",
+      "history": "Reflects the locally rooted Satti community in this hill tract.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "lahore-t-0",
@@ -808,10 +825,11 @@
       "sourceId": "lahore-t-6",
       "oldName": "Lahore City",
       "proposedDistrict": "Lahore",
-      "newName": "Lahore City",
-      "meaning": "Urban core of Lahore; name's origin is debated",
-      "history": "The walled city contains Guru Ram Das's birthplace and Sikh-Mughal monuments.",
-      "decision": "Retained"
+      "newName": "Lahore",
+      "meaning": "Established ancient city-name, etymology disputed.",
+      "history": "Shortens Lahore City but retains the internationally recognized historic core.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK60603",
@@ -889,10 +907,11 @@
       "sourceId": "PK62002",
       "oldName": "Mandi Bahauddin",
       "proposedDistrict": "Kair Sahib",
-      "newName": "Mandi Bahauddin",
-      "meaning": "Mandi means market; Bahauddin is a personal name",
-      "history": "Established large market city; district's proposed Kair Sahib name adds shrine context.",
-      "decision": "Retained"
+      "newName": "Kair Sahib",
+      "meaning": "Name of the Guru Nanak-associated Gurdwara Kair Sahib.",
+      "history": "The historic shrine at Jaisak/Jai Sukh Wala lies in Mandi Bahauddin Tehsil.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-249",
@@ -1015,10 +1034,11 @@
       "sourceId": "PK61602",
       "oldName": "Naushera",
       "proposedDistrict": "Khushab",
-      "newName": "Naushera",
-      "meaning": "Nau + shahr, meaning new town",
-      "history": "Existing Khushab-area valley town, distinct from KP's Nowshera.",
-      "decision": "Retained"
+      "newName": "Soon",
+      "meaning": "The locally established name of the Soon Valley.",
+      "history": "Naushera is the main town of the Soon Valley in the Salt Range foothills.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-218",
@@ -1042,28 +1062,31 @@
       "sourceId": "lahore-t-7",
       "oldName": "Nishter",
       "proposedDistrict": "Lahore",
-      "newName": "Nishtar",
-      "meaning": "Administrative name honoring Abdur Rab Nishtar",
-      "history": "Established Lahore urban zone; use more common spelling Nishtar.",
-      "decision": "Renamed"
+      "newName": "Green Town",
+      "meaning": "Established Lahore neighborhood meaning a green settlement.",
+      "history": "Green Town is a recognized locality in Nishtar Town; this is a proposed wider administrative name.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK61603",
       "oldName": "Noorpur",
       "proposedDistrict": "Khushab",
-      "newName": "Noorpur",
-      "meaning": "Nur or noor means light; pur means town",
-      "history": "Known Soon Valley/Khushab region town; keep geographic identity.",
-      "decision": "Retained"
+      "newName": "Thal",
+      "meaning": "Name of the Thal desert and sandy plain.",
+      "history": "The source Noorpur is Noorpur Thal, a tehsil extending into the Thal region.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK60903",
       "oldName": "Nowshera Virkan",
       "proposedDistrict": "Ranjitgarh",
-      "newName": "Nowshera Virkan",
-      "meaning": "New settlement associated with the Virk community",
-      "history": "Known Gujranwala rural center with distinct Virk identity.",
-      "decision": "Retained"
+      "newName": "Virkan",
+      "meaning": "Place-name referring to the Virk/Virkan local community.",
+      "history": "Shortens Nowshera Virkan; distinct from Naushera in Khushab.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK62602",
@@ -1177,28 +1200,31 @@
       "sourceId": "PK61303",
       "oldName": "Pind Dadan Khan",
       "proposedDistrict": "Jhelum",
-      "newName": "Pind Dadan Khan",
-      "meaning": "Pind means village; named after Dadan Khan",
-      "history": "Salt Range town near Khewra and historic trade routes.",
-      "decision": "Retained"
+      "newName": "Khewra",
+      "meaning": "Established name of the salt-mining town and Salt Range locality.",
+      "history": "The historic Khewra Salt Mine is inside Pind Dadan Khan Tehsil.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK61102",
       "oldName": "Pindi Bhattian",
       "proposedDistrict": "Rori Sahib",
-      "newName": "Pindi Bhattian",
-      "meaning": "Pindi means settlement; Bhattian relates to Bhatti community",
-      "history": "Historic Hafizabad-region center with clan and commercial heritage.",
-      "decision": "Retained"
+      "newName": "Bhattian",
+      "meaning": "Refers to the Bhatti clan/community in this established place-name.",
+      "history": "Preserves the identity of Pindi Bhattian while shortening the long administrative label.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK60106",
       "oldName": "Pindi Gheb",
       "proposedDistrict": "Panja Sahib",
-      "newName": "Pindi Gheb",
-      "meaning": "Pindi means settlement; Gheb is local regional name",
-      "history": "Established Attock-area market center, distinct from Taxila.",
-      "decision": "Retained"
+      "newName": "Gheb",
+      "meaning": "Local Gheb-region toponym retained from Pindi Gheb.",
+      "history": "A shorter regional name; Pindi Gheb remains the town and headquarters.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK63504",
@@ -1411,10 +1437,11 @@
       "sourceId": "PK62403",
       "oldName": "Shah Kot",
       "proposedDistrict": "Nankana Sahib",
-      "newName": "Shah Kot",
-      "meaning": "Shah means king; kot means fort",
-      "history": "Established Shahkot tehsil of Nankana Sahib area, separate from Indian Shahkot.",
-      "decision": "Retained"
+      "newName": "Shahkot",
+      "meaning": "Conventional spelling of the source town-name.",
+      "history": "Keeps a recognizable Nankana-area town while removing an unnecessary space.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-209",
@@ -1438,10 +1465,11 @@
       "sourceId": "PK62502",
       "oldName": "Shakargarh",
       "proposedDistrict": "Kartarpur Sahib",
-      "newName": "Shakargarh",
-      "meaning": "Garh means fort; Shakar is a local name element",
-      "history": "Kartarpur Gurdwara is within this larger tehsil; keep Shakargarh for location clarity.",
-      "decision": "Retained"
+      "newName": "Kartarpur",
+      "meaning": "Town of the Creator, founded by Guru Nanak.",
+      "history": "Gurdwara Darbar Sahib Kartarpur is in Shakargarh Tehsil; the shrine town supplies the proposed tehsil name.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "lahore-t-3",
@@ -1457,9 +1485,10 @@
       "oldName": "Sharak Pur",
       "proposedDistrict": "Sacha Sauda",
       "newName": "Sharqpur",
-      "meaning": "Sharq = east; pur = settlement or town.",
-      "history": "Standardize established Sharqpur town-name in Sheikhupura area.",
-      "decision": "Renamed"
+      "meaning": "Well-established spelling of this historic town; sharq means east.",
+      "history": "Preserves the original town and Mughal-era landscape without an unrelated shrine name.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK63305",
@@ -1520,9 +1549,10 @@
       "oldName": "Summundri",
       "proposedDistrict": "Sandalbar",
       "newName": "Samundri",
-      "meaning": "Historic canal-town name Samundri; etymology uncertain",
-      "history": "Use standard spelling; important Faisalabad agricultural town.",
-      "decision": "Renamed"
+      "meaning": "Established common spelling of the town.",
+      "history": "Preserves the agricultural market town in the Faisalabad area.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-272",
@@ -1540,7 +1570,8 @@
       "newName": "Talagang",
       "meaning": "Established Talagang name; exact etymology uncertain",
       "history": "Standardize place-name; historic Potohar and Salt Range market center.",
-      "decision": "Renamed"
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-246",
@@ -1556,9 +1587,10 @@
       "oldName": "Tandlian Wala",
       "proposedDistrict": "Sandalbar",
       "newName": "Tandlianwala",
-      "meaning": "Wala means place of; Tandlian is local element",
-      "history": "Standardize single-word spelling of established canal-colony town.",
-      "decision": "Renamed"
+      "meaning": "Established common spelling of the town name.",
+      "history": "Preserves the recognized local settlement with normalized spelling.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "in-t-276",
@@ -1601,18 +1633,20 @@
       "oldName": "Wahga",
       "proposedDistrict": "Lahore",
       "newName": "Wagah",
-      "meaning": "Wagah is an established border-village name; origin uncertain.",
-      "history": "Use internationally familiar Wagah spelling for the border crossing.",
-      "decision": "Renamed"
+      "meaning": "Established standardized spelling of the Lahore-border settlement.",
+      "history": "Retains a widely recognized geographic name and standardizes its English spelling.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK60904",
       "oldName": "Wazirabad",
       "proposedDistrict": "Ranjitgarh",
-      "newName": "Wazirabad",
-      "meaning": "Abad means settlement; wazir means minister",
-      "history": "Important historic industrial town near the Chenab River.",
-      "decision": "Retained"
+      "newName": "Ramnagar",
+      "meaning": "Historic Sikh-era town-name meaning town of Ram.",
+      "history": "Historic Rasulnagar/Ramnagar lies in Wazirabad Tehsil and was renamed Ramnagar in the Sikh period; town Wazirabad remains unchanged.",
+      "decision": "Renamed",
+      "provenance": "User-provided Western Panjab rename list"
     },
     {
       "sourceId": "PK62503",

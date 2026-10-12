@@ -414,6 +414,12 @@ try {
   ).rows;
   const reviewed = new Map(reviewRows.map((row) => [row.sourceId, row]));
   assert.equal(reviewed.size, 181);
+  assert.equal(
+    reviewRows.filter(
+      (row) => row.provenance === 'User-provided Western Panjab rename list',
+    ).length,
+    34,
+  );
   let documentedRenames = 0;
   for (const feature of punjabTehsils) {
     const props = feature.properties;
@@ -455,7 +461,7 @@ try {
       props.sourceId + ' proposed tehsil is in the research audit',
     );
   }
-  assert.equal(documentedRenames, 19);
+  assert.equal(documentedRenames, 43);
   const guruHarSahai = punjabTehsils.find(
     (feature) => feature.properties.sourceId === 'in-t-guru-har-sahai',
   );
