@@ -189,6 +189,7 @@ try {
         .querySelector('.ua-map-caption')
         ?.textContent.includes('Loading'),
   );
+  await page.waitForTimeout(800);
   await page.screenshot({
     path: 'outputs/private-atlas/divisions-desktop.png',
   });

@@ -188,6 +188,7 @@ try {
       analysis.changes.some((r) => r.proposedDistrict === name),
       name + ' assignment documented',
     );
+  const punjabDivisions = [];
   const punjabDistricts = [];
   const punjabTehsils = [];
   for (const id of [
@@ -243,6 +244,8 @@ try {
             );
         }
         assert.ok(d.features.length <= 20);
+        if (id === 'punjab' && level === 'division')
+          punjabDivisions.push(...d.features);
         if (id === 'punjab' && level === 'district')
           punjabDistricts.push(...d.features);
         if (id === 'punjab' && level === 'tehsil')
@@ -252,6 +255,38 @@ try {
         if (offset === null) assert.equal(total, d.total);
       } while (offset !== null);
     }
+  const divisionPlan = JSON.parse(
+    await fs.readFile('scripts/punjab-divisions.json', 'utf8'),
+  );
+  assert.equal(data.provinces.find((p) => p.id === 'punjab').detailCounts.division, 10);
+  assert.equal(punjabDivisions.length, 10);
+  assert.equal(punjabDistricts.length, 49);
+  assert.equal(divisionPlan.flatMap((spec) => spec.districts).length, 49);
+  const plannedDistricts = new Map(
+    divisionPlan.flatMap((spec) => spec.districts.map((name) => [name, spec])),
+  );
+  assert.equal(plannedDistricts.size, 49);
+  for (const spec of divisionPlan) {
+    const division = punjabDivisions.find((feature) => feature.properties.name === spec.name);
+    assert.ok(division, spec.name + ' division exists');
+    assert.equal(division.properties.capital, spec.headquarters);
+    assert.deepEqual(division.properties.memberDistricts, spec.districts);
+  }
+  for (const district of punjabDistricts) {
+    const spec = plannedDistricts.get(district.properties.name);
+    assert.ok(spec, district.properties.name + ' is assigned once');
+    assert.equal(district.properties.division, spec.name);
+    assert.equal(district.properties.divisionCapital, spec.headquarters);
+    const division = punjabDivisions.find((feature) => feature.properties.name === spec.name);
+    assert.ok(contains(division.geometry, district.properties.center));
+  }
+  for (const tehsil of punjabTehsils)
+    assert.equal(tehsil.properties.division, plannedDistricts.get(tehsil.properties.district)?.name);
+  for (const change of analysis.changes.filter((row) => row.provinceId === 'punjab')) {
+    const spec = plannedDistricts.get(change.proposedDistrict);
+    assert.equal(change.proposedDivision, spec?.name);
+    assert.equal(change.divisionCapital, spec?.headquarters);
+  }
   const districtEditor = await loadLocalModule(
     new URL('../app/private-atlas-districts.ts', import.meta.url),
   );

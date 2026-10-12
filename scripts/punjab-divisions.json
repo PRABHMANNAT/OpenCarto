@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Panja Sahib",
+    "headquarters": "Hasan Abdal",
+    "districts": ["Haripur", "Taxila", "Panja Sahib"]
+  },
+  {
+    "name": "Rawalpindi",
+    "headquarters": "Rawalpindi",
+    "districts": ["Rawalpindi", "Chakwal", "Katas", "Jhelum"]
+  },
+  {
+    "name": "Dinga",
+    "headquarters": "Gujrat",
+    "districts": ["Dinga", "Kair Sahib", "Rori Sahib", "Babe Di Ber", "Ranjitgarh"]
+  },
+  {
+    "name": "Sargodha",
+    "headquarters": "Sargodha",
+    "districts": ["Khushab", "Sargodha", "Chenab"]
+  },
+  {
+    "name": "Lahore",
+    "headquarters": "Lahore",
+    "districts": ["Lahore", "Sacha Sauda", "Nankana Sahib", "Bulleh Shah"]
+  },
+  {
+    "name": "Sandalbar",
+    "headquarters": "Faisalabad",
+    "districts": ["Jhang", "Toba Tek Singh", "Sandalbar", "Harappa", "Nanaksar", "Fazilka", "Sri Muktsar Sahib"]
+  },
+  {
+    "name": "Kartarpur",
+    "headquarters": "Amritsar",
+    "districts": ["Kartarpur–Ravi", "Narowal", "Amritsar", "Gurdaspur", "Pathankot", "Tarn Taran", "Ferozepur"]
+  },
+  {
+    "name": "Jalandhar",
+    "headquarters": "Jalandhar",
+    "districts": ["Kapurthala", "Jalandhar", "Hoshiarpur", "Shahid Bhagat Singh Nagar", "Ludhiana"]
+  },
+  {
+    "name": "Anandpur Sahib",
+    "headquarters": "Sri Anandpur Sahib",
+    "districts": ["Sri Anandpur Sahib", "Rupnagar", "Fatehgarh Sahib", "S A S Nagar"]
+  },
+  {
+    "name": "Patiala",
+    "headquarters": "Patiala",
+    "districts": ["Patiala", "Barnala", "Sangrur", "Moga", "Bathinda", "Mansa", "Faridkot"]
+  }
+]

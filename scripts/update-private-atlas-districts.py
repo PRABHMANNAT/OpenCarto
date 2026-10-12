@@ -281,10 +281,71 @@ for row in payload['analysis']['changes']:
     if row['proposedDistrict'] in capitals:
         row['proposedCapital'] = capitals[row['proposedDistrict']]
 
+# Division outlines follow the requested district grouping exactly, including
+# the two separate Kartarpur–Ravi and Narowal district features.
+division_specs = json.loads((ROOT / 'scripts/punjab-divisions.json').read_text(encoding='utf-8'))
+district_by_name = {feature['properties']['name']: feature for feature in districts}
+district_to_division = {}
+new_divisions = []
+
+
+def division_member_geometry(feature):
+    original = geometry(feature)
+    if original.is_valid:
+        return original
+    # The source Rawalpindi polygon has one sub-metre self-intersection. Repair
+    # only the derived division outline; keep the reviewed district untouched.
+    repaired = original.buffer(0)
+    if not repaired.is_valid or abs(repaired.area - original.area) > 1e-7:
+        raise ValueError(f"Division union cannot safely repair {feature['properties']['name']}")
+    return repaired
+
+
+if len(division_specs) != 10 or len(district_by_name) != len(districts):
+    raise ValueError('Expected ten requested divisions and uniquely named Punjab districts')
+for spec in division_specs:
+    division_name = spec['name']
+    if not division_name or not spec['headquarters'] or not spec['districts']:
+        raise ValueError(f'Incomplete Punjab division: {division_name}')
+    members = []
+    for district_name in spec['districts']:
+        if district_name not in district_by_name or district_name in district_to_division:
+            raise ValueError(f'Missing or repeated Punjab division district: {district_name}')
+        district_to_division[district_name] = spec
+        members.append(district_by_name[district_name])
+    division = {
+        'type': 'Feature',
+        'id': 'punjab-div-' + division_name.lower().replace(' ', '-'),
+        'properties': {
+            'id': 'punjab-div-' + division_name.lower().replace(' ', '-'),
+            'name': division_name,
+            'province': 'punjab',
+            'capital': spec['headquarters'],
+            'memberDistricts': spec['districts'],
+        },
+        'geometry': None,
+    }
+    set_geometry(division, unary_union([division_member_geometry(member) for member in members]))
+    new_divisions.append(division)
+if set(district_to_division) != set(district_by_name):
+    raise ValueError('The requested division plan does not cover all Punjab districts')
+punjab['division']['features'] = new_divisions
+for district in districts:
+    spec = district_to_division[district['properties']['name']]
+    district['properties'].update(division=spec['name'], divisionCapital=spec['headquarters'])
+for tehsil in tehsils:
+    spec = district_to_division[tehsil['properties']['district']]
+    tehsil['properties']['division'] = spec['name']
+for row in payload['analysis']['changes']:
+    if row.get('provinceId') == 'punjab':
+        spec = district_to_division[row['proposedDistrict']]
+        row.update(proposedDivision=spec['name'], divisionCapital=spec['headquarters'])
+
 punjab_overview = payload['overview']['provinces'][next(
     i for i, province in enumerate(payload['overview']['provinces'])
     if province['id'] == 'punjab'
  )]
+punjab_overview['detailCounts']['division'] = len(new_divisions)
 punjab_overview['detailCounts']['district'] = len(districts)
 punjab_overview['detailCounts']['tehsil'] = len(tehsils)
 
@@ -305,7 +366,10 @@ decisions[:] = [decision for decision in decisions if not decision.startswith((
     'All 180 Punjab source tehsils have proposed', 'Punjab tehsil labels use established source place names',
     'All 180 Punjab tehsil labels, meanings and short histories follow',
     'Names and short histories for 180 Punjab source tehsils follow',
+    'Chiniot, Jhang and Toba Tek Singh remain in the Chenab',
+    'The requested ten Punjab divisions group all 49 districts',
 ))]
+decisions.append('The requested ten Punjab divisions group all 49 districts exactly once. Their boundaries are unions of the member district outlines; Hasan Abdal, Rawalpindi, Gujrat, Sargodha, Lahore, Faisalabad, Amritsar, Jalandhar, Sri Anandpur Sahib and Patiala are their respective headquarters.')
 western_updates = sum(row.get('provenance') == 'User-provided Western Panjab rename list' for row in name_rows)
 locality_updates = sum(row.get('provenance') == 'Project review of requested tehsil renames' for row in name_rows)
 tehsil_note = (f'Names and short histories for 180 Punjab source tehsils follow the user-provided reviews, '
