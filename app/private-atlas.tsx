@@ -297,6 +297,42 @@ function fit(map: GLMap, b: number[], mobile = false) {
     },
   );
 }
+function featureBounds(feature: Feature | undefined): number[] | null {
+  if (!feature) return null;
+  const raw = feature.properties?.bbox;
+  let bbox = raw;
+  if (typeof raw === 'string') {
+    try {
+      bbox = JSON.parse(raw);
+    } catch {
+      bbox = null;
+    }
+  }
+  if (
+    Array.isArray(bbox) &&
+    bbox.length === 4 &&
+    bbox.every((value) => typeof value === 'number' && Number.isFinite(value))
+  )
+    return bbox;
+  const bounds = [Infinity, Infinity, -Infinity, -Infinity];
+  function collect(value: unknown) {
+    if (!Array.isArray(value)) return;
+    if (typeof value[0] === 'number' && typeof value[1] === 'number') {
+      bounds[0] = Math.min(bounds[0], value[0]);
+      bounds[1] = Math.min(bounds[1], value[1]);
+      bounds[2] = Math.max(bounds[2], value[0]);
+      bounds[3] = Math.max(bounds[3], value[1]);
+      return;
+    }
+    for (const part of value) collect(part);
+  }
+  const geometry = feature.geometry;
+  if (geometry && 'coordinates' in geometry) collect(geometry.coordinates);
+  else if (geometry?.type === 'GeometryCollection')
+    for (const part of geometry.geometries)
+      if ('coordinates' in part) collect(part.coordinates);
+  return Number.isFinite(bounds[0]) ? bounds : null;
+}
 function PhotoGallery({ photos }: { photos: Photo[] }) {
   const [index, setIndex] = useState(0),
     photo = photos[index];
@@ -1579,7 +1615,9 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     [inspected, setInspected] = useState<Feature | null>(null),
     [analysis, setAnalysis] = useState<Analysis | null>(null),
     [research, setResearch] = useState(false),
-    [researchQuery, setResearchQuery] = useState('');
+    [researchQuery, setResearchQuery] = useState(''),
+    [downloadMenuOpen, setDownloadMenuOpen] = useState(false),
+    [downloading, setDownloading] = useState(false);
   const map = useRef<GLMap | null>(null),
     sidebar = useRef<HTMLElement | null>(null),
     requestVersion = useRef(0);
@@ -1645,6 +1683,19 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
   const focusedDistrict = displayedDetail.features.find(
     (feature) => feature.properties?.id === focusedDistrictId,
   );
+  const inspectedArea =
+    level !== 'province' && !inspected?.properties?.kind
+      ? displayedDetail.features.find(
+          (feature) => feature.properties?.id === inspected?.properties?.id,
+        )
+      : undefined;
+  const exportArea = focusedDistrict || inspectedArea;
+  const exportProvince = data?.provinces.find((item) => item.id === selected);
+  const exportAreaName = String(
+    exportArea?.properties?.name || exportProvince?.name || data?.name || 'atlas',
+  );
+  const exportBounds =
+    featureBounds(exportArea) || exportProvince?.bbox || data?.bbox || null;
   const selectedDetail = displayedDetail.features.find(
     (feature) =>
       feature.properties?.id ===
@@ -1868,14 +1919,47 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     setQuery('');
     setHover('');
   }
-  async function downloadMap() {
+  async function downloadMap(scope: 'current' | 'full') {
+    setDownloadMenuOpen(false);
     const current = map.current;
     if (!current) {
       setError('The map is still opening. Try again shortly.');
       return;
     }
+    const originalCamera =
+      scope === 'full'
+        ? {
+            center: current.getCenter(),
+            zoom: current.getZoom(),
+            bearing: current.getBearing(),
+            pitch: current.getPitch(),
+          }
+        : null;
     try {
       setError('');
+      setDownloading(true);
+      if (scope === 'full') {
+        if (!exportBounds)
+          throw new Error('The selected area is not ready to export.');
+        await new Promise<void>((resolve, reject) => {
+          const onIdle = () => {
+            window.clearTimeout(timeout);
+            resolve();
+          };
+          const timeout = window.setTimeout(() => {
+            current.off('idle', onIdle);
+            reject(new Error('The full map is still loading. Try again shortly.'));
+          }, 20000);
+          current.once('idle', onIdle);
+          current.fitBounds(
+            [
+              [exportBounds[0], exportBounds[1]],
+              [exportBounds[2], exportBounds[3]],
+            ],
+            { padding: 35, duration: 0, maxZoom: 12 },
+          );
+        });
+      }
       const snapshot = await new Promise<string>((resolve, reject) => {
         const timeout = window.setTimeout(
           () =>
@@ -1919,18 +2003,11 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       );
       const link = document.createElement('a');
       link.href = canvas.toDataURL('image/png');
-      link.download =
-        selected === 'punjab' && level === 'district'
-          ? (focusedDistrict
-              ? String(focusedDistrict.properties?.name || 'punjab-district')
-                  .toLowerCase()
-                  .replace(/[^a-z0-9]+/g, '-')
-                  .replace(/^-|-$/g, '')
-              : 'punjab-districts') +
-            '-' +
-            mapStyle +
-            '.png'
-          : 'custom-atlas-map.png';
+      const filenameArea = exportAreaName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+      link.download = `${filenameArea}-${scope}-view-${mapStyle}.png`;
       link.click();
     } catch (cause) {
       setError(
@@ -1938,6 +2015,24 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
           ? cause.message
           : 'The map could not be downloaded.',
       );
+    } finally {
+      try {
+        if (originalCamera && map.current === current)
+          await new Promise<void>((resolve) => {
+            const onIdle = () => {
+              window.clearTimeout(timeout);
+              resolve();
+            };
+            const timeout = window.setTimeout(() => {
+              current.off('idle', onIdle);
+              resolve();
+            }, 10000);
+            current.once('idle', onIdle);
+            current.jumpTo(originalCamera);
+          });
+      } finally {
+        setDownloading(false);
+      }
     }
   }
   // oxlint-disable-next-line react/react-compiler -- Loading state reflects an external protected geometry request; abort stale requests on navigation.
@@ -2433,15 +2528,35 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                 <BookOpen size={16} />
                 Research & changes
               </button>
-              <button
-                type="button"
-                onClick={() => void downloadMap()}
-                disabled={detailLoading || precisionLoading}
-                title="Download the current map view as a PNG image"
-              >
-                <Download size={16} />
-                Download map
-              </button>
+              <div className="ua-download-menu">
+                <button
+                  type="button"
+                  onClick={() => setDownloadMenuOpen((open) => !open)}
+                  disabled={detailLoading || precisionLoading || downloading}
+                  aria-expanded={downloadMenuOpen}
+                  aria-controls="ua-download-options"
+                >
+                  <Download size={16} />
+                  {downloading ? 'Preparing map…' : 'Download map'}
+                </button>
+                {downloadMenuOpen && (
+                  <div
+                    id="ua-download-options"
+                    className="ua-download-options"
+                    role="group"
+                    aria-label="Map download options"
+                  >
+                    <button type="button" onClick={() => void downloadMap('current')}>
+                      <strong>Current view</strong>
+                      <small>Exactly what is on screen</small>
+                    </button>
+                    <button type="button" onClick={() => void downloadMap('full')}>
+                      <strong>Full selected area</strong>
+                      <small>Fit {exportAreaName} in the image</small>
+                    </button>
+                  </div>
+                )}
+              </div>
             </nav>
             <div className="ua-workspace" data-theme={dark ? 'dark' : 'light'}>
               <div className="ua-map-pane">

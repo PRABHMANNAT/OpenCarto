@@ -176,8 +176,42 @@
 .ua-controls button {
   white-space: nowrap;
 }
-.ua-controls > button:last-child {
+.ua-download-menu {
+  position: relative;
   margin-left: auto;
+}
+.ua-download-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  width: min(240px, calc(100vw - 24px));
+  padding: 5px;
+  background: #fff;
+  border: 1px solid #dce4df;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px #19364629;
+}
+.ua-download-options button {
+  display: block;
+  width: 100%;
+  padding: 9px 11px;
+  text-align: left;
+  white-space: normal;
+  border: 0;
+  background: transparent;
+}
+.ua-download-options button:hover,
+.ua-download-options button:focus-visible {
+  background: #eef5f2;
+}
+.ua-download-options strong,
+.ua-download-options small {
+  display: block;
+}
+.ua-download-options small {
+  margin-top: 2px;
+  color: #607785;
 }
 .ua-national {
   background: #e7efe8 !important;
@@ -1136,7 +1170,7 @@
     flex: 1;
     min-width: 145px;
   }
-  .ua-controls > button:last-child {
+  .ua-download-menu {
     margin-left: auto;
   }
   .ua-level {

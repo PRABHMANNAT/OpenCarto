@@ -44,7 +44,7 @@ await context.addInitScript(
 const page = await context.newPage();
 page.setDefaultTimeout(45000);
 const errors = [];
-page.on('pageerror', (e) => errors.push(e.message));
+page.on('pageerror', (e) => errors.push(e.stack || e.message));
 await fs.mkdir('outputs/private-atlas', { recursive: true });
 async function open() {
   await page.getByRole('button', { name: 'My maps', exact: true }).click();
@@ -128,6 +128,16 @@ try {
     .locator('.ua-profile h2')
     .filter({ hasText: 'Maharashtra' })
     .waitFor();
+  await page.getByRole('button', { name: 'Download map' }).click();
+  assert.ok(
+    (
+      await page
+        .getByRole('group', { name: 'Map download options' })
+        .getByRole('button', { name: 'Full selected area' })
+        .innerText()
+    ).includes(data.name),
+  );
+  await page.getByRole('button', { name: 'Download map' }).click();
   await choose('Punjab');
   await page.waitForFunction(
     () =>
@@ -146,6 +156,31 @@ try {
       JSON.parse(localStorage.getItem('private-atlas-map-colors-v1') || '{}')
         .borderWidth === 4,
   );
+  assert.equal(await page.locator('.ua-map-error').count(), 0);
+  async function downloadAtlasMap(option, expectedName) {
+    await page.getByRole('button', { name: 'Download map' }).click();
+    const options = page.getByRole('group', { name: 'Map download options' });
+    await options.getByRole('button', { name: option }).waitFor();
+    const pending = page.waitForEvent('download');
+    await options.getByRole('button', { name: option }).click();
+    const item = await pending;
+    assert.equal(item.suggestedFilename(), expectedName);
+    const path = `outputs/private-atlas/${expectedName}`;
+    await item.saveAs(path);
+    const image = await fs.readFile(path);
+    assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+    assert.ok(image.length > 10_000);
+    return image;
+  }
+  const currentMap = await downloadAtlasMap(
+    'Current view',
+    'punjab-current-view-political.png',
+  );
+  const fullMap = await downloadAtlasMap(
+    'Full selected area',
+    'punjab-full-view-political.png',
+  );
+  assert.notDeepEqual(currentMap, fullMap);
   assert.equal(await page.locator('.ua-map-error').count(), 0);
   await page
     .locator('.ua-gallery img')
