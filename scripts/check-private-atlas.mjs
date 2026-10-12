@@ -414,11 +414,17 @@ try {
   ).rows;
   const reviewed = new Map(reviewRows.map((row) => [row.sourceId, row]));
   assert.equal(reviewed.size, 181);
+  assert.equal(reviewed.get('PK61602')?.newName, 'Naushera');
+  assert.equal(reviewed.get('PK60904')?.newName, 'Wazirabad');
   assert.equal(
     reviewRows.filter(
       (row) => row.provenance === 'User-provided Western Panjab rename list',
     ).length,
-    21,
+    19,
+  );
+  assert.equal(
+    reviewRows.filter((row) => row.provenance === 'User-requested name restoration').length,
+    2,
   );
   assert.equal(
     reviewRows.filter(
@@ -479,7 +485,7 @@ try {
       props.sourceId + ' proposed tehsil is in the research audit',
     );
   }
-  assert.equal(documentedRenames, 62);
+  assert.equal(documentedRenames, 60);
   const guruHarSahai = punjabTehsils.find(
     (feature) => feature.properties.sourceId === 'in-t-guru-har-sahai',
   );
