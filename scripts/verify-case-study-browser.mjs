@@ -17,12 +17,25 @@ async function search(name){await page.getByRole('button',{name:'Search and add 
 async function exported(format,path){await configureExport(page,{format,width:1600});const event=page.waitForEvent('download',{timeout:120000});await triggerExport(page);await (await event).saveAs(path);return fs.readFile(path);}
 try{
  await page.goto(process.env.MAP_TEST_URL||'http://localhost:4545/',{waitUntil:'networkidle',timeout:60000});await idle();
- await page.getByRole('tab',{name:'History',exact:true}).click();await page.getByLabel('History case study').selectOption('sikh-heritage-core');await idle();
+ await page.getByRole('tab',{name:'History',exact:true}).click();
+ assert.ok(await page.getByLabel('Historical empire').isVisible());
+ assert.equal(await page.getByLabel('History case study',{exact:true}).count(),0);
+ assert.equal(await page.getByRole('button',{name:'Load Sikh military & heritage case study',exact:true}).count(),0);
+ assert.equal(await page.locator('.case-study-controls').count(),0);
+ await page.screenshot({path:'outputs/case-study/history-without-case-study.png'});
+ await page.getByRole('button',{name:'Guide & sources',exact:true}).click();
+ const guide=page.getByRole('dialog');
+ assert.equal(await guide.getByRole('heading',{name:'Sikh military & heritage case study',exact:true}).count(),0);
+ await guide.getByRole('button',{name:'Close',exact:true}).click();await guide.waitFor({state:'hidden'});
+ // Existing settings files remain editable even though History no longer offers the preset.
+ const legacy=model.validate({...model.initial,...study.caseStudyLoadPreset(model.initial)});
+ await fs.writeFile('outputs/case-study/legacy-settings.json',JSON.stringify(legacy));
+ await page.locator('input[type=file]').first().setInputFiles('outputs/case-study/legacy-settings.json');await idle();
  assert.equal(await page.getByLabel('Jump to a region').locator('option[value="pk-lahore-study"]').count(),0);
  const loaded=await saved();assert.equal(loaded.mapScope,'full');assert.equal(loaded.regions['pk-country'].province,true);assert.deepEqual(loaded.scopeAreas,study.caseStudyAreaIds);assert.equal(loaded.caseStudyId,'sikh-heritage-core');assert.equal(loaded.areaNames.PK609,'Maharaja Ranjit Singh');
  assert.ok(await page.getByLabel('History case study caption').isVisible());assert.equal(await page.locator('.floating-legend>div').count(),4);
  await page.screenshot({path:'outputs/case-study/heritage-core.png'});
- await page.getByRole('button',{name:'Focus Lahore selection',exact:true}).click();await idle();
+ await search('Lahore');await page.locator('.area-search-card[data-area="PK617"]').getByRole('button',{name:'Zoom to Lahore',exact:true}).click();await idle();
  const lahoreSvg=(await exported('svg','outputs/case-study/lahore.svg')).toString();for(const id of ['case-lahore-city','case-lahore-shalimar','case-lahore-cantonment'])assert.ok(lahoreSvg.includes('data-area="'+id+'"'));
  assert.ok(lahoreSvg.includes('alternate-history'));assert.ok(lahoreSvg.includes('OpenStreetMap'));await page.screenshot({path:'outputs/case-study/lahore.png'});
  await page.getByRole('button',{name:'Fit visible regions',exact:true}).click();await idle();
@@ -49,5 +62,5 @@ try{
  console.log('Case-study exports, names, saved settings and mobile editing verified; checking empire switching.');
  await page.getByRole('tab',{name:'History',exact:true}).click();await page.getByLabel('Historical empire').selectOption('sikh-1839');await idle();assert.equal((await saved()).caseStudyId,'none');assert.equal(await page.getByLabel('History case study caption').count(),0);
  assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);
- console.log('Verified case-study loading/colors/names, exact Lahore geometry and focus, custom/original searches, renaming/reset, SVG text escaping, PNG/JPG, Save/Load, reload, undo/redo, mobile editing and switching to empire history.');
+ console.log('Verified case-study controls and guide removed from History, retained empire controls, legacy settings loading/colors/names, Lahore geometry and area zoom, renaming/reset, SVG/PNG/JPG, Save/Load, reload, undo/redo, mobile editing and empire switching.');
 }catch(e){console.error('Page errors:',errors,'HTTP errors:',failed);console.error('Status:',await page.locator('.statusbar').innerText({timeout:3000}).catch(()=>''));await page.screenshot({path:'outputs/case-study/failure.png'}).catch(()=>{});throw e;}finally{await browser.close();}

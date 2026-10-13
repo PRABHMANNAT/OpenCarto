@@ -564,14 +564,6 @@
 .empire-controls>button {font-size:11px;margin:5px 0 12px;}
 .empire-color {display:flex;align-items:center;justify-content:space-between;}
 .empire-source {font-size:11px;margin:12px 0;}
-.case-study-controls {border-top:1px solid #e1e8dd;padding-top:20px;margin-top:20px;}
-.case-study-controls p,.case-study-controls small {font-size:11px;line-height:1.7;color:#708266;}
-.case-study-controls details {font-size:11px;margin-top:15px;}
-.case-study-controls summary {cursor:pointer;font-weight:600;}
-.case-study-controls img {display:block;width:100%;height:auto;border-radius:7px;margin:12px 0;}
-.case-study-qualification {padding:10px;border:1px solid #dccfa6;border-radius:7px;background:#fcf9eb;}
-.case-study-area-group {margin-top:12px;}
-.case-study-area-group i {display:inline-block;width:10px;height:10px;margin-right:6px;}
 .case-study-map-caption {border:1px solid #dccfa6;border-radius:9px;background:#fffdf4ef;padding:10px 12px;font-size:10px;line-height:1.5;}
 .case-study-map-caption strong,.case-study-map-caption span {display:block;}
 .empire-map-legend {position:absolute;left:80px;bottom:42px;z-index:3;max-width:250px;background:#ffffffed;border:1px solid #dce7d7;border-radius:9px;padding:10px 12px;font-size:10px;box-shadow:0 3px 18px #24411912;}

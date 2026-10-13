@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {chromium} from 'playwright';
-import {loadMapModel} from './load-map-model.mjs';
+import {loadMapModel,loadLocalModule} from './load-map-model.mjs';
 import {configureExport,triggerExport} from './workspace-ui.mjs';
-const model=await loadMapModel(),seed={...model.initial},key='punjab-studio-regional-v2',output='outputs/paint-palette';
+const model=await loadMapModel(),study=await loadLocalModule(new URL('../app/case-study-model.ts',import.meta.url));
+const seed=model.validate({...model.initial,...study.caseStudyLoadPreset(model.initial)}),key='punjab-studio-regional-v2',output='outputs/paint-palette';
 for(const field of ['paintPalette','paintColor','paintAutoAdvance','paintPaletteIndex'])delete seed[field];
 await fs.mkdir(output,{recursive:true});
 const browser=await chromium.launch({channel:process.env.MAP_BROWSER_CHANNEL||'chrome',headless:true,args:['--enable-unsafe-swiftshader']}),page=await browser.newPage({viewport:{width:1440,height:1000},acceptDownloads:true});page.setDefaultTimeout(30000);
@@ -19,7 +20,7 @@ try{
  await page.goto(process.env.MAP_TEST_URL||'http://localhost:4545/',{waitUntil:'networkidle'});await idle();
  assert.equal((await saved()).paintColor,'#AFC7B1');assert.equal((await saved()).paintPalette.length,45);
  assert.equal(await page.getByRole('button',{name:'Rectangle',exact:true}).count(),1);assert.equal(await page.getByRole('button',{name:'Ellipse',exact:true}).count(),0);assert.equal(await page.getByRole('button',{name:'Polygon',exact:true}).count(),0);
- await page.getByRole('tab',{name:'History',exact:true}).click();await page.getByLabel('History case study').selectOption('sikh-heritage-core');await idle();const full=await saved();assert.equal(full.mapScope,'full');
+ await page.getByRole('tab',{name:'History',exact:true}).click();assert.equal(await page.getByLabel('History case study',{exact:true}).count(),0);const full=await saved();assert.equal(full.mapScope,'full');
  const provinces=model.areas.filter(a=>a.region==='pk-country'&&a.level==='province');for(const a of provinces)assert.ok(model.visible(a,full),a.name);
  await page.screenshot({path:output+'/sikh-complete.png'});
  await configureExport(page,{format:'svg',width:1600});const download=page.waitForEvent('download');await triggerExport(page);const file=await download;await file.saveAs(output+'/complete.svg');const svg=await fs.readFile(output+'/complete.svg','utf8');for(const a of provinces)assert.ok(svg.includes('data-area="'+a.id+'"'),'Export includes '+a.name);assert.ok(svg.includes('data-area="PK609"'));assert.ok(svg.includes('data-area="case-lahore-city"'));

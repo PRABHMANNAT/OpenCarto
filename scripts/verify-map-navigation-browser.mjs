@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import {chromium} from 'playwright';
 import {loadMapModel,loadLocalModule} from './load-map-model.mjs';
 import {configureExport,triggerExport,setPaintColor} from './workspace-ui.mjs';
-const model=await loadMapModel(),scope=await loadLocalModule(new URL('../app/scope-model.ts',import.meta.url));
+const model=await loadMapModel(),scope=await loadLocalModule(new URL('../app/scope-model.ts',import.meta.url)),study=await loadLocalModule(new URL('../app/case-study-model.ts',import.meta.url)),navigation=await loadLocalModule(new URL('../app/map-navigation-model.ts',import.meta.url));
 const amritsar=model.areas.find(a=>a.name==='Amritsar'&&a.region==='in-punjab'&&a.level==='district');
 const seed=model.validate({...model.initial,...scope.scopePreset(model.initial,'combination',{scopeRegions:['in-punjab','pk-punjab']}),title:'My Punjab combination',hidden:['PK614'],fills:{[amritsar.id]:{color:'#123456',pattern:'dots'}},areaNames:{[amritsar.id]:'My Amritsar'}});
 const key='punjab-studio-regional-v2',output='outputs/map-navigation';await fs.mkdir(output,{recursive:true});
@@ -37,7 +37,10 @@ try{
  await history('sikh-1839');assert.ok(await page.getByRole('button',{name:'Normal map',exact:true}).isEnabled());await menu();await page.screenshot({path:output+'/history-toolbar.png'});await page.keyboard.press('Escape');
  await page.getByRole('button',{name:'Normal map',exact:true}).click();await idle();assert.deepEqual(await saved(),edited);assert.equal(await page.getByLabel('Empire legend').count(),0);
  await history('maurya-250-bce');await page.getByLabel('Historical empire').selectOption('none');await idle();assert.deepEqual(await saved(),edited,'Existing Off control uses the same restore behavior');
- await page.getByLabel('History case study').selectOption('sikh-heritage-core');await idle();await paint('PK609','Gujranwala','#d54c70');
+ // Exercise navigation for an existing saved case-study map through settings import.
+ const legacy=model.validate({...edited,...navigation.recordHistoryChange(edited,study.caseStudyLoadPreset(edited))});
+ await fs.writeFile(output+'/legacy-settings.json',JSON.stringify(legacy));
+ await page.locator('input[type=file]').first().setInputFiles(output+'/legacy-settings.json');await idle();await paint('PK609','Gujranwala','#d54c70');
  const card=page.locator('.area-search-card[data-area="PK609"]');await card.getByRole('button',{name:'Rename Gujranwala',exact:true}).click();const inspector=page.getByRole('complementary',{name:'Inspected area',exact:true});await inspector.getByLabel('Area display name').fill('My edited Gujranwala');await inspector.getByRole('button',{name:'Save name',exact:true}).click();await idle();await card.getByRole('button',{name:'Hide Gujranwala',exact:true}).click();await idle();
  await history('mughal-late-1600s');const historyDraft=await saved();assert.equal(historyDraft.historyReturn.before.title,edited.title);
  await page.getByRole('button',{name:'Save',exact:true}).click();const dialog=page.getByRole('dialog');await dialog.getByLabel('Map name',{exact:true}).fill('History return test');await dialog.getByRole('button',{name:'Save map',exact:true}).click();await dialog.getByRole('button',{name:'Save changes',exact:true}).waitFor();await dialog.getByRole('button',{name:'Close',exact:true}).click();await dialog.waitFor({state:'hidden'});
@@ -46,6 +49,6 @@ try{
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await menu();const box=await popup.boundingBox();assert.ok(box.x>=0&&box.x+box.width<=390+1,'Mobile popup stays within the screen');await page.screenshot({path:output+'/mobile-menu.png'});await popup.getByRole('button',{name:/Complete map/}).click();await idle();await choose('Selected map');assert.deepEqual(await saved(),normal);
  await page.getByRole('button',{name:'My maps',exact:true}).click();await dialog.getByRole('button',{name:'Open History return test',exact:true}).click();await idle();assert.equal((await saved()).empireId,'mughal-late-1600s');await page.getByRole('button',{name:'Normal map',exact:true}).click();await idle();assert.deepEqual(await saved(),normal,'A reopened named history map can also return to normal');
  await choose('Complete map');await page.getByRole('tab',{name:'Areas',exact:true}).click();await page.getByLabel('Find an area',{exact:true}).fill('Amritsar');await page.locator('.area-search-card[data-area="'+amritsar.id+'"]').getByRole('button',{name:'Show only Amritsar',exact:true}).click();await idle();const changed=await saved();assert.equal(changed.viewReturn,null);assert.deepEqual(changed.scopeAreas,[amritsar.id]);await page.locator('.settings .inspector-close').click();await choose('Selected map');assert.deepEqual(await saved(),changed,'An explicit new selection replaces the earlier remembered combination');
- assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);console.log('Verified floating normal/complete/selected/focus controls, camera and SVG extent, empire Off, edited case-study colors/names/hidden areas, reload, named-map reopening, keyboard dismissal and mobile popup.');
+ assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);console.log('Verified floating normal/complete/selected/focus controls, camera and SVG extent, empire Off, saved case-study colors/names/hidden areas, reload, named-map reopening, keyboard dismissal and mobile popup.');
  }
 }catch(error){console.error('Page errors:',errors,'HTTP errors:',failed);await page.screenshot({path:output+'/failure.png'}).catch(()=>{});throw error;}finally{await browser.close();}

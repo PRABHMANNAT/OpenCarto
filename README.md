@@ -69,27 +69,15 @@ John Walker's map of territory at Ranjit Singh's death. Their assumptions differ
 Turning History off restores the user's retained paints. Census overlays also
 retain those paints while showing their own colors on a neutral background.
 
-### Sikh military & heritage case study
+### Previously saved heritage maps
 
-In **History → Case study**, load **Sikh military & heritage · United Punjab core**.
-It reproduces the supplied scenario’s selection and colors: all 23 Indian Punjab
-districts and Chandigarh, selected Pakistani Punjab districts and partial tehsils,
-and twelve specific KP frontier tehsils. The panel lists included units and
-exclusions and shows the supplied reference image. **Focus Lahore selection**
-zooms to City, Shalimar and Cantonment; Model Town and Raiwind are excluded.
-
-This is an editable **hypothetical / alternate-history administrative case study**,
-not a dated Sikh Empire frontier or a current political or legal boundary.
-Military and heritage labels are commemorative scenario names. Existing atlas
-boundary editions are retained; the three Lahore polygons are from OpenStreetMap,
-retrieved 10 October 2026 UTC (11 October in India), newer than the reference’s
-August snapshot. The [case-study manifest](app/case-study-data.json) records the
-selection and image hash; [Lahore provenance](app/case-study-lahore-sources.json)
-records relation IDs, versions, coordinates, dates and **ODbL-1.0** attribution.
-The reference image retains its supplied source terms.
-
-The preset loads ordinary editable paints and display names. Undo restores the
-previous map. Its caption and boundary qualification carry into exports.
+History contains the historical empire controls. The Sikh military and heritage
+case-study selector, load button and reference panel have been removed.
+Previously saved case-study maps still open with their editable colors, names,
+geometry and scenario caption. Their caption and boundary qualification remain
+in exports. The [case-study manifest](app/case-study-data.json) and
+[Lahore provenance](app/case-study-lahore-sources.json) retain source details for
+these saved maps, including OpenStreetMap **ODbL-1.0** attribution.
 
 ### Custom area names
 
@@ -390,17 +378,17 @@ files must be under 1 MB. Invalid lists leave your existing palette intact.
 Palette, current color, advance setting and position persist in autosave, named
 custom maps and settings downloads. Paint and advancement undo together.
 
-The Sikh military & heritage case study now opens with all available states and
-provinces around its colored core, including the full Pakistan province layer.
-**View → Selected map** focuses the original core; **Complete map** restores the
-context without recoloring your work. Normal map restores the earlier map.
+For previously saved Sikh military and heritage maps, **View → Complete map**
+shows all available states and provinces around the colored core, including the
+full Pakistan province layer. **Selected map** restores the original core without
+recoloring your work. Normal map restores the earlier map.
 
 ## Saved custom maps
 
-The floating toolbar's **Normal** button exits empire and history case-study
+The floating toolbar's **Normal** button exits empire and saved case-study
 views. It restores the map used before entering history and retains colors,
-names and settings edited afterwards. The existing History tab's Off options
-use the same return behavior. Return settings are included in autosave and
+names and settings edited afterwards. The History tab's empire Off option
+uses the same return behavior. Return settings are included in autosave and
 named maps, so they also work after reloading or reopening a saved map.
 Older historical maps without a stored earlier view return to the atlas and
 remove unchanged preset styling while retaining custom edits.
