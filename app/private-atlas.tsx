@@ -1044,7 +1044,8 @@ function DistrictOverviewPanel({
               .
             </p>
             <p className="ua-data-note">
-              Illustrative alternative-world estimates. Statistics use the same{' '}
+              Fictional allocations reflect religious heritage centres and the
+              urban and rural settlement mix. Statistics use the same{' '}
               {records.length} districts shown on the map, including merged
               districts. Select a district to see its allocation and source
               profile.

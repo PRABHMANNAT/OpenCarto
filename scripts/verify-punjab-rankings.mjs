@@ -72,6 +72,29 @@ try {
     edits,
   );
   const districts = displayed.features.map((feature) => feature.properties);
+  const religiousShare = (name, religion) => {
+    const district = districts.find((item) => item.name === name);
+    return (
+      district.hypotheticalDemographics.religions.find(
+        (item) => item.name === religion,
+      ).population / district.hypotheticalDemographics.total
+    );
+  };
+  assert.ok(religiousShare('Taxila', 'Buddhism') >= 0.2);
+  assert.ok(religiousShare('Katas', 'Hinduism') >= 0.35);
+  for (const name of [
+    'Amritsar',
+    'Kartarpur Sahib',
+    'Nankana Sahib',
+    'Sri Anandpur Sahib',
+    'Tarn Taran',
+    'Sandalbar',
+    'Lahore',
+  ])
+    assert.ok(
+      religiousShare(name, 'Sikhism') >= 0.9,
+      name + ' Sikh majority is served by the API',
+    );
   const divisions = editor.summarizeDistrictDivisions(displayed.features);
   assert.equal(districts.length, 47);
   assert.equal(
@@ -155,6 +178,14 @@ try {
       .sort((a, b) => value(b) - value(a) || a.name.localeCompare(b.name))
       .slice(0, 10);
     await checkRanking('.ua-district-religion-ranking', top10, value);
+    if (religion === 'Buddhism')
+      assert.equal(
+        await page
+          .locator('.ua-district-religion-ranking strong')
+          .first()
+          .innerText(),
+        'Taxila',
+      );
   }
   await picker.selectOption('Hinduism');
   await picker.scrollIntoViewIfNeeded();

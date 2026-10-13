@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { loadLocalModule } from './load-map-model.mjs';
+import {
+  balancePopulation,
+  districtPopulationTargets,
+} from './punjab-population-model.mjs';
 const atlas = JSON.parse(
   await fs.readFile('private/united-atlas/atlas.json', 'utf8'),
 );
@@ -79,6 +83,45 @@ const editor = await loadLocalModule(
   new URL('../app/private-atlas-districts.ts', import.meta.url),
 );
 const source = atlas.details.punjab.district;
+assert.deepEqual(
+  districts.map((district) => district.hypotheticalDemographics.total),
+  districtPopulationTargets(districts),
+  'Religious redistribution preserves every district population',
+);
+const example = balancePopulation(
+  [13, 17, 23],
+  [11, 19, 23],
+  [
+    [9, 1, 3],
+    [2, 11, 4],
+    [4, 7, 12],
+  ],
+);
+assert.deepEqual(
+  example.map((row) => row.reduce((a, b) => a + b, 0)),
+  [13, 17, 23],
+);
+assert.deepEqual(
+  [0, 1, 2].map((column) => example.reduce((sum, row) => sum + row[column], 0)),
+  [11, 19, 23],
+);
+assert.ok(
+  example.flat().every((value) => Number.isSafeInteger(value) && value >= 0),
+);
+assert.deepEqual(
+  balancePopulation(
+    [13, 17, 23],
+    [11, 19, 23],
+    [
+      [9, 1, 3],
+      [2, 11, 4],
+      [4, 7, 12],
+    ],
+  ),
+  example,
+  'Integer allocations are deterministic',
+);
+assert.throws(() => balancePopulation([3], [2], [[1]]), /Invalid population/);
 const edits = editor.defaultDistrictEdits();
 const displayed = editor.styleDistrictFeatures(
   editor.mergeDistrictFeatures(source, edits.groups),
@@ -86,6 +129,73 @@ const displayed = editor.styleDistrictFeatures(
   edits,
 );
 assert.equal(displayed.features.length, 47);
+const religiousCount = (district, religion) =>
+  district.hypotheticalDemographics.religions.find(
+    (item) => item.name === religion,
+  ).population;
+const religiousShare = (district, religion) =>
+  religiousCount(district, religion) / district.hypotheticalDemographics.total;
+const displayedDistricts = displayed.features.map(
+  (feature) => feature.properties,
+);
+const findDistrict = (name) =>
+  displayedDistricts.find((district) => district.name === name);
+const taxila = findDistrict('Taxila');
+assert.ok(
+  religiousShare(taxila, 'Buddhism') >= 0.2,
+  'Taxila needs a substantial Buddhist share',
+);
+assert.ok(
+  religiousCount(taxila, 'Buddhism') > 75000,
+  'Taxila holds over half the scenario Buddhist population',
+);
+assert.equal(
+  [...displayedDistricts].sort(
+    (a, b) => religiousCount(b, 'Buddhism') - religiousCount(a, 'Buddhism'),
+  )[0].name,
+  'Taxila',
+);
+assert.ok(religiousShare(findDistrict('Haripur'), 'Buddhism') >= 0.03);
+assert.ok(religiousShare(findDistrict('Rawalpindi'), 'Buddhism') >= 0.003);
+assert.ok(
+  religiousShare(findDistrict('Katas'), 'Hinduism') >= 0.35,
+  'Merged Katas needs a substantial Hindu community',
+);
+assert.ok(religiousCount(findDistrict('Katas'), 'Hinduism') >= 500000);
+for (const name of [
+  'Amritsar',
+  'Kartarpur Sahib',
+  'Nankana Sahib',
+  'Sri Anandpur Sahib',
+  'Tarn Taran',
+  'Sandalbar',
+  'Lahore',
+])
+  assert.ok(
+    religiousShare(findDistrict(name), 'Sikhism') >= 0.9,
+    name + ' needs a strong Sikh majority',
+  );
+const sikhRanked = [...displayedDistricts].sort(
+  (a, b) => religiousCount(b, 'Sikhism') - religiousCount(a, 'Sikhism'),
+);
+assert.deepEqual(
+  sikhRanked.slice(0, 2).map((district) => district.name),
+  ['Lahore', 'Sandalbar'],
+);
+assert.ok(religiousCount(findDistrict('Lahore'), 'Sikhism') >= 9000000);
+assert.ok(religiousCount(findDistrict('Sandalbar'), 'Sikhism') >= 5000000);
+assert.ok(
+  religiousShare(findDistrict('Sangrur'), 'Islam') >= 0.05,
+  'Retained Malerkotla area increases the Sangrur Muslim allocation',
+);
+assert.ok(religiousShare(findDistrict('Ludhiana'), 'Hinduism') >= 0.3);
+assert.ok(
+  religiousShare(findDistrict('Gurdaspur'), 'Christianity') >
+    400000 / province.total,
+);
+assert.ok(
+  religiousShare(findDistrict('Ludhiana'), 'Jainism') > 200000 / province.total,
+);
 assert.equal(
   editor.sumDistrictDemographics(displayed.features).total,
   province.total,
@@ -151,6 +261,10 @@ for (const division of atlas.details.punjab.division.features) {
     summary.hypotheticalDemographics.total,
     division.properties.hypotheticalDemographics.total,
   );
+  assert.deepEqual(
+    summary.hypotheticalDemographics.religions,
+    division.properties.hypotheticalDemographics.religions,
+  );
   assert.ok(Math.abs(summary.areaKm2 - division.properties.areaKm2) < 0.1);
 }
 // Additional saved merges and renames must keep rankings and totals aligned with the map.
@@ -182,5 +296,5 @@ assert.equal(
 );
 assert.equal(source.features.length, 49, 'Original source records stay intact');
 console.log(
-  '47 displayed district allocations, merged religion totals and density, dynamic ranks, 11 division aggregates, custom merges and attributed galleries verified.',
+  '47 displayed districts, heritage-centred religious distribution, exact district and province totals, integer balancing, density, 11 division aggregates and attributed galleries verified.',
 );

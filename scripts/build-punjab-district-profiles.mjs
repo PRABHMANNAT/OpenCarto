@@ -1,101 +1,20 @@
 import fs from 'node:fs/promises';
+import {
+  allocatePunjabPopulation,
+  easternDistricts as east,
+  populationNote as note,
+  religionTotals as totals,
+} from './punjab-population-model.mjs';
 const file = 'private/united-atlas/atlas.json';
 const atlas = JSON.parse(await fs.readFile(file, 'utf8'));
 const districts = atlas.details.punjab.district.features;
-const weights = {
-  Lahore: 12,
-  Sandalbar: 7,
-  Rawalpindi: 4.8,
-  Ranjitgarh: 4.6,
-  Harappa: 4.5,
-  Ludhiana: 3.6,
-  Sargodha: 3.1,
-  Jhang: 2.6,
-  'Sacha Sauda': 2.8,
-  'Babe Di Ber': 2.6,
-  'Bulleh Shah': 2.5,
-  Dinga: 2.4,
-  Jalandhar: 2.2,
-  Amritsar: 2.2,
-  Patiala: 1.9,
-  Sangrur: 1.9,
-  Hoshiarpur: 1.6,
-  Bathinda: 1.5,
-};
-const east = new Set([
-  'Amritsar',
-  'Barnala',
-  'Bathinda',
-  'Faridkot',
-  'Fatehgarh Sahib',
-  'Fazilka',
-  'Ferozepur',
-  'Gurdaspur',
-  'Hoshiarpur',
-  'Jalandhar',
-  'Kapurthala',
-  'Ludhiana',
-  'Mansa',
-  'Moga',
-  'Pathankot',
-  'Patiala',
-  'Rupnagar',
-  'S A S Nagar',
-  'Sangrur',
-  'Shahid Bhagat Singh Nagar',
-  'Sri Anandpur Sahib',
-  'Sri Muktsar Sahib',
-  'Tarn Taran',
-]);
-const totals = [
-  ['Sikhism', 61000000],
-  ['Hinduism', 16000000],
-  ['Islam', 1700000],
-  ['Christianity', 400000],
-  ['Jainism', 200000],
-  ['Buddhism', 150000],
-  ['Other', 150000],
-];
-const note =
-  'Fictional alternative-world estimate, not a census or forecast. User-set Punjab totals are apportioned by illustrative settlement weights, with higher Sikh shares in western districts and a broader Sikh–Hindu mix in eastern districts. The remaining 9 lakh are modelled as 4 lakh Christian, 2 lakh Jain, 1.5 lakh Buddhist and 1.5 lakh other residents. No real-world demographic or development ranking is implied.';
-for (const d of districts)
-  d.properties.hypotheticalDemographics = { total: 0, religions: [], note };
-for (const [name, total] of totals) {
-  const shares = districts.map((d) => {
-    const p = d.properties,
-      w = weights[p.name] || Math.max(0.45, Math.min(2, p.areaKm2 / 3000)),
-      e = east.has(p.name);
-    return (
-      w *
-      (name === 'Sikhism'
-        ? e
-          ? 0.85
-          : 1.2
-        : name === 'Hinduism'
-          ? e
-            ? 1.8
-            : 0.35
-          : 1)
-    );
-  });
-  const sum = shares.reduce((a, b) => a + b, 0),
-    values = shares.map((w) => (total * w) / sum),
-    counts = values.map(Math.floor);
-  const order = values
-    .map((v, i) => ({ i, remainder: v - counts[i] }))
-    .sort((a, b) => b.remainder - a.remainder || a.i - b.i);
-  for (
-    let i = 0, left = total - counts.reduce((a, b) => a + b, 0);
-    i < left;
-    i++
-  )
-    counts[order[i].i]++;
-  districts.forEach((d, i) => {
-    const s = d.properties.hypotheticalDemographics;
-    s.religions.push({ name, population: counts[i] });
-    s.total += counts[i];
-  });
-}
+const allocations = allocatePunjabPopulation(
+  districts.map((district) => district.properties),
+);
+districts.forEach(
+  (district, index) =>
+    (district.properties.hypotheticalDemographics = allocations[index]),
+);
 const ranked = [...districts].sort(
   (a, b) =>
     b.properties.hypotheticalDemographics.total -
