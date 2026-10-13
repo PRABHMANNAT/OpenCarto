@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { loadLocalModule } from './load-map-model.mjs';
 const atlas = JSON.parse(
   await fs.readFile('private/united-atlas/atlas.json', 'utf8'),
 );
@@ -74,6 +75,112 @@ assert.equal(
   ),
   province.total,
 );
+const editor = await loadLocalModule(
+  new URL('../app/private-atlas-districts.ts', import.meta.url),
+);
+const source = atlas.details.punjab.district;
+const edits = editor.defaultDistrictEdits();
+const displayed = editor.styleDistrictFeatures(
+  editor.mergeDistrictFeatures(source, edits.groups),
+  source,
+  edits,
+);
+assert.equal(displayed.features.length, 47);
+assert.equal(
+  editor.sumDistrictDemographics(displayed.features).total,
+  province.total,
+);
+assert.deepEqual(
+  editor.sumDistrictDemographics(displayed.features).religions,
+  province.religions,
+);
+assert.equal(
+  new Set(displayed.features.map((f) => f.properties.populationRank)).size,
+  47,
+);
+assert.equal(
+  Math.max(...displayed.features.map((f) => f.properties.populationRank)),
+  47,
+);
+for (const group of edits.groups) {
+  const members = source.features.filter((f) =>
+    group.members.includes(f.properties.id),
+  );
+  const merged = displayed.features.find(
+    (f) => f.properties.id === group.id,
+  ).properties;
+  const total = members.reduce(
+    (n, f) => n + f.properties.hypotheticalDemographics.total,
+    0,
+  );
+  assert.equal(merged.hypotheticalDemographics.total, total);
+  assert.deepEqual(
+    merged.hypotheticalDemographics,
+    editor.sumDistrictDemographics(members),
+  );
+  assert.equal(
+    merged.areaKm2,
+    members.reduce((n, f) => n + f.properties.areaKm2, 0),
+  );
+  assert.equal(
+    merged.tehsilCount,
+    members.reduce((n, f) => n + f.properties.tehsilCount, 0),
+  );
+  assert.equal(merged.density, Math.round(total / merged.areaKm2));
+  assert.ok(
+    !displayed.features.some((f) =>
+      group.members.slice(1).includes(f.properties.id),
+    ),
+  );
+}
+const summaries = editor.summarizeDistrictDivisions(displayed.features);
+assert.equal(summaries.length, 11);
+assert.equal(
+  summaries.reduce((n, d) => n + d.districtCount, 0),
+  47,
+);
+assert.equal(
+  summaries.reduce((n, d) => n + d.hypotheticalDemographics.total, 0),
+  province.total,
+);
+assert.equal(summaries.find((d) => d.name === 'Rawalpindi').districtCount, 6);
+assert.equal(summaries.find((d) => d.name === 'Kartarpur').districtCount, 5);
+for (const division of atlas.details.punjab.division.features) {
+  const summary = summaries.find((d) => d.name === division.properties.name);
+  assert.equal(
+    summary.hypotheticalDemographics.total,
+    division.properties.hypotheticalDemographics.total,
+  );
+  assert.ok(Math.abs(summary.areaKm2 - division.properties.areaKm2) < 0.1);
+}
+// Additional saved merges and renames must keep rankings and totals aligned with the map.
+const custom = editor.mergeEditedDistricts(
+  edits,
+  'punjab-d-lahore',
+  'punjab-d-nankana-sahib',
+  displayed,
+);
+custom.names['punjab-d-lahore'] = 'Lahore union';
+const customized = editor.styleDistrictFeatures(
+  editor.mergeDistrictFeatures(source, custom.groups),
+  source,
+  custom,
+);
+assert.equal(customized.features.length, 46);
+assert.equal(
+  customized.features.find((f) => f.properties.id === 'punjab-d-lahore')
+    .properties.name,
+  'Lahore union',
+);
+assert.equal(
+  editor.sumDistrictDemographics(customized.features).total,
+  province.total,
+);
+assert.equal(
+  Math.max(...customized.features.map((f) => f.properties.populationRank)),
+  46,
+);
+assert.equal(source.features.length, 49, 'Original source records stay intact');
 console.log(
-  '49 district allocations, exact province totals, geography and attributed galleries verified.',
+  '47 displayed district allocations, merged religion totals and density, dynamic ranks, 11 division aggregates, custom merges and attributed galleries verified.',
 );

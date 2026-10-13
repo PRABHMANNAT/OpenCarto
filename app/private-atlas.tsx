@@ -43,7 +43,10 @@ import {
   readDistrictEdits,
   styleDistrictFeatures,
   styleTehsilFeatures,
+  sumDistrictDemographics,
+  summarizeDistrictDivisions,
   type DistrictEdits,
+  type HypotheticalDemographics,
   type TehsilColorMode,
 } from './private-atlas-districts';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -54,11 +57,6 @@ type Census = {
   population: number;
   languages: { name: string; share: number }[];
   religions: { name: string; share: number }[];
-};
-type HypotheticalDemographics = {
-  total: number;
-  religions: { name: string; population: number }[];
-  note: string;
 };
 type Photo = {
   url: string;
@@ -224,12 +222,14 @@ type DistrictInfo = {
 function DistrictProfile({
   district,
   areaRank,
+  districtCount,
   onBack,
   onEdit,
   onIsolate,
 }: {
   district: DistrictInfo;
   areaRank: number;
+  districtCount: number;
   onBack: () => void;
   onEdit: () => void;
   onIsolate?: () => void;
@@ -276,7 +276,9 @@ function DistrictProfile({
           </div>
           <div>
             <dt>Area rank</dt>
-            <dd>#{areaRank} of 49</dd>
+            <dd>
+              #{areaRank} of {districtCount}
+            </dd>
           </div>
           <div>
             <dt>Mapped tehsils</dt>
@@ -293,7 +295,9 @@ function DistrictProfile({
               </div>
               <div>
                 <dt>Population rank · fictional</dt>
-                <dd>#{district.populationRank} of 49</dd>
+                <dd>
+                  #{district.populationRank} of {districtCount}
+                </dd>
               </div>
               <div>
                 <dt>Density · fictional</dt>
@@ -612,6 +616,50 @@ function PhotoGallery({
   );
 }
 
+function RankingList({
+  entries,
+  className = '',
+  label,
+  formatValue,
+  onSelect,
+}: {
+  entries: { id: string; name: string; context: string; value: number }[];
+  className?: string;
+  label: string;
+  formatValue: (value: number) => string;
+  onSelect?: (id: string) => void;
+}) {
+  return (
+    <ol className={`ua-area-ranking ${className}`} aria-label={label}>
+      {entries.map((entry, index) => {
+        const content = (
+          <>
+            <b>{index + 1}</b>
+            <span>
+              <strong>{entry.name}</strong>
+              <small>{entry.context}</small>
+            </span>
+            <em title={entry.value.toLocaleString('en-IN')}>
+              {formatValue(entry.value)}
+            </em>
+          </>
+        );
+        return (
+          <li key={entry.id}>
+            {onSelect ? (
+              <button type="button" onClick={() => onSelect(entry.id)}>
+                {content}
+              </button>
+            ) : (
+              <div>{content}</div>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 function DivisionPanel({
   divisions,
   active,
@@ -644,6 +692,17 @@ function DivisionPanel({
   )[0];
   const activeAreaRank = info
     ? ranked.findIndex((feature) => feature.properties?.id === info.id) + 1
+    : 0;
+  const populationRanked = [...divisions].sort(
+    (a, b) =>
+      Number(b.properties?.hypotheticalDemographics?.total || 0) -
+        Number(a.properties?.hypotheticalDemographics?.total || 0) ||
+      String(a.properties?.name).localeCompare(String(b.properties?.name)),
+  );
+  const activePopulationRank = info
+    ? populationRanked.findIndex(
+        (feature) => feature.properties?.id === info.id,
+      ) + 1
     : 0;
   return (
     <article
@@ -720,12 +779,20 @@ function DivisionPanel({
                 <dd>{info.tehsilCount}</dd>
               </div>
               {info.hypotheticalDemographics && (
-                <div>
-                  <dt>Estimated population · fictional</dt>
-                  <dd>
-                    {formatPopulation(info.hypotheticalDemographics.total)}
-                  </dd>
-                </div>
+                <>
+                  <div>
+                    <dt>Estimated population · fictional</dt>
+                    <dd>
+                      {formatPopulation(info.hypotheticalDemographics.total)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Population rank · fictional</dt>
+                    <dd>
+                      #{activePopulationRank} of {divisions.length}
+                    </dd>
+                  </div>
+                </>
               )}
             </dl>
             <button
@@ -811,7 +878,7 @@ function DivisionPanel({
             </div>
           </div>
           <h3>Division area ranking</h3>
-          <ol className="ua-area-ranking">
+          <ol className="ua-area-ranking ua-division-area-ranking">
             {ranked.map((feature, index) => (
               <li key={String(feature.properties?.id)}>
                 <button type="button" onClick={() => onPick(feature)}>
@@ -820,21 +887,61 @@ function DivisionPanel({
                     <strong>{String(feature.properties?.name)}</strong>
                     <small>HQ: {String(feature.properties?.capital)}</small>
                   </span>
-                  <em>{format(Number(feature.properties?.areaKm2))} km²</em>
+                  <em
+                    title={Number(feature.properties?.areaKm2).toLocaleString(
+                      'en-IN',
+                    )}
+                  >
+                    {format(Number(feature.properties?.areaKm2))} km²
+                  </em>
                 </button>
               </li>
             ))}
           </ol>
+          <h3>Division population ranking · fictional</h3>
+          <RankingList
+            className="ua-division-population-ranking"
+            label="Divisions ranked by population"
+            entries={populationRanked.map((feature) => ({
+              id: String(feature.properties?.id),
+              name: String(feature.properties?.name),
+              context: `HQ: ${feature.properties?.capital}`,
+              value: Number(
+                feature.properties?.hypotheticalDemographics?.total || 0,
+              ),
+            }))}
+            formatValue={formatPopulation}
+            onSelect={(id) => {
+              const feature = divisions.find(
+                (division) => division.properties?.id === id,
+              );
+              if (feature) onPick(feature);
+            }}
+          />
           <p className="ua-data-note">
-            Areas are measured from the proposed district unions. Comparable
-            population and development rankings are not available for these
-            proposed divisions.
+            Areas are measured from the proposed district unions. Population
+            ranks sum the fictional allocations of the displayed districts.
           </p>
         </div>
       )}
     </article>
   );
 }
+
+const religionPopulationLabels: Record<string, string> = {
+  Sikhism: 'Sikh',
+  Hinduism: 'Hindu',
+  Islam: 'Islam',
+  Christianity: 'Christian',
+  Jainism: 'Jain',
+  Buddhism: 'Buddhist',
+  Other: 'other communities',
+};
+const byRankingValue =
+  <T extends { name: string }>(value: (record: T) => number) =>
+  (a: T, b: T) =>
+    value(b) - value(a) || a.name.localeCompare(b.name);
+const formatArea = (value: number) => format(value) + ' km²';
 
 function DistrictOverviewPanel({
   districts,
@@ -845,16 +952,68 @@ function DistrictOverviewPanel({
   loading: boolean;
   onSelect: (id: string) => void;
 }) {
+  const [religion, setReligion] = useState('Sikhism');
   const records = districts.map(
     (feature) => feature.properties as DistrictInfo,
   );
-  const ranked = [...records].sort((a, b) => b.areaKm2 - a.areaKm2);
+  const scenario = sumDistrictDemographics(districts);
+  const religions = scenario?.religions.map((item) => item.name) || [];
+  const selectedReligion = religions.includes(religion)
+    ? religion
+    : religions[0] || 'Sikhism';
+  const areaRanked = [...records].sort(
+    byRankingValue((record: DistrictInfo) => record.areaKm2),
+  );
+  const population = (record: DistrictInfo) =>
+    record.hypotheticalDemographics?.total || 0;
+  const populationRanked = [...records].sort(byRankingValue(population));
+  const religionPopulation = (record: DistrictInfo) =>
+    record.hypotheticalDemographics?.religions.find(
+      (item) => item.name === selectedReligion,
+    )?.population || 0;
+  const religionRanked = [...records]
+    .sort(byRankingValue(religionPopulation))
+    .slice(0, 10);
+  const divisions = summarizeDistrictDivisions(districts);
+  const divisionAreaRanked = [...divisions].sort(
+    byRankingValue((division: (typeof divisions)[number]) => division.areaKm2),
+  );
+  const divisionPopulationRanked = [...divisions].sort(
+    byRankingValue(
+      (division: (typeof divisions)[number]) =>
+        division.hypotheticalDemographics?.total || 0,
+    ),
+  );
   const alphabetical = [...records].sort((a, b) =>
     a.name.localeCompare(b.name),
   );
   const mostTehsils = [...records].sort(
     (a, b) => b.tehsilCount - a.tehsilCount,
   )[0];
+  const districtEntries = (
+    ranked: DistrictInfo[],
+    value: (record: DistrictInfo) => number,
+  ) =>
+    ranked.map((record) => ({
+      id: record.id,
+      name: record.name,
+      context: record.division + ' Division',
+      value: value(record),
+    }));
+  const divisionEntries = (
+    ranked: typeof divisions,
+    value: (division: (typeof divisions)[number]) => number,
+  ) =>
+    ranked.map((division) => ({
+      id: division.name,
+      name: division.name,
+      context: division.districtCount + ' districts · HQ: ' + division.capital,
+      value: value(division),
+    }));
+  const religionHeading =
+    'Top 10 districts by ' +
+    (religionPopulationLabels[selectedReligion] || selectedReligion) +
+    ' population';
   return (
     <article
       className="ua-profile ua-district-overview"
@@ -863,7 +1022,10 @@ function DistrictOverviewPanel({
       <div className="ua-profile-heading">
         <span className="ua-kicker">PUNJAB · PROPOSED DISTRICTS</span>
         <h2>Punjab districts</h2>
-        <p>{records.length} districts with mapped area and headquarters</p>
+        <p>
+          {records.length} districts · {divisions.length} divisions · ranked
+          largest first
+        </p>
       </div>
       <div className="ua-division-content">
         {loading ? (
@@ -872,50 +1034,31 @@ function DistrictOverviewPanel({
           <>
             <h3>Population · fictional scenario</h3>
             <p>
-              Punjab: <strong>7.96 crore</strong> · Sikhism 6.1 crore · Hinduism
-              1.6 crore · Islam 17 lakh · other communities 9 lakh.
+              Punjab: <strong>{formatPopulation(scenario?.total || 0)}</strong>{' '}
+              ·{' '}
+              {scenario?.religions
+                .map(
+                  (item) => item.name + ' ' + formatPopulation(item.population),
+                )
+                .join(' · ')}
+              .
             </p>
             <p className="ua-data-note">
-              Illustrative alternative-world estimates, not real census figures.
-              Select a district to see its allocation and source profile.
+              Illustrative alternative-world estimates. Statistics use the same{' '}
+              {records.length} districts shown on the map, including merged
+              districts. Select a district to see its allocation and source
+              profile.
             </p>
-            <details>
-              <summary>District population ranking · fictional</summary>
-              <ol className="ua-area-ranking">
-                {[...records]
-                  .sort(
-                    (a, b) =>
-                      (b.hypotheticalDemographics?.total || 0) -
-                      (a.hypotheticalDemographics?.total || 0),
-                  )
-                  .map((d, i) => (
-                    <li key={d.id}>
-                      <button type="button" onClick={() => onSelect(d.id)}>
-                        <b>{i + 1}</b>
-                        <span>
-                          <strong>{d.name}</strong>
-                          <small>{d.capital}</small>
-                        </span>
-                        <em>
-                          {formatPopulation(
-                            d.hypotheticalDemographics?.total || 0,
-                          )}
-                        </em>
-                      </button>
-                    </li>
-                  ))}
-              </ol>
-            </details>
             <div className="ua-ranking-highlights">
               <div>
                 <small>Largest district</small>
-                <strong>{ranked[0]?.name}</strong>
-                <span>{format(Number(ranked[0]?.areaKm2))} km²</span>
+                <strong>{areaRanked[0]?.name}</strong>
+                <span>{formatArea(areaRanked[0]?.areaKm2 || 0)}</span>
               </div>
               <div>
                 <small>Smallest district</small>
-                <strong>{ranked.at(-1)?.name}</strong>
-                <span>{format(Number(ranked.at(-1)?.areaKm2))} km²</span>
+                <strong>{areaRanked.at(-1)?.name}</strong>
+                <span>{formatArea(areaRanked.at(-1)?.areaKm2 || 0)}</span>
               </div>
               <div>
                 <small>Most tehsils</small>
@@ -923,51 +1066,128 @@ function DistrictOverviewPanel({
                 <span>{mostTehsils?.tehsilCount} mapped</span>
               </div>
               <div>
-                <small>Development rank</small>
-                <strong>Not available</strong>
-                <span>No comparable index</span>
+                <small>Most populated district</small>
+                <strong>{populationRanked[0]?.name}</strong>
+                <span>
+                  {formatPopulation(
+                    populationRanked[0]?.hypotheticalDemographics?.total || 0,
+                  )}
+                </span>
               </div>
             </div>
-            <h3>District area ranking</h3>
-            <ol className="ua-area-ranking ua-district-area-ranking">
-              {ranked.map((district, index) => (
-                <li key={district.id}>
-                  <div>
-                    <b>{index + 1}</b>
-                    <span>
-                      <strong>{district.name}</strong>
-                      <small>{district.division} Division</small>
-                    </span>
-                    <em>{format(district.areaKm2)} km²</em>
-                  </div>
-                </li>
-              ))}
-            </ol>
-            <h3>District directory</h3>
-            <p className="ua-data-note">
-              All district names are listed alphabetically with their proposed
-              administrative headquarters.
-            </p>
-            <table className="ua-division-districts ua-district-directory">
-              <thead>
-                <tr>
-                  <th>District</th>
-                  <th>Capital / HQ</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alphabetical.map((district) => (
-                  <tr key={district.id}>
-                    <td>{district.name}</td>
-                    <td>{district.capital}</td>
+            <section className="ua-ranking-section">
+              <h3>District area ranking</h3>
+              <p className="ua-data-note">
+                All {records.length} districts · area in km²
+              </p>
+              <RankingList
+                className="ua-district-area-ranking"
+                label="Districts ranked by area"
+                entries={districtEntries(
+                  areaRanked,
+                  (record) => record.areaKm2,
+                )}
+                formatValue={formatArea}
+                onSelect={onSelect}
+              />
+            </section>
+            <section className="ua-ranking-section">
+              <h3>District population ranking · fictional</h3>
+              <p className="ua-data-note">
+                All {records.length} districts · total residents
+              </p>
+              <RankingList
+                className="ua-district-population-ranking"
+                label="Districts ranked by population"
+                entries={districtEntries(populationRanked, population)}
+                formatValue={formatPopulation}
+                onSelect={onSelect}
+              />
+            </section>
+            <section className="ua-ranking-section">
+              <h3>Division area ranking</h3>
+              <p className="ua-data-note">
+                All {divisions.length} divisions · combined district area
+              </p>
+              <RankingList
+                className="ua-division-area-ranking"
+                label="Divisions ranked by area"
+                entries={divisionEntries(
+                  divisionAreaRanked,
+                  (division) => division.areaKm2,
+                )}
+                formatValue={formatArea}
+              />
+            </section>
+            <section className="ua-ranking-section">
+              <h3>Division population ranking · fictional</h3>
+              <p className="ua-data-note">
+                All {divisions.length} divisions · combined district population
+              </p>
+              <RankingList
+                className="ua-division-population-ranking"
+                label="Divisions ranked by population"
+                entries={divisionEntries(
+                  divisionPopulationRanked,
+                  (division) => division.hypotheticalDemographics?.total || 0,
+                )}
+                formatValue={formatPopulation}
+              />
+            </section>
+            <section className="ua-ranking-section ua-religion-ranking">
+              <h3>{religionHeading}</h3>
+              <label className="ua-division-picker">
+                Rank by religious population
+                <select
+                  aria-label="Top 10 districts by religion population"
+                  value={selectedReligion}
+                  onChange={(event) => setReligion(event.currentTarget.value)}
+                >
+                  {religions.map((name) => (
+                    <option key={name} value={name}>
+                      Top 10 districts by{' '}
+                      {religionPopulationLabels[name] || name} population
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <p className="ua-data-note">
+                Ranked by number of residents · fictional scenario
+              </p>
+              <RankingList
+                className="ua-district-religion-ranking"
+                label={religionHeading}
+                entries={districtEntries(religionRanked, religionPopulation)}
+                formatValue={formatPopulation}
+                onSelect={onSelect}
+              />
+            </section>
+            <details className="ua-district-directory-section">
+              <summary>District directory · {records.length} districts</summary>
+              <p className="ua-data-note">
+                Districts listed alphabetically with their proposed
+                headquarters.
+              </p>
+              <table className="ua-division-districts ua-district-directory">
+                <thead>
+                  <tr>
+                    <th>District</th>
+                    <th>Capital / HQ</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {alphabetical.map((district) => (
+                    <tr key={district.id}>
+                      <td>{district.name}</td>
+                      <td>{district.capital}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </details>
             <p className="ua-data-note">
               Area uses WGS84 ellipsoidal polygon measurement. Tehsil counts
-              reflect retained map coverage. No comparable district development
-              index has been established for this proposed geography.
+              reflect retained map coverage.
             </p>
           </>
         )}
@@ -2366,6 +2586,23 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     if (selected !== 'punjab') return mergedDistricts;
     if (level === 'district')
       return styleDistrictFeatures(mergedDistricts, detail, districtEdits);
+    if (level === 'division') {
+      const summaries = summarizeDistrictDivisions(
+        styledPunjabDistricts.features,
+      );
+      return {
+        ...mergedDistricts,
+        features: mergedDistricts.features.map((feature) => ({
+          ...feature,
+          properties: {
+            ...feature.properties,
+            ...summaries.find(
+              (summary) => summary.name === feature.properties?.name,
+            ),
+          },
+        })),
+      };
+    }
     if (level === 'tehsil')
       return styleTehsilFeatures(
         detail,
@@ -2379,6 +2616,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     detail,
     districtSource,
     districtEdits,
+    styledPunjabDistricts,
     tehsilColorMode,
     level,
     selected,
@@ -2386,24 +2624,24 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
   const currentEditingDistrictId =
     editingDistrictId ||
     String(displayedDetail.features[0]?.properties?.id || '');
-  const focusedDistrict = districtSource.features.find(
+  const focusedDistrict = styledPunjabDistricts.features.find(
     (feature) => feature.properties?.id === focusedDistrictId,
   );
   const districtProfile =
     focusedDistrict ||
     (selected === 'punjab' && level === 'district'
-      ? districtSource.features.find(
+      ? styledPunjabDistricts.features.find(
           (feature) => feature.properties?.id === inspected?.properties?.id,
         )
       : undefined);
   const rankedDistrictSource = useMemo(
     () =>
-      [...districtSource.features].sort(
+      [...styledPunjabDistricts.features].sort(
         (a, b) =>
           Number(b.properties?.areaKm2 || 0) -
           Number(a.properties?.areaKm2 || 0),
       ),
-    [districtSource],
+    [styledPunjabDistricts],
   );
   const focusedDistrictStats = districtProfile;
   const focusedDistrictAreaRank = focusedDistrictStats
@@ -2472,12 +2710,13 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
           ...province,
           detailCounts: {
             ...province.detailCounts,
-            district:
-              province.detailCounts.district -
-              districtEdits.groups.reduce(
-                (removed, group) => removed + group.members.length - 1,
-                0,
-              ),
+            district: districtSource.features.length
+              ? styledPunjabDistricts.features.length
+              : province.detailCounts.district -
+                districtEdits.groups.reduce(
+                  (removed, group) => removed + group.members.length - 1,
+                  0,
+                ),
           },
         }
       : province;
@@ -2802,7 +3041,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     async function load() {
       const [result, districts] = await Promise.all([
         loadLevel(level),
-        selected === 'punjab' && level === 'tehsil'
+        selected === 'punjab' && (level === 'tehsil' || level === 'division')
           ? loadLevel('district')
           : Promise.resolve(null),
       ]);
@@ -3067,7 +3306,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                       }
                     >
                       <option value="">All Punjab districts</option>
-                      {[...districtSource.features]
+                      {[...styledPunjabDistricts.features]
                         .sort((a, b) =>
                           String(a.properties?.name).localeCompare(
                             String(b.properties?.name),
@@ -3376,7 +3615,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                       )
                     ) {
                       setInspected(
-                        districtSource.features.find(
+                        styledPunjabDistricts.features.find(
                           (district) => district.properties?.id === id,
                         ) || feature,
                       );
@@ -3625,6 +3864,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                   <DistrictProfile
                     district={districtProfile.properties as DistrictInfo}
                     areaRank={focusedDistrictAreaRank}
+                    districtCount={styledPunjabDistricts.features.length}
                     onBack={() => {
                       setFocusedDistrictId('');
                       setInspected(null);
@@ -3649,11 +3889,11 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                   />
                 ) : selected === 'punjab' && level === 'district' ? (
                   <DistrictOverviewPanel
-                    districts={districtSource.features}
+                    districts={styledPunjabDistricts.features}
                     loading={detailLoading}
                     onSelect={(id) => {
                       setInspected(
-                        districtSource.features.find(
+                        styledPunjabDistricts.features.find(
                           (district) => district.properties?.id === id,
                         ) || null,
                       );

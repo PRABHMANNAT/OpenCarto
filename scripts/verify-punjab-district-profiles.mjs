@@ -1,8 +1,19 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { chromium } from 'playwright';
+import { loadLocalModule } from './load-map-model.mjs';
 const atlas = JSON.parse(
   await fs.readFile('private/united-atlas/atlas.json', 'utf8'),
+);
+const editor = await loadLocalModule(
+  new URL('../app/private-atlas-districts.ts', import.meta.url),
+);
+const source = atlas.details.punjab.district;
+const edits = editor.defaultDistrictEdits();
+const districts = editor.styleDistrictFeatures(
+  editor.mergeDistrictFeatures(source, edits.groups),
+  source,
+  edits,
 );
 const browser = await chromium.launch({
   channel: 'chrome',
@@ -14,7 +25,7 @@ page.setDefaultTimeout(45000);
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 try {
-  await page.goto('http://127.0.0.1:4545/', {
+  await page.goto(process.env.MAP_TEST_URL || 'http://127.0.0.1:4545/', {
     waitUntil: 'networkidle',
     timeout: 120000,
   });
@@ -26,9 +37,9 @@ try {
   await page.getByRole('button', { name: 'Punjab only', exact: true }).click();
   await page.getByLabel('Administrative detail view').selectOption('district');
   const picker = page.getByLabel('Show separate Punjab district');
-  await picker.locator('option').nth(49).waitFor({ state: 'attached' });
-  assert.equal(await picker.locator('option').count(), 50);
-  for (const f of atlas.details.punjab.district.features) {
+  await picker.locator('option').nth(47).waitFor({ state: 'attached' });
+  assert.equal(await picker.locator('option').count(), 48);
+  for (const f of districts.features) {
     const d = f.properties;
     await picker.selectOption(d.id);
     const article = page.getByRole('article', {
@@ -40,7 +51,8 @@ try {
     assert.ok(
       text.includes(d.hypotheticalDemographics.total.toLocaleString('en-IN')),
     );
-    assert.ok(text.includes('#' + d.populationRank + ' of 49'));
+    assert.ok(text.includes('#' + d.populationRank + ' of 47'));
+    assert.ok(!text.includes('of 49'));
     assert.equal(await article.locator('.ua-demographic').count(), 7);
     assert.equal(await article.locator('.ua-gallery img').count(), 1);
   }
@@ -76,7 +88,7 @@ try {
   );
   assert.deepEqual(errors, []);
   console.log(
-    'All 49 district profiles, seven religion rows, exact population, gallery, Lahore photo and mobile layout verified.',
+    'All 47 displayed district profiles, seven religion rows, merged population, gallery, Lahore photo and mobile layout verified.',
   );
 } finally {
   await browser.close();

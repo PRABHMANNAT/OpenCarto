@@ -1,8 +1,23 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { chromium } from 'playwright';
+import { loadLocalModule } from './load-map-model.mjs';
 
 const url = process.env.MAP_TEST_URL || 'http://127.0.0.1:4545/';
+const atlas = JSON.parse(
+  await fs.readFile('private/united-atlas/atlas.json', 'utf8'),
+);
+const editor = await loadLocalModule(
+  new URL('../app/private-atlas-districts.ts', import.meta.url),
+);
+const source = atlas.details.punjab.district;
+const edits = editor.defaultDistrictEdits();
+const displayed = editor.styleDistrictFeatures(
+  editor.mergeDistrictFeatures(source, edits.groups),
+  source,
+  edits,
+);
+const divisionSummaries = editor.summarizeDistrictDivisions(displayed.features);
 const browser = await chromium.launch({
   channel: 'chrome',
   headless: true,
@@ -82,9 +97,13 @@ try {
       '#BDD5E3',
     ],
   );
-  assert.equal(await page.locator('.ua-area-ranking li').count(), 11);
+  assert.equal(await page.locator('.ua-division-area-ranking li').count(), 11);
+  assert.equal(
+    await page.locator('.ua-division-population-ranking li').count(),
+    11,
+  );
   const divisionRanking = await page
-    .locator('.ua-area-ranking em')
+    .locator('.ua-division-area-ranking em')
     .allTextContents();
   const rankedAreas = divisionRanking.map((text) =>
     Number(text.replace(/[^0-9.]/g, '')),
@@ -127,9 +146,16 @@ try {
       await profile.locator('.ua-division-facts').innerText(),
       /Area rank\s+#\d+ of 11/,
     );
-    assert.equal(await profile.locator('tbody tr').count(), info.districtCount);
+    const summary = divisionSummaries.find(
+      (division) => division.name === info.name,
+    );
+    assert.equal(
+      await profile.locator('tbody tr').count(),
+      summary.districtCount,
+    );
     const rows = await profile.locator('tbody').innerText();
-    for (const name of info.memberDistricts) assert.ok(rows.includes(name));
+    for (const district of summary.districtStats)
+      assert.ok(rows.includes(district.name));
     await profile
       .locator('.ua-gallery img')
       .evaluate((image) => image.decode());
@@ -186,11 +212,11 @@ try {
     .waitFor();
   assert.equal(
     await districtOverview.locator('.ua-district-area-ranking li').count(),
-    49,
+    47,
   );
   assert.equal(
     await districtOverview.locator('.ua-district-directory tbody tr').count(),
-    49,
+    47,
   );
   const directoryNames = await districtOverview
     .locator('.ua-district-directory tbody td:first-child')
@@ -206,7 +232,7 @@ try {
     .locator('.ua-single-district .ua-division-facts')
     .innerText();
   assert.match(districtFacts, /Headquarters\s+Rawalpindi/);
-  assert.match(districtFacts, /Area rank\s+#\d+ of 49/);
+  assert.match(districtFacts, /Area rank\s+#\d+ of 47/);
   assert.match(districtFacts, /Estimated population · fictional/);
   await page.getByLabel('Administrative detail view').selectOption('division');
   await page.setViewportSize({ width: 390, height: 844 });
@@ -225,7 +251,7 @@ try {
   assert.equal(await page.locator('.ua-map-error').count(), 0);
   assert.deepEqual(errors, []);
   console.log(
-    'Verified all 11 division profiles and area rankings, all 49 district rankings and capital-directory rows, selected district statistics, attributed images, headquarters controls, full division PNG export and mobile layout.',
+    'Verified all 11 division profiles and area/population rankings, all 47 displayed district rankings and capital-directory rows, selected district statistics, attributed images, headquarters controls, full division PNG export and mobile layout.',
   );
 } catch (error) {
   await page

@@ -18,6 +18,73 @@ export type DistrictEdits = {
   colors: Record<string, string>;
 };
 
+export type HypotheticalDemographics = {
+  total: number;
+  religions: { name: string; population: number }[];
+  note: string;
+};
+
+export function sumDistrictDemographics(
+  features: Feature[],
+): HypotheticalDemographics | undefined {
+  const scenarios = features.map(
+    (feature) =>
+      feature.properties?.hypotheticalDemographics as
+        | HypotheticalDemographics
+        | undefined,
+  );
+  if (!scenarios.length || scenarios.some((scenario) => !scenario))
+    return undefined;
+  const religions = new Map<string, number>();
+  let total = 0;
+  for (const scenario of scenarios) {
+    total += scenario!.total;
+    for (const religion of scenario!.religions)
+      religions.set(
+        religion.name,
+        (religions.get(religion.name) || 0) + religion.population,
+      );
+  }
+  return {
+    total,
+    religions: [...religions].map(([name, population]) => ({
+      name,
+      population,
+    })),
+    note: scenarios[0]!.note,
+  };
+}
+
+export function summarizeDistrictDivisions(districts: Feature[]) {
+  const members = new Map<string, Feature[]>();
+  for (const district of districts) {
+    const name = String(district.properties?.division || '');
+    if (!members.has(name)) members.set(name, []);
+    members.get(name)!.push(district);
+  }
+  return [...members].map(([name, features]) => ({
+    name,
+    capital: String(features[0].properties?.divisionCapital || ''),
+    areaKm2: features.reduce(
+      (total, feature) => total + Number(feature.properties?.areaKm2 || 0),
+      0,
+    ),
+    districtCount: features.length,
+    tehsilCount: features.reduce(
+      (total, feature) => total + Number(feature.properties?.tehsilCount || 0),
+      0,
+    ),
+    districtStats: features
+      .map((feature) => ({
+        name: String(feature.properties?.name),
+        areaKm2: Number(feature.properties?.areaKm2 || 0),
+        tehsilCount: Number(feature.properties?.tehsilCount || 0),
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    hypotheticalDemographics: sumDistrictDemographics(features),
+  }));
+}
+
 export const districtEditsStorageKey = 'private-atlas-punjab-districts-v1';
 
 export function defaultDistrictEdits(): DistrictEdits {
@@ -169,18 +236,53 @@ export function mergeDistrictFeatures(
             total + Number(feature.properties?.tehsilCount || 0),
           0,
         ),
+        hypotheticalDemographics: sumDistrictDemographics(features),
+        sourceName: [
+          ...new Set(
+            features
+              .map((feature) => feature.properties?.sourceName)
+              .filter(Boolean),
+          ),
+        ].join(' + '),
+        keyCities: [
+          ...new Set(
+            features.flatMap((feature) => feature.properties?.keyCities || []),
+          ),
+        ],
         mergedFrom: names,
         reason: `Merged ${names.join(' and ')} for this editable proposal; original source boundaries are retained in the atlas dataset.`,
       },
     });
     group.members.slice(1).forEach((id) => hidden.add(id));
   }
+  const features = source.features.flatMap((feature) => {
+    const id = districtId(feature);
+    return hidden.has(id) ? [] : [replaced.get(id) || feature];
+  });
+  const ranked = [...features].sort(
+    (a, b) =>
+      Number(b.properties?.hypotheticalDemographics?.total || 0) -
+        Number(a.properties?.hypotheticalDemographics?.total || 0) ||
+      String(a.properties?.name).localeCompare(String(b.properties?.name)),
+  );
+  const populationRanks = new Map(
+    ranked.map((feature, index) => [districtId(feature), index + 1]),
+  );
   return {
     type: 'FeatureCollection',
-    features: source.features.flatMap((feature) => {
-      const id = districtId(feature);
-      return hidden.has(id) ? [] : [replaced.get(id) || feature];
-    }),
+    features: features.map((feature) => ({
+      ...feature,
+      properties: {
+        ...feature.properties,
+        populationRank: populationRanks.get(districtId(feature)),
+        density: feature.properties?.hypotheticalDemographics
+          ? Math.round(
+              feature.properties.hypotheticalDemographics.total /
+                feature.properties.areaKm2,
+            )
+          : undefined,
+      },
+    })),
   };
 }
 

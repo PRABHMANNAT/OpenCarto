@@ -781,6 +781,21 @@
   color: #607785;
   font-size: 11px;
 }
+.ua-ranking-section {
+  margin-bottom: 24px;
+}
+.ua-religion-ranking .ua-division-picker select {
+  width: 100%;
+  min-width: 0;
+}
+.ua-district-directory-section {
+  margin: 24px 0;
+}
+.ua-district-directory-section summary {
+  margin-bottom: 12px;
+  cursor: pointer;
+  color: #29495e;
+}
 .ua-accent {
   display: block;
   width: 39px;

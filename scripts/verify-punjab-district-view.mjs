@@ -22,7 +22,7 @@ const y = (lat) =>
       Math.PI) /
   2;
 try {
-  await page.goto('http://127.0.0.1:4545/', {
+  await page.goto(process.env.MAP_TEST_URL || 'http://127.0.0.1:4545/', {
     waitUntil: 'networkidle',
     timeout: 120000,
   });
@@ -35,17 +35,18 @@ try {
   await page.getByLabel('Administrative detail view').selectOption('district');
   const picker = page.getByLabel('Show separate Punjab district'),
     map = page.locator('.ua-map');
-  await picker.locator('option').nth(49).waitFor({ state: 'attached' });
+  await picker.locator('option').nth(47).waitFor({ state: 'attached' });
   const count = Number(await map.getAttribute('data-detail-count'));
-  assert.ok(count > 40);
+  assert.equal(count, 47);
   assert.equal(await picker.inputValue(), '');
   const ranking = page.getByRole('article', {
     name: 'Punjab district rankings and directory',
   });
   await ranking
-    .getByText('District population ranking · fictional', { exact: true })
+    .locator('.ua-district-population-ranking')
+    .getByRole('button')
+    .filter({ has: page.getByText('Lahore', { exact: true }) })
     .click();
-  await ranking.getByRole('button').filter({ hasText: 'Lahore' }).click();
   await page
     .getByRole('article', { name: 'Lahore district profile' })
     .waitFor();
