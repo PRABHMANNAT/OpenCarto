@@ -1480,3 +1480,40 @@
   color: #377da5;
   text-decoration: underline;
 }
+
+.ua-province-details {
+  padding: 8px 20px;
+  background: #f3f7f4;
+  border-bottom: 1px solid #dde4df;
+  flex: none;
+  max-height: 128px;
+  overflow-y: auto;
+}
+.ua-province-details p {
+  margin: 0 0 5px;
+  font-size: 11px;
+  color: #526b76;
+}
+.ua-province-details > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ua-province-detail {
+  display: inline-flex;
+}
+.ua-province-detail button {
+  padding: 5px 8px;
+  font-size: 11px;
+}
+.ua-province-detail button:first-child {
+  border-radius: 7px 0 0 7px;
+}
+.ua-province-detail button:last-child {
+  border-radius: 0 7px 7px 0;
+  border-left: 0;
+}
+.ua-province-detail button[aria-pressed=true] {
+  background: #deebe2;
+  border-color: #9cb8a5;
+}

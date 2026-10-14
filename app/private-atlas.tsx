@@ -51,6 +51,7 @@ import {
 } from './private-atlas-districts';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './private-atlas.css';
+import {atlasDetailKey, atlasDetailLabels, provinceDetailsStorageKey, readProvinceDetails, tagAtlasDetail, type AtlasDetailLevel} from './private-atlas-detail';
 
 type Census = {
   year: number;
@@ -2083,9 +2084,8 @@ function AtlasMap({
           });
           map.on('click', 'province-fill', (event) => {
             if (
-              latest.current.level !== 'province' ||
               map?.queryRenderedFeatures(event.point, {
-                layers: ['place-dots'],
+                layers: ['place-dots', 'detail-fill', 'division-headquarters-dots'],
               }).length
             )
               return;
@@ -2093,6 +2093,9 @@ function AtlasMap({
             if (id) latest.current.onSelect(id);
           });
           map.on('click', 'detail-fill', (event) => {
+            if (map?.queryRenderedFeatures(event.point, {
+              layers: ['place-dots', 'division-headquarters-dots'],
+            }).length) return;
             const f = event.features?.[0];
             if (f) latest.current.onDetailInspect(f);
           });
@@ -2221,7 +2224,7 @@ function AtlasMap({
     m.setLayoutProperty(
       'punjab-district-outlines',
       'visibility',
-      selected === 'punjab' && level === 'tehsil' ? 'visible' : 'none',
+      districtOutlines.features.length ? 'visible' : 'none',
     );
     m.setPaintProperty('punjab-district-outlines', 'line-color', colors.border);
     m.setPaintProperty(
@@ -2242,14 +2245,10 @@ function AtlasMap({
     const m = mapRef.current;
     if (!loaded || !m) return;
     const customDetailIds = detail.features
-      .map((feature) => String(feature.properties?.id || ''))
-      .filter((id) =>
-        selected === 'punjab' &&
-        level === 'tehsil' &&
-        tehsilColorMode === 'district'
-          ? false
-          : colors.fills[id],
-      );
+      .filter(feature => !(feature.properties?.atlasProvince === 'punjab' &&
+        feature.properties?.atlasLevel === 'tehsil' && tehsilColorMode === 'district') &&
+        colors.fills[String(feature.properties?.id || '')])
+      .map(feature => String(feature.properties?.id || ''));
     const customDetailColors = Object.fromEntries(
       customDetailIds.map((id) => [id, colors.fills[id]]),
     ) as Record<string, string>;
@@ -2263,15 +2262,12 @@ function AtlasMap({
           }
         : detail,
     );
-    const colored =
-      selected === 'punjab' &&
-      (level === 'division' || level === 'district' || level === 'tehsil');
     m.setPaintProperty(
       'detail-fill',
       'fill-color',
       atlasFillExpression(
         customDetailColors,
-        colored ? ['coalesce', ['get', 'color'], '#ffffff'] : '#ffffff',
+        ['case', ['==', ['get', 'atlasProvince'], 'punjab'], ['coalesce', ['get', 'color'], '#ffffff'], '#ffffff'],
       ),
     );
     m.setPaintProperty(
@@ -2279,18 +2275,14 @@ function AtlasMap({
       'fill-opacity',
       mapStyle === 'satellite'
         ? 0
-        : colored
-          ? mapStyle === 'political'
-            ? 0.9
-            : 0.28
-          : customDetailIds.length
-            ? [
-                'case',
-                ['in', ['get', 'id'], ['literal', customDetailIds]],
-                mapStyle === 'political' ? 0.85 : 0.28,
-                0.08,
-              ]
-            : 0.08,
+        : [
+            'case',
+            ['==', ['get', 'atlasProvince'], 'punjab'],
+            mapStyle === 'political' ? 0.9 : 0.28,
+            ['in', ['get', 'id'], ['literal', customDetailIds]],
+            mapStyle === 'political' ? 0.85 : 0.28,
+            0.08,
+          ],
     );
     m.setPaintProperty('detail-borders', 'line-color', colors.border);
     m.setPaintProperty('detail-borders', 'line-width', colors.borderWidth);
@@ -2299,12 +2291,12 @@ function AtlasMap({
     m.setLayoutProperty(
       'detail-borders',
       'visibility',
-      level === 'province' ? 'none' : 'visible',
+      detail.features.length ? 'visible' : 'none',
     );
     m.setLayoutProperty(
       'detail-labels',
       'visibility',
-      labels && level !== 'province' ? 'visible' : 'none',
+      labels && detail.features.length ? 'visible' : 'none',
     );
   }, [
     detail,
@@ -2341,8 +2333,8 @@ function AtlasMap({
     const headquartersFeatures: FeatureCollection = {
       type: 'FeatureCollection',
       features:
-        level === 'division' && headquarters
-          ? detail.features.flatMap((feature) => {
+        headquarters
+          ? detail.features.filter(feature => feature.properties?.atlasLevel === 'division').flatMap((feature) => {
               const coordinates = feature.properties?.headquartersCoordinates;
               if (!Array.isArray(coordinates) || coordinates.length !== 2)
                 return [];
@@ -2352,6 +2344,8 @@ function AtlasMap({
                   properties: {
                     id: feature.properties?.id,
                     name: feature.properties?.capital,
+                    atlasProvince: feature.properties?.atlasProvince,
+                    atlasLevel: 'division',
                   },
                   geometry: { type: 'Point' as const, coordinates },
                 },
@@ -2506,6 +2500,7 @@ function AtlasMap({
           : detail.features.length
       }
       data-headquarters-visible={headquarters}
+      data-province-details={JSON.stringify(Object.fromEntries(new Map(detail.features.map(feature => [feature.properties?.atlasProvince, feature.properties?.atlasLevel]))))}
       aria-busy={!loaded}
     />
   );
@@ -2528,13 +2523,13 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     [mergeWith, setMergeWith] = useState(''),
     [hover, setHover] = useState(''),
     [query, setQuery] = useState(''),
-    [level, setLevel] = useState<Level>('province'),
+    [provinceDetails, setProvinceDetails] = useState(readProvinceDetails),
+    [loadedDetails, setLoadedDetails] = useState<Record<string, FeatureCollection>>({}),
     [dark, setDark] = useState(false),
     [context, setContext] = useState(false),
     [labels, setLabels] = useState(true),
     [places, setPlaces] = useState(true),
     [headquarters, setHeadquarters] = useState(true),
-    [detail, setDetail] = useState<FeatureCollection>(empty),
     [districtSource, setDistrictSource] = useState<FeatureCollection>(empty),
     [detailLoading, setDetailLoading] = useState(false),
     [precise, setPrecise] = useState<FeatureCollection>(empty),
@@ -2547,16 +2542,19 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     [downloading, setDownloading] = useState(false);
   const map = useRef<GLMap | null>(null),
     sidebar = useRef<HTMLElement | null>(null),
-    requestVersion = useRef(0);
+    detailCache = useRef(new Map<string, FeatureCollection>());
+  const level: Level = selected ? provinceDetails[selected] || 'province' : 'province';
+  function setLevel(next: Level, provinceId = selected) {
+    if (!provinceId) return;
+    setProvinceDetails(current => {
+      const result = {...current};
+      if (next === 'province') delete result[provinceId];
+      else result[provinceId] = next;
+      return result;
+    });
+  }
   const province = data?.provinces.find((p) => p.id === (selected || hover)),
     active = selected || hover;
-  const mergedDistricts = useMemo(
-    () =>
-      selected === 'punjab' && level === 'district'
-        ? mergeDistrictFeatures(detail, districtEdits.groups)
-        : detail,
-    [detail, districtEdits.groups, level, selected],
-  );
   const districtNames = useMemo(
     () => districtDisplayNames(districtSource, districtEdits),
     [districtSource, districtEdits],
@@ -2583,45 +2581,40 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       ) || [],
     [analysis, districtNames],
   );
-  const displayedDetail = useMemo<FeatureCollection>(() => {
-    if (selected !== 'punjab') return mergedDistricts;
-    if (level === 'district')
-      return styleDistrictFeatures(mergedDistricts, detail, districtEdits);
-    if (level === 'division') {
-      const summaries = summarizeDistrictDivisions(
-        styledPunjabDistricts.features,
-      );
-      return {
-        ...mergedDistricts,
-        features: mergedDistricts.features.map((feature) => ({
-          ...feature,
-          properties: {
+  const detailsByProvince = useMemo(() => {
+    const result: Record<string, FeatureCollection> = {};
+    for (const [id, mode] of Object.entries(provinceDetails)) {
+      if (!data?.provinces.some(p => p.id === id && p.detailCounts[mode])) continue;
+      const raw = loadedDetails[atlasDetailKey(id, mode)];
+      if (!raw) continue;
+      let styled = raw;
+      if (id === 'punjab') {
+        if (mode === 'district')
+          styled = styleDistrictFeatures(mergeDistrictFeatures(raw, districtEdits.groups), raw, districtEdits);
+        else if (mode === 'tehsil')
+          styled = styleTehsilFeatures(raw, districtSource, districtEdits, tehsilColorMode);
+        else {
+          const summaries = summarizeDistrictDivisions(styledPunjabDistricts.features);
+          styled = {...raw, features: raw.features.map(feature => ({...feature, properties: {
             ...feature.properties,
-            ...summaries.find(
-              (summary) => summary.name === feature.properties?.name,
-            ),
-          },
-        })),
-      };
+            ...summaries.find(summary => summary.name === feature.properties?.name),
+          }}))};
+        }
+      }
+      result[id] = tagAtlasDetail(styled, id, mode);
     }
-    if (level === 'tehsil')
-      return styleTehsilFeatures(
-        detail,
-        districtSource,
-        districtEdits,
-        tehsilColorMode,
-      );
-    return mergedDistricts;
-  }, [
-    mergedDistricts,
-    detail,
-    districtSource,
-    districtEdits,
-    styledPunjabDistricts,
-    tehsilColorMode,
-    level,
-    selected,
-  ]);
+    return result;
+  }, [data, provinceDetails, loadedDetails, districtSource, districtEdits, styledPunjabDistricts, tehsilColorMode]);
+  const displayedDetail = detailsByProvince[selected] || empty;
+  const nationalDetail = useMemo<FeatureCollection>(() => ({
+    type: 'FeatureCollection',
+    features: Object.values(detailsByProvince).flatMap(collection => collection.features),
+  }), [detailsByProvince]);
+  const enabledProvinceDetails = data?.provinces.filter(p => provinceDetails[p.id] && p.detailCounts[provinceDetails[p.id]]) || [];
+  useEffect(() => {
+    try {localStorage.setItem(provinceDetailsStorageKey, JSON.stringify(provinceDetails));}
+    catch { /* Controls still work when browser storage is unavailable. */ }
+  }, [provinceDetails]);
   const currentEditingDistrictId =
     editingDistrictId ||
     String(displayedDetail.features[0]?.properties?.id || '');
@@ -2821,9 +2814,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     setSelected('');
     setHover('');
     setQuery('');
-    setLevel('province');
     setInspected(null);
-    setDetail(empty);
     if (data && map.current)
       fit(map.current, data.bbox, window.innerWidth < 760);
   }
@@ -2834,9 +2825,6 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       setPunjabOnly(false);
     }
     setSelected(id);
-    setLevel('province');
-    setDetail(empty);
-    setDetailLoading(false);
     setInspected(null);
     if (focus) {
       const p = data?.provinces.find((p) => p.id === id);
@@ -2846,7 +2834,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
   function showPunjabOnly() {
     choose('punjab');
     setPunjabOnly(true);
-    setLevel('district');
+    setLevel('district', 'punjab');
     setPlaces(false);
     setQuery('');
   }
@@ -2885,7 +2873,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     }
     choose('punjab', true);
     setPunjabOnly(true);
-    setLevel('district');
+    setLevel('district', 'punjab');
     setDistrictEditing(true);
     setPlaces(false);
     setQuery('');
@@ -3009,63 +2997,55 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       }
     }
   }
-  // oxlint-disable-next-line react/react-compiler -- Loading state reflects an external protected geometry request; abort stale requests on navigation.
+  // oxlint-disable-next-line react/react-compiler -- Synchronise independently selected server geometry; abort stale requests.
   useEffect(() => {
-    // oxlint-disable-next-line react/react-compiler -- Clear old external geometry and publish the current request's loading state.
-    if (!selected || level === 'province') return;
-    const controller = new AbortController(),
-      version = ++requestVersion.current;
-    // oxlint-disable-next-line react/react-compiler -- Publish loading state for the external detail request.
-    setDetailLoading(true);
+    if (!data) return;
+    const controller = new AbortController();
+    const selections = data.provinces.filter(p => provinceDetails[p.id] && p.detailCounts[provinceDetails[p.id]]);
+    setDetailLoading(selections.some(p => !detailCache.current.has(atlasDetailKey(p.id, provinceDetails[p.id]))));
     setError('');
-    async function loadLevel(requestedLevel: Level) {
-      const result: FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [],
-      };
+    async function loadLevel(id: string, requestedLevel: AtlasDetailLevel) {
+      const key = atlasDetailKey(id, requestedLevel);
+      const cached = detailCache.current.get(key);
+      if (cached) return cached;
+      const result: FeatureCollection = {type: 'FeatureCollection', features: []};
       let offset: number | null = 0;
       do {
         const page: DetailPage = await request<DetailPage>(
-          'action=detail&province=' +
-            encodeURIComponent(selected) +
-            '&level=' +
-            requestedLevel +
-            '&offset=' +
-            offset,
-          { signal: controller.signal },
+          'action=detail&province=' + encodeURIComponent(id) + '&level=' + requestedLevel + '&offset=' + offset,
+          {signal: controller.signal},
         );
         result.features.push(...page.features);
         offset = page.next;
       } while (offset !== null);
+      if (!controller.signal.aborted) detailCache.current.set(key, result);
       return result;
     }
-    async function load() {
-      const [result, districts] = await Promise.all([
-        loadLevel(level),
-        selected === 'punjab' && (level === 'tehsil' || level === 'division')
-          ? loadLevel('district')
-          : Promise.resolve(null),
-      ]);
-      if (version === requestVersion.current) {
-        setDetail(result);
-        if (selected === 'punjab' && level === 'district')
-          setDistrictSource(result);
-        if (districts) setDistrictSource(districts);
+    async function loadProvince(id: string) {
+      const mode = provinceDetails[id];
+      try {
+        const [result, districts] = await Promise.all([
+          loadLevel(id, mode),
+          id === 'punjab' && mode !== 'district' ? loadLevel(id, 'district') : Promise.resolve(null),
+        ]);
+        if (controller.signal.aborted) return;
+        setLoadedDetails(current => ({...current, [atlasDetailKey(id, mode)]: result}));
+        if (id === 'punjab') setDistrictSource(districts || result);
+      } catch (cause) {
+        if (controller.signal.aborted) return;
+        const name = data!.provinces.find(p => p.id === id)?.name || id;
+        setError(name + ': ' + (cause instanceof Error ? cause.message : 'Detail unavailable.'));
+        if (cause instanceof AtlasError && cause.status === 401) setData(null);
       }
     }
-    void load()
-      .catch((e) => {
-        if (!controller.signal.aborted) {
-          setDetail(empty);
-          setError(e instanceof Error ? e.message : 'Detail unavailable.');
-          if (e instanceof AtlasError && e.status === 401) setData(null);
-        }
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setDetailLoading(false);
-      });
+    // Limit concurrent provinces while loading each province's paged source completely.
+    void (async () => {
+      for (let i = 0; i < selections.length && !controller.signal.aborted; i += 4)
+        await Promise.all(selections.slice(i, i + 4).map(p => loadProvince(p.id)));
+      if (!controller.signal.aborted) setDetailLoading(false);
+    })();
     return () => controller.abort();
-  }, [selected, level, data]);
+  }, [provinceDetails, data]);
   async function openResearch() {
     setResearch(true);
     if (analysis && districtSource.features.length) return;
@@ -3259,7 +3239,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                     setInspected(null);
                   }}
                 >
-                  <option value="province">Provinces only</option>
+                  <option value="province">Province outline only</option>
                   {(['division', 'district', 'tehsil'] as Level[]).map((v) => (
                     <option
                       key={v}
@@ -3548,6 +3528,18 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                 )}
               </div>
             </nav>
+            <section className="ua-province-details" aria-label="Active province detail layers">
+              <p>Click a province, then choose its view. Other provinces keep their detail.</p>
+              <div>
+                {enabledProvinceDetails.map(p => <span className="ua-province-detail" key={p.id}>
+                  <button type="button" aria-label={'Select ' + p.name + ' detail'} aria-pressed={selected === p.id} onClick={() => choose(p.id)}>
+                    {p.name} · {atlasDetailLabels[provinceDetails[p.id]]}
+                  </button>
+                  <button type="button" aria-label={'Remove ' + p.name + ' detail'} onClick={() => setLevel('province', p.id)}><X size={13}/></button>
+                </span>)}
+                {!!enabledProvinceDetails.length && <button type="button" onClick={() => {setProvinceDetails({}); setInspected(null); setDistrictEditing(false); setFocusedDistrictId('');}}>Clear all province detail</button>}
+              </div>
+            </section>
             <div className="ua-workspace" data-theme={dark ? 'dark' : 'light'}>
               <div className="ua-map-pane">
                 <AtlasMap
@@ -3591,13 +3583,20 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                             },
                           ],
                         }
-                      : displayedDetail
+                      : punjabOnly ? displayedDetail : nationalDetail
                   }
-                  districtOutlines={styledPunjabDistricts}
+                  districtOutlines={provinceDetails.punjab === 'tehsil' && (!punjabOnly || selected === 'punjab') ? styledPunjabDistricts : empty}
                   tehsilColorMode={tehsilColorMode}
                   precise={precise}
                   onDetailInspect={(feature) => {
                     const id = String(feature.properties?.id || '');
+                    const owner = String(feature.properties?.atlasProvince || '');
+                    if (owner && owner !== selected) {
+                      choose(owner);
+                      setInspected(detailsByProvince[owner]?.features.find(item => item.properties?.id === id) || feature);
+                      sidebar.current?.scrollTo({top: 0});
+                      return;
+                    }
                     if (
                       level !== 'province' &&
                       !feature.properties?.kind &&
@@ -3672,6 +3671,8 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                     {focusedDistrict
                       ? String(focusedDistrict.properties?.name) +
                         ' · separate district'
+                      : !punjabOnly && enabledProvinceDetails.length
+                        ? enabledProvinceDetails.length + ' provinces with detail · national view'
                       : level === 'province'
                         ? punjabOnly
                           ? 'Punjab · proposed province only'
@@ -3691,7 +3692,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                       ? 'Loading protected geometry…'
                       : focusedDistrict
                         ? 'Only this district is shown · choose All Punjab districts to return'
-                        : 'Hover to preview · select to explore · drag or pinch to navigate'}
+                        : 'Click a province to change its detail · drag or pinch to navigate'}
                   </span>
                 </div>
                 {error && (
@@ -3997,7 +3998,6 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                           type="button"
                           onClick={() => {
                             setSelected('');
-                            setLevel('province');
                             setPunjabOnly(false);
                           }}
                           aria-label="Resume hover previews"
@@ -4010,8 +4010,8 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                       province={profileProvince!}
                       onFocus={() => choose(province.id, true)}
                       onDetail={(v) => {
-                        choose(province.id, true);
-                        setLevel(v);
+                        choose(province.id);
+                        setLevel(v, province.id);
                       }}
                     />
                   </>

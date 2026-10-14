@@ -24,6 +24,25 @@ source dates vary; the detailed notes below explain what each layer represents.
 - **Add context:** cities, Delhi metro lines, a 300-entry gurdwara directory, 123 sourced shrine map locations and 65 credited photographs.
 - **Keep and share your work:** local autosave, undo/redo, settings files, and PNG, SVG or JPG exports.
 
+### Detail across multiple provinces in the custom national view
+
+Open **My maps → United Subcontinent — Alternative Political Geography**.
+Click a province on the national map, then use **View** to choose **Districts**,
+**Tehsils / subdistricts**, or **Divisions** where the source provides them.
+Click another province and choose its detail independently. Existing province
+detail stays visible, so districts in one state and tehsils in another can appear
+together without isolating either state or changing the national map extent.
+
+The active province buttons show each setting and let you select or remove it.
+**Province outline only** removes detail from the selected province;
+**Clear all province detail** removes every detail selection. **National overview**
+fits the whole map and retains the selected layers. Browser storage restores the
+settings when you reopen the atlas. PNG exports include the visible combination.
+
+Run `node scripts/verify-national-province-details.mjs` with localhost on port 4545
+to check map clicks, mixed levels, independent changes, Punjab styling, storage,
+PNG export and mobile layout.
+
 ### Search the atlas and manage visibility
 
 Open **Layers**, **Areas**, or **Search map** above the map. The shared **Map
