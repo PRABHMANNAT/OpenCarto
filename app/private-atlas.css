@@ -508,6 +508,19 @@
   background: #fbfcfa;
   scrollbar-width: thin;
 }
+.ua-sidebar[hidden] {
+  display: none;
+}
+.ua-workspace.ua-sidebar-collapsed {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ua-dialog .ua-info-toggle {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
+  box-shadow: 0 2px 7px #213b4c13;
+}
 .ua-district-editor {
   display: flex;
   flex-direction: column;
@@ -1381,6 +1394,20 @@
     border-top: 1px solid #d4dfd5;
     overflow: visible;
     flex: 1;
+  }
+  .ua-workspace.ua-sidebar-collapsed {
+    overflow: hidden;
+  }
+  .ua-sidebar-collapsed .ua-map-pane {
+    height: auto;
+    min-height: 0;
+    flex: 1;
+  }
+  .ua-dialog .ua-info-toggle {
+    top: 11px;
+    right: 11px;
+    padding: 6px 8px;
+    font-size: 10px;
   }
   .ua-footer {
     font-size: 8px;

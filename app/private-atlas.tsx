@@ -1,6 +1,6 @@
 'use client';
 /* oxlint-disable next/no-img-element, jsx-a11y/prefer-tag-over-role -- Plain Vite React uses licensed remote thumbnails and accessible SVG silhouettes. */
-import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback, useId } from 'react';
 import {
   ArrowLeft,
   Globe2,
@@ -17,6 +17,8 @@ import {
   Download,
   Pencil,
   RotateCcw,
+  PanelRightClose,
+  PanelRightOpen,
 } from 'lucide-react';
 import {
   Dialog,
@@ -2515,6 +2517,8 @@ function AtlasMap({
 }
 
 export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const sidebarId = useId();
   const [data, setData] = useState<Overview | null>(null),
     [loading, setLoading] = useState(true),
     [error, setError] = useState(''),
@@ -3552,8 +3556,19 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                 {!!enabledProvinceDetails.length && <button type="button" onClick={() => {setProvinceDetails({}); setInspected(null); setDistrictEditing(false); setFocusedDistrictId('');}}>Clear all province detail</button>}
               </div>
             </section>
-            <div className="ua-workspace" data-theme={dark ? 'dark' : 'light'}>
+            <div className={'ua-workspace' + (sidebarCollapsed ? ' ua-sidebar-collapsed' : '')} data-theme={dark ? 'dark' : 'light'}>
               <div className="ua-map-pane">
+                <button
+                  type="button"
+                  className="ua-info-toggle"
+                  aria-label={sidebarCollapsed ? 'Expand information panel' : 'Collapse information panel'}
+                  aria-expanded={!sidebarCollapsed}
+                  aria-controls={sidebarId}
+                  onClick={() => setSidebarCollapsed(collapsed => !collapsed)}
+                >
+                  {sidebarCollapsed ? <PanelRightOpen size={16}/> : <PanelRightClose size={16}/>}
+                  {sidebarCollapsed ? 'Expand info' : 'Collapse info'}
+                </button>
                 <AtlasMap
                   data={data}
                   active={active}
@@ -3790,7 +3805,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                     </div>
                   )}
               </div>
-              <aside ref={sidebar} className="ua-sidebar">
+              <aside ref={sidebar} id={sidebarId} className="ua-sidebar" aria-label="Atlas information" hidden={sidebarCollapsed}>
                 {districtEditing ? (
                   <DistrictEditor
                     districts={displayedDetail}
