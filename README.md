@@ -39,6 +39,15 @@ The active province buttons show each setting and let you select or remove it.
 fits the whole map and retains the selected layers. Browser storage restores the
 settings when you reopen the atlas. PNG exports include the visible combination.
 
+KP district detail uses a distinct color for each source district. Its tehsil view
+uses the same district colors for all linked tehsils. Selecting a KP tehsil and
+editing its fill changes the color of its parent district and all sibling tehsils.
+State/province borders are darker, thicker, and drawn above detail fills so they
+remain visible when several states show administrative detail.
+
+Run `node scripts/verify-kp-district-colors.mjs` to check district colors, tehsil
+inheritance, recoloring, rendered border contrast, reload and PNG export.
+
 Run `node scripts/verify-national-province-details.mjs` with localhost on port 4545
 to check map clicks, mixed levels, independent changes, Punjab styling, storage,
 PNG export and mobile layout.

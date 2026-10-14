@@ -51,7 +51,7 @@ import {
 } from './private-atlas-districts';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './private-atlas.css';
-import {atlasDetailKey, atlasDetailLabels, provinceDetailsStorageKey, readProvinceDetails, tagAtlasDetail, type AtlasDetailLevel} from './private-atlas-detail';
+import {atlasDetailKey, atlasDetailLabels, nationalBorderColor, provinceDetailsStorageKey, readProvinceDetails, styleKpDetailFeatures, tagAtlasDetail, type AtlasDetailLevel} from './private-atlas-detail';
 
 type Census = {
   year: number;
@@ -1778,15 +1778,15 @@ function AtlasMap({
             type: 'line',
             source: 'provinces',
             paint: {
-              'line-color': '#506375',
+              'line-color': nationalBorderColor,
               'line-width': [
                 'interpolate',
                 ['linear'],
                 ['zoom'],
                 3,
-                0.65,
+                2,
                 8,
-                1.25,
+                3.5,
               ],
             },
           });
@@ -2004,6 +2004,9 @@ function AtlasMap({
             },
           });
           map.moveLayer('disputed-borders', 'province-names');
+          // State edges must remain above opaque district and tehsil fills.
+          map.moveLayer('province-borders', 'province-names');
+          map.moveLayer('province-highlight', 'province-names');
           map.moveLayer('province-names', 'place-names');
           map.addSource('division-headquarters', {
             type: 'geojson',
@@ -2245,8 +2248,9 @@ function AtlasMap({
     const m = mapRef.current;
     if (!loaded || !m) return;
     const customDetailIds = detail.features
-      .filter(feature => !(feature.properties?.atlasProvince === 'punjab' &&
-        feature.properties?.atlasLevel === 'tehsil' && tehsilColorMode === 'district') &&
+      .filter(feature => !(feature.properties?.atlasLevel === 'tehsil' &&
+        (feature.properties?.atlasProvince === 'kp' ||
+          feature.properties?.atlasProvince === 'punjab' && tehsilColorMode === 'district')) &&
         colors.fills[String(feature.properties?.id || '')])
       .map(feature => String(feature.properties?.id || ''));
     const customDetailColors = Object.fromEntries(
@@ -2267,7 +2271,7 @@ function AtlasMap({
       'fill-color',
       atlasFillExpression(
         customDetailColors,
-        ['case', ['==', ['get', 'atlasProvince'], 'punjab'], ['coalesce', ['get', 'color'], '#ffffff'], '#ffffff'],
+        ['coalesce', ['get', 'color'], '#ffffff'],
       ),
     );
     m.setPaintProperty(
@@ -2277,7 +2281,11 @@ function AtlasMap({
         ? 0
         : [
             'case',
-            ['==', ['get', 'atlasProvince'], 'punjab'],
+            ['any',
+              ['==', ['get', 'atlasProvince'], 'punjab'],
+              ['all', ['==', ['get', 'atlasProvince'], 'kp'],
+                ['in', ['get', 'atlasLevel'], ['literal', ['district', 'tehsil']]]],
+            ],
             mapStyle === 'political' ? 0.9 : 0.28,
             ['in', ['get', 'id'], ['literal', customDetailIds]],
             mapStyle === 'political' ? 0.85 : 0.28,
@@ -2455,17 +2463,17 @@ function AtlasMap({
             mapStyle === 'political' ? (dark ? 0.76 : 0.84) : 0.14,
           ],
     );
-    m.setPaintProperty('province-borders', 'line-color', colors.border);
+    m.setPaintProperty('province-borders', 'line-color', nationalBorderColor);
     m.setPaintProperty('province-borders', 'line-width', [
       'interpolate',
       ['linear'],
       ['zoom'],
       3,
-      0.65 * colors.borderWidth,
+      2 * Math.max(1, colors.borderWidth),
       8,
-      1.25 * colors.borderWidth,
+      3.5 * Math.max(1, colors.borderWidth),
     ]);
-    m.setPaintProperty('province-highlight', 'line-color', colors.border);
+    m.setPaintProperty('province-highlight', 'line-color', nationalBorderColor);
     m.setPaintProperty(
       'province-highlight',
       'line-width',
@@ -2601,10 +2609,12 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
           }}))};
         }
       }
+      if (id === 'kp' && (mode === 'district' || mode === 'tehsil'))
+        styled = styleKpDetailFeatures(raw, loadedDetails[atlasDetailKey(id, 'district')] || empty, mode, colors.fills);
       result[id] = tagAtlasDetail(styled, id, mode);
     }
     return result;
-  }, [data, provinceDetails, loadedDetails, districtSource, districtEdits, styledPunjabDistricts, tehsilColorMode]);
+  }, [data, provinceDetails, loadedDetails, districtSource, districtEdits, styledPunjabDistricts, tehsilColorMode, colors.fills]);
   const displayedDetail = detailsByProvince[selected] || empty;
   const nationalDetail = useMemo<FeatureCollection>(() => ({
     type: 'FeatureCollection',
@@ -2669,17 +2679,17 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
   const colorTargetId =
     level === 'province'
       ? selected
-      : selected === 'punjab' &&
+      : (selected === 'kp' || selected === 'punjab' && tehsilColorMode === 'district') &&
           level === 'tehsil' &&
-          tehsilColorMode === 'district'
+          !!colorTarget?.properties?.parentDistrictId
         ? String(colorTarget?.properties?.parentDistrictId || '')
         : String(colorTarget?.properties?.id || '');
   const colorTargetName =
     level === 'province'
       ? province?.name
-      : selected === 'punjab' &&
+      : (selected === 'kp' || selected === 'punjab' && tehsilColorMode === 'district') &&
           level === 'tehsil' &&
-          tehsilColorMode === 'district'
+          !!colorTarget?.properties?.parentDistrictId
         ? String(colorTarget?.properties?.district || '')
         : String(colorTarget?.properties?.name || '');
   const punjabDistrictColor =
@@ -3026,10 +3036,12 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       try {
         const [result, districts] = await Promise.all([
           loadLevel(id, mode),
-          id === 'punjab' && mode !== 'district' ? loadLevel(id, 'district') : Promise.resolve(null),
+          id === 'punjab' && mode !== 'district' || id === 'kp' && mode === 'tehsil' ? loadLevel(id, 'district') : Promise.resolve(null),
         ]);
         if (controller.signal.aborted) return;
-        setLoadedDetails(current => ({...current, [atlasDetailKey(id, mode)]: result}));
+        setLoadedDetails(current => ({...current, [atlasDetailKey(id, mode)]: result,
+          ...(districts ? {[atlasDetailKey(id, 'district')]: districts} : {}),
+        }));
         if (id === 'punjab') setDistrictSource(districts || result);
       } catch (cause) {
         if (controller.signal.aborted) return;
@@ -3335,7 +3347,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                     ? 'District fill'
                     : level === 'division'
                       ? 'Division fill'
-                      : selected === 'punjab' && tehsilColorMode === 'district'
+                      : selected === 'kp' || selected === 'punjab' && tehsilColorMode === 'district'
                         ? 'District fill'
                         : 'Tehsil fill'}
                 <input

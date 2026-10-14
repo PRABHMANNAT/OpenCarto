@@ -1,8 +1,10 @@
 import type {FeatureCollection} from 'geojson';
+import {paletteColor} from './private-atlas-districts';
 
 export type AtlasDetailLevel = 'division' | 'district' | 'tehsil';
 export type ProvinceDetails = Record<string, AtlasDetailLevel>;
 export const provinceDetailsStorageKey = 'private-atlas-province-details-v1';
+export const nationalBorderColor = '#182d3b';
 export const atlasDetailLabels = {
   division: 'Divisions',
   district: 'Districts',
@@ -33,5 +35,43 @@ export function tagAtlasDetail(collection: FeatureCollection, province: string, 
       ...feature,
       properties: {...feature.properties, atlasProvince: province, atlasLevel: level},
     })),
+  };
+}
+
+// KP uses one palette per district, shared by its linked source tehsils.
+export function styleKpDetailFeatures(
+  collection: FeatureCollection,
+  districts: FeatureCollection,
+  level: 'district' | 'tehsil',
+  fills: Record<string, string>,
+): FeatureCollection {
+  const ordered = [...districts.features].sort((a, b) =>
+    String(a.properties?.id).localeCompare(String(b.properties?.id)),
+  );
+  const byId = new Map(ordered.map(feature => [String(feature.properties?.id), feature]));
+  const bySource = new Map(ordered.map(feature => [String(feature.properties?.sourceId), feature]));
+  const byName = new Map(ordered.map(feature => [String(feature.properties?.name), feature]));
+  const colors = new Map(ordered.map((feature, index) => {
+    const id = String(feature.properties?.id);
+    return [id, fills[id] || paletteColor(index)];
+  }));
+  return {
+    ...collection,
+    features: collection.features.map(feature => {
+      const parent = level === 'district' ? feature :
+        byId.get(String(feature.properties?.parentDistrictId || '')) ||
+        bySource.get(String(feature.properties?.sourceParent || '')) ||
+        byName.get(String(feature.properties?.district || ''));
+      if (!parent) return feature;
+      const id = String(parent.properties?.id);
+      return {
+        ...feature,
+        properties: {
+          ...feature.properties,
+          color: colors.get(id),
+          ...(level === 'tehsil' ? {parentDistrictId: id} : {}),
+        },
+      };
+    }),
   };
 }
