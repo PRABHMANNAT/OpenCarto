@@ -1734,6 +1734,7 @@ function AtlasMap({
   inspectedAreaId,
   mapStyle,
   populationMetric,
+  demographicsActive,
   colors,
   districtEditing,
   editingDistrictId,
@@ -1761,6 +1762,7 @@ function AtlasMap({
   inspectedAreaId: string;
   mapStyle: MapStyle;
   populationMetric: DemographicMetric;
+  demographicsActive: boolean;
   colors: AtlasColors;
   districtEditing: boolean;
   editingDistrictId: string;
@@ -1781,10 +1783,14 @@ function AtlasMap({
   onDetailInspect: (feature: Feature) => void;
 }) {
   const host = useRef<HTMLDivElement>(null),
-    latest = useRef({ onSelect, onHover, onError, onDetailInspect, level, populationMetric });
+    latest = useRef({ onSelect, onHover, onError, onDetailInspect, level, populationMetric, demographicsActive });
+  const demographicPopupRef = useRef<{remove: () => void} | null>(null);
   useEffect(() => {
-    latest.current = { onSelect, onHover, onError, onDetailInspect, level, populationMetric };
-  }, [onSelect, onHover, onError, onDetailInspect, level, populationMetric]);
+    latest.current = { onSelect, onHover, onError, onDetailInspect, level, populationMetric, demographicsActive };
+  }, [onSelect, onHover, onError, onDetailInspect, level, populationMetric, demographicsActive]);
+  useEffect(() => {
+    demographicPopupRef.current?.remove();
+  }, [demographicsActive, detail]);
   const [loaded, setLoaded] = useState(false);
   const previousFocusedDistrictId = useRef('');
   useEffect(() => {
@@ -2277,10 +2283,14 @@ function AtlasMap({
             if (f) latest.current.onDetailInspect(f);
           });
           const demographicPopup = new gl.Popup({closeButton:false,closeOnClick:false,maxWidth:'290px',className:'ua-demographic-tooltip'});
+          demographicPopupRef.current = demographicPopup;
           const demographicPopupNode = document.createElement('div');
           let demographicHoverId = '';
           map.on('mousemove','detail-fill',event=>{
             const feature=event.features?.[0];
+            if(!latest.current.demographicsActive || feature?.properties?.atlasLevel!=='district') {
+              demographicPopup.remove();demographicHoverId='';return;
+            }
             let value=feature?.properties?.hypotheticalDemographics;
             try {if(typeof value==='string')value=JSON.parse(value);} catch {value=undefined;}
             const stats=currentDemographics(value);
@@ -2324,6 +2334,8 @@ function AtlasMap({
     return () => {
       cancelled = true;
       observer.disconnect();
+      demographicPopupRef.current?.remove();
+      demographicPopupRef.current = null;
       map?.remove();
       mapRef.current = null;
     };
@@ -3869,6 +3881,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                   inspectedAreaId={String(inspectedArea?.properties?.id || '')}
                   mapStyle={mapStyle}
                   populationMetric={populationMetric}
+                  demographicsActive={demographicsOpen}
                   colors={colors}
                   districtEditing={districtEditing}
                   editingDistrictId={currentEditingDistrictId}

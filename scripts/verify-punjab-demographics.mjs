@@ -96,7 +96,23 @@ try{
   const canvas=page.locator('.ua-map canvas.maplibregl-canvas'),box=await canvas.boundingBox();
   const scale=Math.min((box.width-140)/(east-west),(box.height-140)/(south-north));
   await page.mouse.move(box.x+box.width/2+(x-(west+east)/2)*scale,box.y+box.height/2+(y-(north+south)/2)*scale);
-  await page.locator('.ua-demographic-tooltip').waitFor();assert.match(await page.locator('.ua-demographic-tooltip').innerText(),/Fictional 2026/);
+  assert.equal(await page.locator('.ua-demographic-tooltip').count(),0,'Region hover does not show the district demographic banner');
+  await page.mouse.move(0,0);
+  await selectView('district',48);
+  await page.getByRole('button',{name:'Demographics 2026',exact:true}).click();await dashboard.waitFor();
+  await page.getByLabel('Show separate Punjab district').selectOption('punjab-d-hazarawala');await ready();await page.waitForTimeout(850);
+  const district=data.rows.find(row=>row.id==='punjab-d-hazarawala');
+  async function hoverDistrict(){
+    const [dw,dn]=project([district.bbox[0],district.bbox[3]]),[de,ds]=project([district.bbox[2],district.bbox[1]]),[dx,dy]=project(district.center);
+    const districtBox=await canvas.boundingBox(),districtScale=Math.min((districtBox.width-140)/(de-dw),(districtBox.height-140)/(ds-dn));
+    await page.mouse.move(districtBox.x+districtBox.width/2+(dx-(dw+de)/2)*districtScale,districtBox.y+districtBox.height/2+(dy-(dn+ds)/2)*districtScale);
+  }
+  await hoverDistrict();
+  await page.locator('.ua-demographic-tooltip').waitFor();assert.match(await page.locator('.ua-demographic-tooltip').innerText(),/Hazarawala · district[\s\S]*Fictional 2026/);
+  await page.getByRole('button',{name:'Demographics 2026',exact:true}).evaluate(button=>button.click());
+  await page.locator('.ua-demographic-tooltip').waitFor({state:'hidden'});
+  await hoverDistrict();
+  assert.equal(await page.locator('.ua-demographic-tooltip').count(),0,'District hover stays quiet outside Demographics 2026');
   await page.mouse.move(0,0);
   await page.getByRole('button',{name:'Punjab only',exact:true}).click();await ready();await layer.selectOption('density');
   await page.setViewportSize({width:1047,height:715});await page.waitForTimeout(850);
