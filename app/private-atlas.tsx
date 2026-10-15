@@ -282,17 +282,6 @@ function DistrictProfile({
         {district.historicalRegion && <p>Historical region · {district.historicalRegion}</p>}
       </div>
       <div className="ua-division-content">
-        <DemographicSummary value={demographics} title={district.name+' · fictional 2026'} />
-        <PhotoGallery
-          key={district.id}
-          photos={district.photos || []}
-          subject="district"
-        />
-        {!!district.photos?.length && <p className="ua-data-note">
-          Real location photographs from current Wikimedia listings. Dates and
-          credits are shown for each image; these are not images of the
-          fictional world.
-        </p>}
         <dl className="ua-division-facts">
           <div>
             <dt>Headquarters</dt>
@@ -308,17 +297,12 @@ function DistrictProfile({
               #{areaRank} of {districtCount}
             </dd>
           </div>
-          <div>
-            <dt>Mapped tehsils</dt>
-            <dd>{district.tehsilCount}</dd>
-          </div>
           {scenario && (
             <>
               <div>
                 <dt>Estimated population · fictional</dt>
                 <dd>
-                  {formatPopulation(scenario.total)} (
-                  {scenario.total.toLocaleString('en-IN')})
+                  {formatPopulation(scenario.total)}
                 </dd>
               </div>
               <div>
@@ -333,7 +317,22 @@ function DistrictProfile({
               </div>
             </>
           )}
+          <div>
+            <dt>Mapped tehsils</dt>
+            <dd>{district.tehsilCount}</dd>
+          </div>
         </dl>
+        <DemographicSummary value={demographics} title={district.name+' · fictional 2026'} />
+        <PhotoGallery
+          key={district.id}
+          photos={district.photos || []}
+          subject="district"
+        />
+        {!!district.photos?.length && <p className="ua-data-note">
+          Real location photographs from current Wikimedia listings. Dates and
+          credits are shown for each image; these are not images of the
+          fictional world.
+        </p>}
         <h3>Overview and geography</h3>
         <p>
           {district.summary ||
