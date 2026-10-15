@@ -85,6 +85,7 @@ export async function privateAtlasHandler(req, res) {
     }
     const data = await payload(key);
     if (action === 'overview') return respond(res, 200, data.overview);
+    if (action === 'demographics') return data.demographics ? respond(res,200,data.demographics) : respond(res,404,{error:'The 2026 demographic scenario is not available.'});
     if (action === 'search') {
       const query = (url.searchParams.get('q') || '').trim().toLowerCase();
       if (query.length < 2 || query.length > 100)

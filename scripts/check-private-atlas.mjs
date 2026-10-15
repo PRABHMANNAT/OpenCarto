@@ -77,6 +77,11 @@ try {
       const {checkHistoricalRegionsApi} = await import('./check-punjab-historical-regions.mjs');
       await checkHistoricalRegionsApi(call, data);
     }
+    const demographicResponse = await call('demographics');
+    if (demographicResponse.status===200) {
+      const {checkDemographicApi}=await import('./check-punjab-demographic-api.mjs');
+      await checkDemographicApi(call,data);
+    }
   } else if (northernReview) {
     await import('./check-northern-territorial-review.mjs');
   } else {

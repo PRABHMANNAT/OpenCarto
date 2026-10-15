@@ -22,8 +22,15 @@ export type DistrictEdits = {
 
 export type HypotheticalDemographics = {
   total: number;
-  religions: { name: string; population: number }[];
+  religions: { name: string; population: number; key?: string; percentage?: number; urbanPopulation?: number; ruralPopulation?: number; color?: string }[];
   note: string;
+  version?: string;
+  year?: number;
+  urbanPopulation?: number;
+  ruralPopulation?: number;
+  urbanPercent?: number;
+  density?: number | null;
+  largestCommunity?: string;
 };
 
 export type HypotheticalPopulation = {total: number; note: string};
@@ -61,13 +68,21 @@ export function sumDistrictDemographics(
         (religions.get(religion.name) || 0) + religion.population,
       );
   }
+  const first = scenarios[0]!;
+  const urbanPopulation = scenarios.reduce((sum, scenario) => sum + (scenario!.urbanPopulation || 0), 0);
+  const combinedArea = features.reduce((sum, feature) => sum + Number(feature.properties?.areaKm2 || 0), 0);
+  const entries = [...religions].map(([name, population]) => {
+    const original = first.religions.find(r => r.name === name)!;
+    const urban = scenarios.reduce((sum, scenario) => sum + (scenario!.religions.find(r=>r.name===name)?.urbanPopulation || 0), 0);
+    return {...original, name, population, ...(first.version ? {percentage: population / total * 100, urbanPopulation:urban,ruralPopulation:population-urban} : {})};
+  });
   return {
     total,
-    religions: [...religions].map(([name, population]) => ({
-      name,
-      population,
-    })),
-    note: scenarios[0]!.note,
+    religions: entries,
+    note: first.note,
+    ...(first.version ? {version:first.version,year:first.year,urbanPopulation,ruralPopulation:total-urbanPopulation,
+      urbanPercent:urbanPopulation/total*100,density:combinedArea>0?total/combinedArea:null,
+      largestCommunity:[...entries].sort((a,b)=>b.population-a.population)[0]?.key} : {}),
   };
 }
 

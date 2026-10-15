@@ -5,6 +5,8 @@ import {loadLocalModule} from './load-map-model.mjs';
 export async function checkReorganizationApi(call, overview) {
   const spec = JSON.parse(await fs.readFile('app/united-punjab-reorganization.json', 'utf8'));
   const analysis = await (await call('analysis')).json();
+  const revised2026 = !!analysis.audit.currentDemographicScenario;
+  const currentTotal = revised2026 ? 67536450 : 70000000;
   const audit = analysis.audit.administrativeReorganization;
   assert.equal(audit.revision, spec.revision);
   assert.equal(audit.districtCount, 48);
@@ -23,7 +25,7 @@ export async function checkReorganizationApi(call, overview) {
   for (const p of [punjab, amb, overview.provinces.find(p => p.id === 'kp')]) {
     assert.equal(p.population, null);
     if (p.id !== 'punjab' || !analysis.audit.divisionFinalization) assert.equal(p.density, null);
-    assert.ok(!p.hypotheticalDemographics);
+    if(p.id!=='punjab'||!revised2026)assert.ok(!p.hypotheticalDemographics);
   }
   async function detail(province, level) {
     const features = [];
@@ -73,14 +75,15 @@ export async function checkReorganizationApi(call, overview) {
   assert.ok(styledTehsils.features.every(f => f.properties.color === byId.get(f.properties.parentDistrictId).color));
   const ranked = model.mergeDistrictFeatures(districts, []).features;
   assert.ok(ranked.filter(f => !model.populationScenario(f.properties)).every(f => f.properties.populationRank === undefined));
-  assert.equal(model.sumDistrictDemographics(districts.features), undefined);
+  if(revised2026)assert.equal(model.sumDistrictDemographics(districts.features).total,currentTotal);
+  else assert.equal(model.sumDistrictDemographics(districts.features), undefined);
   if (analysis.audit.divisionFinalization) {
     const divisions = await detail('punjab', 'division');
     assert.equal(divisions.features.length, 12);
-    assert.equal(model.sumDistrictPopulation(districts.features).total, 70000000);
-    assert.equal(model.sumDistrictPopulation(divisions.features).total, 70000000);
+    assert.equal(model.sumDistrictPopulation(districts.features).total, currentTotal);
+    assert.equal(model.sumDistrictPopulation(divisions.features).total, currentTotal);
     assert.equal(model.summarizeDistrictDivisions(districts.features).length, 12);
-    assert.equal(punjab.hypotheticalPopulation.total, 70000000);
+    assert.equal(punjab.hypotheticalPopulation.total, currentTotal);
     assert.ok(punjab.silhouette.length > 500);
     assert.ok(punjab.forestArea > 0 && punjab.forestPercent > 0);
     assert.ok(punjab.highestPoint.elevationMeters > 4000);

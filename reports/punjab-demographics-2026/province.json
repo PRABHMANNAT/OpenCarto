@@ -1,0 +1,67 @@
+{
+  "version": "punjab-fictional-demographics-2026-v1",
+  "year": 2026,
+  "total": 67536450,
+  "urbanPopulation": 27014580,
+  "ruralPopulation": 40521870,
+  "urbanPercent": 40,
+  "density": 443.3699383319696,
+  "religions": [
+    {
+      "key": "sikh",
+      "name": "Sikh",
+      "population": 49805065,
+      "percentage": 73.7454589336573,
+      "urbanPopulation": 19535443,
+      "ruralPopulation": 30269622,
+      "color": "#C88B2F"
+    },
+    {
+      "key": "hindu",
+      "name": "Hindu",
+      "population": 14858019,
+      "percentage": 22,
+      "urbanPopulation": 6307200,
+      "ruralPopulation": 8550819,
+      "color": "#B45D45"
+    },
+    {
+      "key": "muslim",
+      "name": "Muslim",
+      "population": 2700000,
+      "percentage": 3.997841165770484,
+      "urbanPopulation": 1086808,
+      "ruralPopulation": 1613192,
+      "color": "#328579"
+    },
+    {
+      "key": "buddhist",
+      "name": "Buddhist",
+      "population": 45000,
+      "percentage": 0.06663068609617473,
+      "urbanPopulation": 18587,
+      "ruralPopulation": 26413,
+      "color": "#8062A2"
+    },
+    {
+      "key": "christian",
+      "name": "Christian",
+      "population": 52000,
+      "percentage": 0.07699545948891302,
+      "urbanPopulation": 29703,
+      "ruralPopulation": 22297,
+      "color": "#467BB1"
+    },
+    {
+      "key": "other",
+      "name": "Others / Jain / not stated",
+      "population": 76366,
+      "percentage": 0.11307375498712177,
+      "urbanPopulation": 36839,
+      "ruralPopulation": 39527,
+      "color": "#77818B"
+    }
+  ],
+  "largestCommunity": "sikh",
+  "note": "Fictional alternate-history scenario for 2026; not a census or a real-world religious population projection. Heritage sites inform editorial settlement priors, never the observed religion of present-day residents."
+}

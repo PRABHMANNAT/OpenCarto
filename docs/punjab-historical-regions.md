@@ -1,5 +1,7 @@
 # United Punjab: six historical regions
 
+**Current population edition:** [2026 demographic scenario](punjab-demographics-2026.md) replaces the historical population column below with exactly **6,75,36,450** residents aggregated from the same 48 districts and 193 tehsils. Pothohar is now displayed as **Pothohar–Gandhara**, retaining its original identifier, members, color and alias. All regional geometries and the 12 division memberships remain unchanged. The 70,000,000 population table below records the superseded allocation; current region counts, religion composition, urban/rural values and density are available in the linked scenario and generated CSV tables.
+
 Revision `punjab-six-historical-regions-2026-10-15` adds **View → Historical Regions** immediately above **Divisions**. It groups the existing 48 Punjab districts into exactly six regions. Historical regions are a parallel editorial grouping: they do not replace or reorganize the 12 administrative divisions. No regional capitals or headquarters are invented.
 
 | Region | Districts | WGS84 polygon area, km² | Existing fictional population |

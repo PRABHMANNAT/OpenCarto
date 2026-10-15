@@ -6,6 +6,6 @@
     {"id": "punjab-region-doaba", "name": "Doaba", "color": "#D8A6AD", "districts": ["Jalandhar", "Kapurthala", "Hoshiarpur", "Shahid Bhagat Singh Nagar"]},
     {"id": "punjab-region-puadh", "name": "Puadh", "color": "#C2C58F", "districts": ["Rupnagar", "S A S Nagar", "Fatehgarh Sahib", "Sri Anandpur Sahib"]},
     {"id": "punjab-region-bar", "name": "Bar", "color": "#E5B48F", "districts": ["Sandalbar", "Jhang", "Toba Tek Singh", "Chenab", "Harappa", "Nanaksar", "Sargodha", "Khushab", "Kair Sahib"]},
-    {"id": "punjab-region-pothohar", "name": "Pothohar", "color": "#AFC7B1", "districts": ["Rawalpindi", "Taxila", "Panja Sahib", "Katas", "Jhelum", "Haripur", "Hazarawala", "Akali Phula Singh"]}
+    {"id": "punjab-region-pothohar", "name": "Pothohar–Gandhara", "aliases": ["Pothohar", "Pothohar-Gandhara", "Pothohar Gandhara"], "color": "#AFC7B1", "districts": ["Rawalpindi", "Taxila", "Panja Sahib", "Katas", "Jhelum", "Haripur", "Hazarawala", "Akali Phula Singh"]}
   ]
 }

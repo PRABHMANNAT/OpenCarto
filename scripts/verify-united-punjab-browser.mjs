@@ -72,7 +72,9 @@ try {
   const overviewPanel = page.getByLabel('Punjab district rankings and directory');
   await overviewPanel.waitFor();
   assert.match(await overviewPanel.innerText(), /48 districts/);
-  assert.match(await overviewPanel.innerText(), overview.provinces.find(p => p.id === 'punjab').hypotheticalPopulation ? /7(?:\.0+)? crore/ : /Unavailable for the current boundaries/);
+  const provincePopulation=overview.provinces.find(p=>p.id==='punjab').hypotheticalPopulation;
+  if(provincePopulation)assert.ok((await overviewPanel.innerText()).includes(provincePopulation.total.toLocaleString('en-IN')));
+  else assert.match(await overviewPanel.innerText(),/Unavailable for the current boundaries/);
   await snapshot('punjab-48-directory');
   for (const [term, name] of [['Khado Khel', 'Ranigat'], ['Khudu Khel', 'Ranigat'], ['Lahor', 'Hund'], ['Topi', 'Mahabanpur'], ['Lower Tanawal', 'Sherwan'], ['Lora', 'Haro'], ['Baffa-Pakhal', 'Pakhli']]) {
     await search(term, name, 'Tehsil / subdistrict');

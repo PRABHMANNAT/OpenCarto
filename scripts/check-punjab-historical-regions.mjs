@@ -41,9 +41,9 @@ export async function checkHistoricalRegionsApi(call, overview) {
     assert.ok(shortName.some(item => item.level === 'region' && item.id === spec.id), spec.name + ' is discoverable by its short name');
   }
   assert.equal(members.size, 48);
-  assert.equal(regions.reduce((sum, feature) => sum + feature.properties.hypotheticalPopulation.total, 0), 70000000);
+  assert.equal(regions.reduce((sum, feature) => sum + feature.properties.hypotheticalPopulation.total, 0), overview.provinces.find(p=>p.id==='punjab').hypotheticalPopulation.total);
   const model = await loadLocalModule(new URL('../app/private-atlas-detail.ts', import.meta.url));
   assert.equal(model.atlasDetailLabels.region, 'Historical Regions');
   assert.equal(model.tagAtlasDetail({type: 'FeatureCollection', features: regions}, 'punjab', 'region').features[0].properties.atlasLevel, 'region');
-  console.log('Verified six historical regions through the encrypted API: exact 13/10/4/4/9/8 membership, 48 unique districts, 7-crore aggregate, region search, response sizes and independent Amb.');
+  console.log('Verified six historical regions through the encrypted API: exact 13/10/4/4/9/8 membership, 48 unique districts, current population aggregate, region search, response sizes and independent Amb.');
 }

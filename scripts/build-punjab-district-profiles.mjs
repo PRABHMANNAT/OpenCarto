@@ -7,6 +7,9 @@ import {
 } from './punjab-population-model.mjs';
 const file = 'private/united-atlas/atlas.json';
 const atlas = JSON.parse(await fs.readFile(file, 'utf8'));
+if (atlas.demographics) {
+  throw new Error('This archived population/profile builder predates the current demographic model. Use npm run data:punjab-demographics; preserve reviewed profile metadata.');
+}
 const districts = atlas.details.punjab.district.features;
 const allocations = allocatePunjabPopulation(
   districts.map((district) => district.properties),

@@ -59,7 +59,7 @@ for region in spec['regions']:
         'tehsilCount': sum(f['properties']['tehsilCount'] for f in members),
         'areaKm2': region_area, 'provinceAreaShare': round(region_area / province['areaKm2'] * 100, 2),
         'areaNote': 'WGS84 geodesic area of the complete existing member district polygons. Inherited source seams are preserved.',
-        'hypotheticalPopulation': {'total': population, 'note': 'Sum of the existing fictional district allocations within the user-defined 7-crore Punjab scenario.'},
+        'hypotheticalPopulation': {'total': population, 'note': 'Sum of the current fictional district allocations.'},
         'density': round(population / region_area, 1),
         'description': f"{region['name']} groups {len(members)} districts in this atlas. Historical regions and administrative divisions are separate views; all existing divisions, district capitals and tehsil names are retained.",
     }
@@ -82,7 +82,7 @@ data['administrativeSearch'] = [item for item in data['administrativeSearch'] if
 for feature in features:
     p = feature['properties']
     data['administrativeSearch'].append({'id': p['id'], 'name': p['name'] + ' Historical Region',
-        'aliases': [p['name'], p['name'] + ' region'], 'province': 'punjab', 'level': 'region', 'capital': '', 'bbox': p['bbox']})
+        'aliases': [p['name'], p['name'] + ' region', *next(r.get('aliases', []) for r in spec['regions'] if r['id']==p['id'])], 'province': 'punjab', 'level': 'region', 'capital': '', 'bbox': p['bbox']})
 for row in data['analysis']['changes']:
     if row.get('provinceId') == 'punjab' and row.get('proposedDistrict') in districts:
         row['proposedHistoricalRegion'] = districts[row['proposedDistrict']]['properties']['historicalRegion']
@@ -97,7 +97,7 @@ assert preserved == hashlib.sha256(json.dumps({
     'geometries': {level: [f['geometry'] for f in levels[level]['features']] for level in ('province', 'division', 'district', 'tehsil')},
     'divisions': levels['division'],
 }, sort_keys=True).encode()).hexdigest()
-assert sum(f['properties']['hypotheticalPopulation']['total'] for f in features) == 70000000
+assert sum(f['properties']['hypotheticalPopulation']['total'] for f in features) == province['hypotheticalPopulation']['total']
 for target, value in [(path, data), (base / 'profiles.json', data['overview']['provinces'])]:
     temporary = target.with_suffix('.tmp')
     temporary.write_text(json.dumps(value, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')

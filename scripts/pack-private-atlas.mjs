@@ -62,22 +62,31 @@ for (const p of payload.overview.provinces) {
     p.hypotheticalDemographics.total = total;
   }
 }
+const activePopulationTotal = payload.demographics?.province.hypotheticalDemographics.total || 70000000;
 if (payload.divisionFinalization) {
   const districts = payload.details.punjab.district.features;
   const divisions = payload.details.punjab.division.features;
   for (const collection of [districts, divisions]) {
     if (collection.some(f => !Number.isSafeInteger(f.properties.hypotheticalPopulation?.total) || f.properties.hypotheticalPopulation.total <= 0) ||
-        collection.reduce((total, f) => total + f.properties.hypotheticalPopulation.total, 0) !== 70000000)
-      throw Error('Punjab district/division population does not reconcile to 7 crore.');
+        collection.reduce((total, f) => total + f.properties.hypotheticalPopulation.total, 0) !== activePopulationTotal)
+      throw Error('Punjab district/division population does not reconcile to the current scenario.');
   }
 }
 if (payload.historicalRegions) {
   const regions = payload.details.punjab.region.features;
   const members = regions.flatMap(f => f.properties.memberDistrictIds);
   if (regions.length !== 6 || members.length !== 48 || new Set(members).size !== 48 ||
-      regions.reduce((sum, f) => sum + f.properties.hypotheticalPopulation.total, 0) !== 70000000 ||
+      regions.reduce((sum, f) => sum + f.properties.hypotheticalPopulation.total, 0) !== activePopulationTotal ||
       payload.details.punjab.district.features.some(f => !members.includes(f.properties.id)))
-    throw Error('Historical regions must cover exactly 48 districts with a 7-crore aggregate.');
+    throw Error('Historical regions must cover exactly 48 districts with the current scenario aggregate.');
+}
+if (payload.demographics) {
+  const locked=JSON.parse(await fs.readFile('app/punjab-demographic-scenario.json','utf8'));
+  for(const level of ['district','tehsil','division','region']) {
+    const features=payload.details.punjab[level].features;
+    if(features.reduce((sum,f)=>sum+f.properties.hypotheticalDemographics.total,0)!==locked.total)throw Error('Invalid 2026 '+level+' total');
+    for(const religion of locked.religions)if(features.reduce((sum,f)=>sum+f.properties.hypotheticalDemographics.religions.find(r=>r.key===religion.key).population,0)!==religion.population)throw Error('Invalid 2026 '+level+' '+religion.key+' margin');
+  }
 }
 // Keep full independent source geometry in private/; serve its precise display
 // derivative. Avoid decrypting unused, duplicated source geometry into memory.

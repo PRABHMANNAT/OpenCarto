@@ -1,0 +1,9 @@
+﻿id,name,district,division,historicalRegion,total,urbanPopulation,ruralPopulation,urbanPercent,density,sikhCount,sikhPercent,hinduCount,hinduPercent,muslimCount,muslimPercent,buddhistCount,buddhistPercent,christianCount,christianPercent,otherCount,otherPercent
+fictional-city-punjab-d-lahore,Lahore,Lahore,Lahore,Majha,4500000,4500000,0,100,,3230624,71.7916444,1007152,22.3811556,247120,5.4915556,488,0.0108444,7680,0.1706667,6936,0.1541333
+fictional-city-punjab-d-faisalabad,Sandalbar,Sandalbar,Sandalbar,Bar,2034331,2034331,0,100,,1579807,77.6573232,368028,18.0908613,79676,3.9165701,220,0.0108144,3467,0.1704246,3133,0.1540064
+fictional-city-punjab-d-ludhiana,Ludhiana,Ludhiana,Ludhiana,Malwa,1452979,1452979,0,100,,941717,64.8128431,472781,32.5387359,33678,2.3178587,155,0.0106677,2442,0.1680685,2206,0.151826
+fictional-city-punjab-d-gujranwala,Ranjitgarh,Ranjitgarh,Ranjitgarh,Majha,1200000,1200000,0,100,,866745,72.22875,291890,24.3241667,37367,3.1139167,130,0.0108333,2032,0.1693333,1836,0.153
+fictional-city-punjab-d-rawalpindi,Rawalpindi,Rawalpindi,Rawalpindi,Pothohar–Gandhara,1160609,1160609,0,100,,736037,63.418171,356485,30.71534,63338,5.4573073,1003,0.0864201,1968,0.1695662,1778,0.1531954
+fictional-city-punjab-d-amritsar,Amritsar,Amritsar,Kartarpur,Majha,470551,470551,0,100,,442751,94.0920325,22536,4.789279,3686,0.783337,50,0.0106258,802,0.1704385,726,0.1542872
+fictional-city-punjab-d-jalandhar,Jalandhar,Jalandhar,Jalandhar,Doaba,449920,449920,0,100,,214034,47.5715683,224106,49.8101885,10310,2.2915185,46,0.010224,748,0.1662518,676,0.1502489
+fictional-city-punjab-d-patiala,Patiala,Patiala,Patiala,Malwa,181730,181730,0,100,,129206,71.0977824,47953,26.3869477,4235,2.3303802,19,0.0104551,39,0.0214604,278,0.1529742

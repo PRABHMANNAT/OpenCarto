@@ -57,6 +57,8 @@ import {
 } from './private-atlas-districts';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './private-atlas.css';
+import DemographicsDashboard, {DemographicSummary, DemographicLegend} from './private-atlas-demographics';
+import {currentDemographics,indianCount,demographicMetrics,demographicChoropleth,type DemographicMetric,type DemographicDataset} from './private-atlas-demography';
 import {atlasDetailKey, atlasDetailLabels, nationalBorderColor, provinceDetailsStorageKey, readProvinceDetails, styleKpDetailFeatures, tagAtlasDetail, type AtlasDetailLevel} from './private-atlas-detail';
 
 type Census = {
@@ -280,6 +282,7 @@ function DistrictProfile({
         {district.historicalRegion && <p>Historical region · {district.historicalRegion}</p>}
       </div>
       <div className="ua-division-content">
+        <DemographicSummary value={demographics} title={district.name+' · fictional 2026'} />
         <PhotoGallery
           key={district.id}
           photos={district.photos || []}
@@ -369,7 +372,7 @@ function DistrictProfile({
         <p className="ua-data-note">
           Illustrative local centres, not a measured city population ranking.
         </p>
-        {demographics && (
+        {demographics && !currentDemographics(demographics) && (
           <section className="ua-scenario-population">
             <h3>Religion and population · fictional scenario</h3>
             <p className="ua-data-note">{demographics.note}</p>
@@ -527,11 +530,7 @@ function format(n: number | null, suffix = '') {
     : n.toLocaleString(undefined, { maximumFractionDigits: 2 }) + suffix;
 }
 function formatPopulation(n: number) {
-  const unit = n >= 10_000_000 ? 10_000_000 : n >= 100_000 ? 100_000 : 1;
-  return (
-    (n / unit).toLocaleString('en-IN', { maximumFractionDigits: 2 }) +
-    (unit === 10_000_000 ? ' crore' : unit === 100_000 ? ' lakh' : '')
-  );
+  return indianCount(n);
 }
 function fit(map: GLMap, b: number[], mobile = false) {
   map.fitBounds(
@@ -709,6 +708,7 @@ type HistoricalRegionInfo = {
   provinceAreaShare: number;
   density: number;
   hypotheticalPopulation: HypotheticalPopulation;
+  hypotheticalDemographics?: HypotheticalDemographics;
   districtStats: DistrictInfo[];
   areaNote: string;
 };
@@ -751,6 +751,7 @@ function HistoricalRegionPanel({regions, active, loading, onPick, onBack, onDist
           <div><dt>Population · fictional</dt><dd>{formatPopulation(info.hypotheticalPopulation.total)}</dd></div>
           <div><dt>Density · fictional</dt><dd>{format(info.density)} / km²</dd></div>
         </dl>
+        <DemographicSummary value={info.hypotheticalDemographics} title={info.name+' · fictional 2026'} />
         <h3>Districts in {info.name}</h3>
         <div className="ua-region-table">
           <table className="ua-division-districts ua-region-districts">
@@ -772,7 +773,8 @@ function HistoricalRegionPanel({regions, active, loading, onPick, onBack, onDist
             <span><strong>{region.name}</strong><small>{region.districtCount} districts · {formatPopulation(region.hypotheticalPopulation.total)}</small></span>
           </button>)}
         </div>
-        <p className="ua-data-note">The six regions cover all 48 Punjab districts, with a combined fictional population of 7 crore. Each region uses the complete existing district polygons.</p>
+        <p className="ua-data-note">The six regions aggregate the same 48 district records and their revised fictional 2026 populations. Each region uses the complete existing district polygons.</p>
+        <details><summary>Province-wide composition · 2026</summary><DemographicSummary value={sumDistrictDemographics(regions)}/></details>
       </>}
       {!loading && <button type="button" onClick={() => downloadCsv('united-punjab-historical-regions.csv', [
         ['Historical region', 'Districts', 'Mapped tehsils', 'Area km2', 'Fictional population', 'Member districts'],
@@ -918,6 +920,7 @@ function DivisionPanel({
                 </>
               )}
             </dl>
+            <DemographicSummary value={info.hypotheticalDemographics} title={info.name+' Division · fictional 2026'} />
             <button
               type="button"
               onClick={() => onHeadquarters(info.headquartersCoordinates)}
@@ -1045,6 +1048,7 @@ function DivisionPanel({
             Areas are measured from the proposed district unions. Population
             ranks sum the fictional allocations of the displayed districts.
           </p>
+          <details><summary>Province-wide composition · 2026</summary><DemographicSummary value={sumDistrictDemographics(divisions)}/></details>
         </div>
       )}
     </article>
@@ -1177,10 +1181,11 @@ function DistrictOverviewPanel({
           <p>Loading district statistics…</p>
         ) : (
           <>
+            <details><summary>2026 composition, urban/rural population & density</summary><DemographicSummary value={demographics}/></details>
             <h3>Population · fictional scenario</h3>
             <p>
               Punjab: <strong>{scenario ? formatPopulation(scenario.total) : 'Unavailable for the current boundaries'}</strong>
-              {demographics && ' · ' + demographics.religions
+              {demographics && !currentDemographics(demographics) && ' · ' + demographics.religions
                 .map(
                   (item) => item.name + ' ' + formatPopulation(item.population),
                 )
@@ -1446,7 +1451,8 @@ function ProvincePanel({
       {scenario && <p className="ua-data-note">{scenario.note} Density: {format(scenario.total / p.areaKm2)} people / km².</p>}
       {p.forestEstimate && <p className="ua-data-note">{p.forestEstimate.note} <a href={p.forestEstimate.sourceUrl} target="_blank" rel="noreferrer">Land-cover source ↗</a></p>}
       {p.highestPoint && <p className="ua-data-note">{p.highestPoint.note} <a href={p.highestPoint.sourceUrl} target="_blank" rel="noreferrer">Elevation source ↗</a></p>}
-      {demographics && (
+      <DemographicSummary value={demographics} title="Fictional Alternate-History Demographic Scenario — 2026" />
+      {demographics && !currentDemographics(demographics) && (
         <details open className="ua-scenario-population">
           <summary>Hypothetical population by religion</summary>
           <p className="ua-data-note">{demographics.note}</p>
@@ -1728,6 +1734,7 @@ function AtlasMap({
   focusedDistrictId,
   inspectedAreaId,
   mapStyle,
+  populationMetric,
   colors,
   districtEditing,
   editingDistrictId,
@@ -1754,6 +1761,7 @@ function AtlasMap({
   focusedDistrictId: string;
   inspectedAreaId: string;
   mapStyle: MapStyle;
+  populationMetric: DemographicMetric;
   colors: AtlasColors;
   districtEditing: boolean;
   editingDistrictId: string;
@@ -1774,10 +1782,10 @@ function AtlasMap({
   onDetailInspect: (feature: Feature) => void;
 }) {
   const host = useRef<HTMLDivElement>(null),
-    latest = useRef({ onSelect, onHover, onError, onDetailInspect, level });
+    latest = useRef({ onSelect, onHover, onError, onDetailInspect, level, populationMetric });
   useEffect(() => {
-    latest.current = { onSelect, onHover, onError, onDetailInspect, level };
-  }, [onSelect, onHover, onError, onDetailInspect, level]);
+    latest.current = { onSelect, onHover, onError, onDetailInspect, level, populationMetric };
+  }, [onSelect, onHover, onError, onDetailInspect, level, populationMetric]);
   const [loaded, setLoaded] = useState(false);
   const previousFocusedDistrictId = useRef('');
   useEffect(() => {
@@ -2269,6 +2277,24 @@ function AtlasMap({
             const f = event.features?.[0];
             if (f) latest.current.onDetailInspect(f);
           });
+          const demographicPopup = new gl.Popup({closeButton:false,closeOnClick:false,maxWidth:'290px',className:'ua-demographic-tooltip'});
+          const demographicPopupNode = document.createElement('div');
+          let demographicHoverId = '';
+          map.on('mousemove','detail-fill',event=>{
+            const feature=event.features?.[0];
+            let value=feature?.properties?.hypotheticalDemographics;
+            try {if(typeof value==='string')value=JSON.parse(value);} catch {value=undefined;}
+            const stats=currentDemographics(value);
+            if(!stats || !map){demographicPopup.remove();demographicHoverId='';return;}
+            const id=String(feature?.properties?.id);
+            if(id!==demographicHoverId){
+              demographicHoverId=id;
+              demographicPopupNode.textContent=String(feature?.properties?.name)+' · '+String(feature?.properties?.atlasLevel)+'\nFictional 2026 · '+indianCount(stats.total)+' residents\nDensity: '+(stats.density===null?'unavailable':stats.density.toFixed(2)+' / km²')+' · Urban: '+stats.urbanPercent.toFixed(2)+'%\n'+stats.religions.map(r=>r.name+': '+indianCount(r.population)+' ('+r.percentage.toFixed(3)+'%)').join('\n');
+            }
+            demographicPopup.setLngLat(event.lngLat);
+            if(!demographicPopup.isOpen())demographicPopup.setDOMContent(demographicPopupNode).addTo(map);
+          });
+          map.on('mouseleave','detail-fill',()=>{demographicPopup.remove();demographicHoverId='';});
           map.on('click', 'place-dots', (event) => {
             if (
               map?.queryRenderedFeatures(event.point, {
@@ -2421,7 +2447,7 @@ function AtlasMap({
       .filter(feature => !(feature.properties?.atlasLevel === 'tehsil' &&
         (feature.properties?.atlasProvince === 'kp' ||
           feature.properties?.atlasProvince === 'punjab' && tehsilColorMode === 'district')) &&
-        colors.fills[String(feature.properties?.id || '')])
+        !feature.properties?.demographicMetric && colors.fills[String(feature.properties?.id || '')])
       .map(feature => String(feature.properties?.id || ''));
     const customDetailColors = Object.fromEntries(
       customDetailIds.map((id) => [id, colors.fills[id]]),
@@ -2677,6 +2703,7 @@ function AtlasMap({
           : 'Interactive hypothetical India–Pakistan province map'
       }
       data-map-style={mapStyle}
+      data-population-metric={populationMetric}
       data-district-id={focusedDistrictId}
       data-detail-count={
         focusedDistrictId
@@ -2731,6 +2758,11 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
     [researchQuery, setResearchQuery] = useState(''),
     [downloadMenuOpen, setDownloadMenuOpen] = useState(false),
     [downloading, setDownloading] = useState(false);
+  const [demographicsOpen,setDemographicsOpen] = useState(false);
+  const [demographicsData,setDemographicsData] = useState<DemographicDataset|null>(null);
+  const [demographicsLoading,setDemographicsLoading] = useState(false);
+  const [demographicsError,setDemographicsError] = useState('');
+  const [populationMetric,setPopulationMetric] = useState<DemographicMetric>('none');
   const map = useRef<GLMap | null>(null),
     sidebar = useRef<HTMLElement | null>(null),
     detailCache = useRef(new Map<string, FeatureCollection>());
@@ -2751,6 +2783,20 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
     () => districtDisplayNames(districtSource, districtEdits),
     [districtSource, districtEdits],
   );
+  const displayedDemographics = useMemo<DemographicDataset|null>(()=>demographicsData?{
+    ...demographicsData,
+    rows:demographicsData.rows.map(row=>({...row,name:row.level==='district'?(districtNames[row.name]||row.name):row.name,district:row.district?(districtNames[row.district]||row.district):undefined})),
+    cities:demographicsData.cities.map(row=>({...row,district:row.district?(districtNames[row.district]||row.district):undefined})),
+  }:null,[demographicsData,districtNames]);
+  useEffect(()=>{
+    if (!demographicsOpen || demographicsData || !data) return;
+    const controller=new AbortController();
+    void request<DemographicDataset>('action=demographics',{signal:controller.signal}).then(value=>{
+      if (!controller.signal.aborted) setDemographicsData(value);
+    }).catch(cause=>{if(!controller.signal.aborted)setDemographicsError(cause instanceof Error?cause.message:'Demographics unavailable.');})
+      .finally(()=>{if(!controller.signal.aborted)setDemographicsLoading(false);});
+    return ()=>controller.abort();
+  },[demographicsOpen,demographicsData,data]);
   const styledPunjabDistricts = useMemo(
     () =>
       styleDistrictFeatures(
@@ -2824,6 +2870,9 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
   const focusedDistrict = styledPunjabDistricts.features.find(
     (feature) => feature.properties?.id === focusedDistrictId,
   );
+  const populationMap = useMemo(()=>demographicChoropleth(
+    focusedDistrict?tagAtlasDetail({type:'FeatureCollection',features:[focusedDistrict]},'punjab','district'):
+      punjabOnly?displayedDetail:nationalDetail,populationMetric),[focusedDistrict,punjabOnly,displayedDetail,nationalDetail,populationMetric]);
   const districtProfile =
     focusedDistrict ||
     (selected === 'punjab' && level === 'district'
@@ -3038,6 +3087,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
     setDistrictEditing(false);
     setFocusedDistrictId('');
     if (id !== 'punjab') {
+      setDemographicsOpen(false);
       setPunjabOnly(false);
     }
     setSelected(id);
@@ -3395,6 +3445,10 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
         ) : (
           <>
             <nav className="ua-controls" aria-label="Custom atlas navigation">
+              <button type="button" aria-pressed={demographicsOpen} onClick={()=>{
+                if (!demographicsOpen) {choose('punjab',true);setSidebarCollapsed(false);setDistrictEditing(false);setDemographicsLoading(!demographicsData);setDemographicsError('');sidebar.current?.scrollTo({top:0});}
+                setDemographicsOpen(value=>!value);
+              }}>Demographics 2026</button>
               <button type="button" className="ua-national" onClick={national}>
                 <Globe2 size={17} />
                 National overview
@@ -3550,9 +3604,10 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                 <select
                   aria-label="Map style"
                   value={mapStyle}
-                  onChange={(event) =>
-                    setMapStyle(event.target.value as MapStyle)
-                  }
+                  onChange={(event) => {
+                    const next=event.target.value as MapStyle;setMapStyle(next);
+                    if(next==='satellite')setPopulationMetric('none');
+                  }}
                 >
                   <option value="political">Political</option>
                   <option value="physical">Physical / terrain</option>
@@ -3560,10 +3615,19 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                   <option value="nature">Nature / tree cover</option>
                 </select>
               </label>
+              {selected==='punjab' && <label className="ua-level">Population layer
+                <select aria-label="Punjab demographic map layer" value={populationMetric} onChange={event=>{
+                  const next=event.target.value as DemographicMetric;setPopulationMetric(next);
+                  if(next!=='none'){setMapStyle('political');if(level==='province')setLevel('district','punjab');}
+                }}>
+                  <option value="none">Administrative colors</option>
+                  {demographicMetrics.map(metric=><option key={metric.id} value={metric.id}>{metric.label}</option>)}
+                </select>
+              </label>}
               <label
                 className="ua-color-control"
                 title={
-                  mapStyle === 'satellite'
+                  selected==='punjab' && populationMetric!=='none' ? 'Choose Administrative colors to edit area fills.' : mapStyle === 'satellite'
                     ? 'Satellite mode keeps area fills transparent. Switch styles to edit fill colors.'
                     : colorTargetId
                       ? `Set the fill color for ${colorTargetName}`
@@ -3585,7 +3649,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                   type="color"
                   aria-label="Area fill color"
                   value={currentFillColor}
-                  disabled={!colorTargetId || mapStyle === 'satellite'}
+                  disabled={!colorTargetId || mapStyle === 'satellite' || selected==='punjab' && populationMetric!=='none'}
                   onInput={(event) => setAreaColor(event.currentTarget.value)}
                 />
               </label>
@@ -3596,7 +3660,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                     <select
                       aria-label="Punjab palette color"
                       defaultValue=""
-                      disabled={!colorTargetId || mapStyle === 'satellite'}
+                      disabled={!colorTargetId || mapStyle === 'satellite' || populationMetric!=='none'}
                       onChange={(event) => {
                         setAreaColor(event.currentTarget.value);
                         event.currentTarget.value = '';
@@ -3616,6 +3680,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                   type="button"
                   className="ua-color-reset"
                   aria-label="Reset area fill color"
+                  disabled={selected==='punjab'&&populationMetric!=='none'}
                   title={`Restore the original color for ${colorTargetName}`}
                   onClick={resetAreaColor}
                 >
@@ -3783,7 +3848,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                 {!!enabledProvinceDetails.length && <button type="button" onClick={() => {setProvinceDetails({}); setInspected(null); setDistrictEditing(false); setFocusedDistrictId('');}}>Clear all province detail</button>}
               </div>
             </section>
-            <div className={'ua-workspace' + (sidebarCollapsed ? ' ua-sidebar-collapsed' : '')} data-theme={dark ? 'dark' : 'light'}>
+            <div className={'ua-workspace' + (sidebarCollapsed ? ' ua-sidebar-collapsed' : '') + (demographicsOpen?' ua-demographics-open':'')} data-theme={dark ? 'dark' : 'light'}>
               <div className="ua-map-pane">
                 <button
                   type="button"
@@ -3804,6 +3869,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                   focusedDistrictId={focusedDistrictId}
                   inspectedAreaId={String(inspectedArea?.properties?.id || '')}
                   mapStyle={mapStyle}
+                  populationMetric={populationMetric}
                   colors={colors}
                   districtEditing={districtEditing}
                   editingDistrictId={currentEditingDistrictId}
@@ -3819,32 +3885,12 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                   }}
                   onError={setError}
                   mapRef={map}
-                  detail={
-                    focusedDistrict
-                      ? {
-                          type: 'FeatureCollection',
-                          features: [
-                            {
-                              ...focusedDistrict,
-                              properties: {
-                                ...focusedDistrict.properties,
-                                atlasProvince: 'punjab',
-                                atlasLevel: 'district',
-                                color:
-                                  displayedDetail.features.find(
-                                    (f) =>
-                                      f.properties?.id === focusedDistrictId,
-                                  )?.properties?.color || '#AFC7B1',
-                              },
-                            },
-                          ],
-                        }
-                      : punjabOnly ? displayedDetail : nationalDetail
-                  }
+                  detail={populationMap.collection}
                   districtOutlines={provinceDetails.punjab === 'tehsil' && (!punjabOnly || selected === 'punjab') ? styledPunjabDistricts : empty}
                   tehsilColorMode={tehsilColorMode}
                   precise={precise}
                   onDetailInspect={(feature) => {
+                    setDemographicsOpen(false);
                     const id = String(feature.properties?.id || '');
                     const owner = String(feature.properties?.atlasProvince || '');
                     if (owner && owner !== selected) {
@@ -3895,6 +3941,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                       setEditingDistrictId(id);
                   }}
                 />
+                <DemographicLegend legend={populationMap.legend}/>
                 <div className="ua-map-badge">
                   <Globe2 size={12} />
                   <span>ALTERNATIVE HISTORY</span>
@@ -4037,7 +4084,16 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                   )}
               </div>
               <aside ref={sidebar} id={sidebarId} className="ua-sidebar" aria-label="Atlas information" hidden={sidebarCollapsed}>
-                {districtEditing ? (
+                {demographicsOpen ? <DemographicsDashboard data={displayedDemographics} loading={demographicsLoading} error={demographicsError} onClose={()=>setDemographicsOpen(false)} onPick={row=>{
+                  if(row.level==='city') {
+                    setDemographicsOpen(false);
+                    if(row.coordinates)map.current?.flyTo({center:[row.coordinates[0],row.coordinates[1]],zoom:10});
+                    else if(row.bbox&&map.current)fit(map.current,row.bbox,window.innerWidth<760);
+                    return;
+                  }
+                  choose('punjab');setDemographicsOpen(false);setFocusedDistrictId('');setLevel(row.level as AtlasDetailLevel,'punjab');
+                  if(row.bbox){pendingSearch.current={id:row.id,name:row.name,province:'punjab',level:row.level as AtlasDetailLevel,aliases:[],capital:row.capital||'',bbox:row.bbox};if(map.current)fit(map.current,row.bbox,window.innerWidth<760);}
+                }}/> : districtEditing ? (
                   <DistrictEditor
                     districts={displayedDetail}
                     edits={districtEdits}
@@ -4215,6 +4271,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                       <h2>{String(inspected.properties?.name || 'Tehsil')}</h2>
                     </div>
                     <div className="ua-tehsil-profile-content">
+                      <DemographicSummary value={inspected.properties?.hypotheticalDemographics} title={String(inspected.properties?.name)+' · fictional 2026'}/>
                       {inspected.properties?.historicalRegion && <p>Historical region · {String(inspected.properties.historicalRegion)}</p>}
                       <p>
                         <strong>

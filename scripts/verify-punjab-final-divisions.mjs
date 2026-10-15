@@ -25,6 +25,8 @@ async function search(term, label) {
   await ready();
 }
 try {
+  const activeProvince=(await (await context.request.get(url+'api/private-atlas?action=overview')).json()).provinces.find(p=>p.id==='punjab');
+  const activeTotal=activeProvince.hypotheticalPopulation.total;
   await page.goto(url, {waitUntil: 'networkidle', timeout: 120000});
   await page.locator('.gl-host[aria-busy=false]').waitFor({timeout: 120000});
   await page.getByRole('button', {name: 'My maps', exact: true}).click();
@@ -41,7 +43,7 @@ try {
   const facts = await profile.locator('.ua-facts').innerText();
   assert.match(facts, /State area/);
   assert.doesNotMatch(facts, /Polygon area/);
-  assert.match(facts, /7(?:\.0+)? crore/);
+  assert.ok(facts.includes(activeTotal.toLocaleString('en-IN')));
   assert.match(facts, /5,200 m/);
   assert.match(facts, /15,460 km²/);
   assert.match(facts, /10.2%/);
@@ -76,7 +78,7 @@ try {
   const overview = page.getByLabel('Punjab district rankings and directory');
   await overview.waitFor();
   assert.match(await overview.innerText(), /48 districts · 12 divisions/);
-  assert.match(await overview.innerText(), /7(?:\.0+)? crore/);
+  assert.ok((await overview.innerText()).includes(activeTotal.toLocaleString('en-IN')));
   const download = page.waitForEvent('download');
   await page.getByRole('button', {name: 'Download district statistics CSV', exact: true}).click();
   await (await download).saveAs('outputs/private-atlas/final-48-district-statistics.csv');
@@ -84,7 +86,7 @@ try {
   const lines = csv.trim().split(/\r?\n/);
   assert.equal(lines.length, 49);
   const rows = lines.slice(1).map(line => line.match(/"([^"]*)"/g).map(cell => cell.slice(1, -1)));
-  assert.equal(rows.reduce((sum, row) => sum + Number(row[5]), 0), 70000000);
+  assert.equal(rows.reduce((sum, row) => sum + Number(row[5]), 0), activeTotal);
   assert.equal(new Set(rows.map(row => row[1])).size, 12);
   assert.equal(rows.find(row => row[0] === 'Akali Phula Singh')[1], 'Hazara');
   assert.equal(rows.find(row => row[0] === 'Haripur')[2], 'Abbottabad');
@@ -97,6 +99,6 @@ try {
   await page.screenshot({path: 'outputs/private-atlas/final-12-divisions-mobile.png'});
   assert.ok(await page.locator('.ua-dialog').evaluate(node => node.scrollWidth) <= 392);
   assert.deepEqual(errors, []);
-  await fs.writeFile('outputs/private-atlas/final-divisions-browser-check.json', JSON.stringify({districts: 48, divisions: 12, population: 70000000, silhouette: true, stateAreaLabel: true, forestEstimate: true, highestPoint: true, rawalpindi: 5, hazara: 3, divisionSearch: true, csvTotal: 70000000, customNamesPreserved: true, pngDownload: true, desktopAndMobile: true, pageErrors: errors}, null, 2));
-  console.log('Verified 48 districts / 12 divisions, Rawalpindi 5 and Hazara 3, existing HQ markers, 7 crore, forest/highest-point estimates, restored silhouette, State area label, division search, custom names and CSV/PNG downloads on desktop/mobile.');
+  await fs.writeFile('outputs/private-atlas/final-divisions-browser-check.json', JSON.stringify({districts: 48, divisions: 12, population: activeTotal, silhouette: true, stateAreaLabel: true, forestEstimate: true, highestPoint: true, rawalpindi: 5, hazara: 3, divisionSearch: true, csvTotal: activeTotal, customNamesPreserved: true, pngDownload: true, desktopAndMobile: true, pageErrors: errors}, null, 2));
+  console.log('Verified 48 districts / 12 divisions, Rawalpindi 5 and Hazara 3, existing HQ markers, current population, forest/highest-point estimates, restored silhouette, State area label, division search, custom names and CSV/PNG downloads on desktop/mobile.');
 } finally {await browser.close();}

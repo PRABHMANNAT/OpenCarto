@@ -12,6 +12,14 @@ from geographiclib.geodesic import Geodesic
 
 base = ROOT / 'private/united-atlas'
 d = json.loads((base / 'atlas.json').read_text(encoding='utf-8'))
+if d.get('demographics'):
+    # The revised edition intentionally replaces the old 7-crore statistics.
+    # Validate it against the immediate pre-2026 geography/hierarchy snapshot.
+    del d
+    import gc, runpy
+    gc.collect()
+    runpy.run_path(str(ROOT / 'scripts/check-punjab-demographic-geometry.py'), run_name='__main__')
+    sys.exit(0)
 b = json.loads((base / 'before-final-12-divisions.json').read_text(encoding='utf-8'))
 config = json.loads((ROOT / 'app/united-punjab-divisions.json').read_text(encoding='utf-8'))
 environment = json.loads((ROOT / 'app/united-punjab-environment.json').read_text(encoding='utf-8'))

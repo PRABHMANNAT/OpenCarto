@@ -10,6 +10,12 @@ from geographiclib.geodesic import Geodesic
 
 base = ROOT / 'private/united-atlas'
 current = json.loads((base / 'atlas.json').read_text(encoding='utf-8'))
+if current.get('demographics'):
+    del current
+    import gc, runpy
+    gc.collect()
+    runpy.run_path(str(ROOT / 'scripts/check-punjab-demographic-geometry.py'), run_name='__main__')
+    sys.exit(0)
 before = json.loads((base / 'before-historical-regions.json').read_text(encoding='utf-8'))
 spec = json.loads((ROOT / 'app/united-punjab-regions.json').read_text(encoding='utf-8'))
 levels = current['details']['punjab']

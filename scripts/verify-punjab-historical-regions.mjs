@@ -79,8 +79,8 @@ try {
   assert.equal(await page.getByRole('button', {name: 'Doaba · 4 districts', exact: true}).locator('i').evaluate(node => getComputedStyle(node).backgroundColor), 'rgb(18, 52, 86)');
   await search('Bar', 'Bar Historical Region');
   await panel.getByRole('heading', {name: 'Bar', exact: true}).waitFor();
-  await search('Pothohar Historical Region', 'Pothohar Historical Region');
-  await panel.getByRole('heading', {name: 'Pothohar', exact: true}).waitFor();
+  await search('Pothohar Historical Region', spec.regions.find(region=>region.id==='punjab-region-pothohar').name+' Historical Region');
+  await panel.getByRole('heading', {name: spec.regions.find(region=>region.id==='punjab-region-pothohar').name, exact: true}).waitFor();
   await panel.getByRole('button', {name: 'Haripur', exact: true}).click();
   await ready();
   const district = page.getByLabel('Haripur district profile');
@@ -96,7 +96,7 @@ try {
   assert.equal(lines.length, 7);
   const rows = lines.slice(1).map(line => line.match(/"([^"]*)"/g).map(cell => cell.slice(1, -1)));
   assert.deepEqual(rows.map(row => Number(row[1])), [13, 10, 4, 4, 9, 8]);
-  assert.equal(rows.reduce((sum, row) => sum + Number(row[4]), 0), 70000000);
+  assert.equal(rows.reduce((sum, row) => sum + Number(row[4]), 0), overview.provinces.find(p=>p.id==='punjab').hypotheticalPopulation.total);
   assert.match(rows[0][5], /Lahore custom/);
   const png = page.waitForEvent('download');
   await page.getByRole('button', {name: 'Download map', exact: true}).click();
@@ -126,7 +126,7 @@ try {
   assert.ok(await page.locator('.ua-dialog').evaluate(node => node.scrollWidth) <= 392);
   assert.ok(responses.length > 0 && responses.every(status => status === 200));
   assert.deepEqual(errors, []);
-  await fs.writeFile('outputs/private-atlas/historical-regions-browser-check.json', JSON.stringify({regions: 6, districtCounts: [13, 10, 4, 4, 9, 8], viewAboveDivisions: true, polygonClick: true, regionSearch: true, customNamesAndColors: true, districtDrilldown: true, csvPopulation: 70000000, pngDownload: true, divisionsRetained: 12, ambIndependent: true, viewPersists: true, desktopAndMobile: true, regionResponseStatuses: responses, pageErrors: errors}, null, 2));
+  await fs.writeFile('outputs/private-atlas/historical-regions-browser-check.json', JSON.stringify({regions: 6, districtCounts: [13, 10, 4, 4, 9, 8], viewAboveDivisions: true, polygonClick: true, regionSearch: true, customNamesAndColors: true, districtDrilldown: true, csvPopulation: overview.provinces.find(p=>p.id==='punjab').hypotheticalPopulation.total, pngDownload: true, divisionsRetained: 12, ambIndependent: true, viewPersists: true, desktopAndMobile: true, regionResponseStatuses: responses, pageErrors: errors}, null, 2));
   console.log('Verified six historical regions above Divisions, exact membership, polygon selection, search, custom names/colors, district drilldown, CSV/PNG exports, 12 retained divisions, independent Amb and persisted desktop/mobile views.');
 } catch (error) {
   await page.screenshot({path: 'outputs/private-atlas/historical-regions-failure.png'});
