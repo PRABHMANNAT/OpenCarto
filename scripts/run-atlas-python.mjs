@@ -1,0 +1,11 @@
+import {existsSync} from 'node:fs';
+import {homedir} from 'node:os';
+import {join} from 'node:path';
+import {spawn} from 'node:child_process';
+const script = process.argv[2];
+if (!['apply-united-punjab-reorganization.py', 'check-united-punjab-geometry.py'].includes(script)) throw Error('Choose a supported atlas script.');
+const bundled = join(homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe');
+const python = process.env.ATLAS_PYTHON || (process.platform === 'win32' && existsSync(bundled) ? bundled : 'python');
+const child = spawn(python, ['-X', 'utf8', 'scripts/' + script], {stdio: 'inherit'});
+child.on('error', error => {console.error(error.message); process.exitCode = 1;});
+child.on('exit', code => {process.exitCode = code ?? 1;});

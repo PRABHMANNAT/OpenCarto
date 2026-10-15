@@ -1,0 +1,44 @@
+{
+  "revision": "united-punjab-48-amb-2026-10-15",
+  "districtCount": 48,
+  "sourceDate": "2022-09-09",
+  "sourceUrl": "https://data.humdata.org/dataset/cod-ab-pak",
+  "mansehraApproval": "Use the whole dated 2022 Mansehra polygon for this fictional map, including any later Tanawal territory inside it.",
+  "retiredDistrictIds": {
+    "punjab-d-chakwal": "punjab-d-katas-raj-salt-range",
+    "punjab-d-narowal": "punjab-d-kartarpur-ravi",
+    "punjab-d-swabi": "punjab-d-akali-phula-singh",
+    "punjab-d-abbottabad": "punjab-d-haripur-hazara",
+    "punjab-d-barnala": "punjab-d-sangrur"
+  },
+  "districts": [
+    {
+      "id": "punjab-d-akali-phula-singh", "name": "Akali Phula Singh", "capital": "Nowshera", "designation": "Zilla", "division": "",
+      "members": {"PK52601": "Nowshera", "PK52603": "Jehangira", "PK53101": "Hund", "PK53104": "Razar", "PK53102": "Swabi", "PK53103": "Mahabanpur", "PK50503": "Ranigat"},
+      "keyCities": ["Nowshera", "Jehangira", "Swabi", "Topi", "Hund", "Totalai", "Panjtar", "Akora Khattak", "Pir Sabaq"],
+      "heritage": ["Akali Phula Singh and the Battle of Nowshera, 1823", "Pir Sabaq and Akali Phula Singh’s samadhi", "Jehangira and the historic Indus crossing", "Hund / Udabhanda and the Hindu Shahi kingdom", "Ancient Gandhara civilization", "Mahaban Mountain and Gadoon heritage", "Ranigat Buddhist archaeological complex", "Khushal Khan Khattak and Akora Khattak", "Regional Pashtun and Islamic heritage"],
+      "summary": "A commemoratively named Zilla combining the existing fictional Akali Phula Singh and Swabi districts. Towns, villages, shrines and monuments retain their original names. Panjtar and Totalai remain in the transferred Khado Khel polygon wherever they fall within it; no Panjtar tehsil is created. Pabbi remains in KP."
+    },
+    {
+      "id": "punjab-d-haripur-hazara", "name": "Haripur", "capital": "Abbottabad", "designation": "District", "division": "Hazara",
+      "members": {"PK51102": "Haripur", "PK51101": "Ghazi", "PK51103": "Khanpur", "PK50101": "Abbottabad", "PK50102": "Havelian", "PK50103": "Haro", "PK50104": "Sherwan"},
+      "keyCities": ["Haripur", "Abbottabad", "Havelian", "Lora", "Sherwan", "Ghazi", "Khanpur"],
+      "heritage": ["Hari Singh Nalwa and the founding of Haripur", "Harkishangarh Fort", "Hazara’s historical connection with the Sikh Empire", "British-era Abbottabad", "Orash Valley", "Hindko and Tanoli cultural history", "Haro River and surrounding mountains", "Tarbela and Khanpur regions"],
+      "summary": "The complete fictional Haripur and Abbottabad districts are consolidated under the Haripur name, administered from Abbottabad. Lora becomes Haro and Lower Tanawal becomes Sherwan without changing their polygons. Abbottabad city, Havelian and all other settlements retain their names. Sherwan remains in United Punjab and is excluded from Amb."
+    },
+    {
+      "id": "punjab-d-hazarawala", "name": "Hazarawala", "capital": "Mansehra", "designation": "District", "division": "Hazara",
+      "members": {"PK52202": "Mansehra", "PK52204": "Pakhli", "PK52201": "Balakot"},
+      "keyCities": ["Mansehra", "Baffa", "Balakot", "Kaghan", "Naran", "Shogran"],
+      "heritage": ["Mahan Singh Hazarawala", "Hazara’s Sikh-era administration", "Ashoka Rock Edicts, Mansehra", "The historic Pakhli region", "Battle of Balakot, 1831", "Syed Ahmad Shaheed and Shah Ismail Shaheed memorial sites", "Hindko-speaking Hazara culture", "Pashtun and Tanoli regional history", "Siran Valley", "Kunhar River", "Kaghan Valley and Babusar Pass"],
+      "summary": "Hazarawala is a new fictional commemorative district name inspired by Mahan Singh Hazarawala, not an ancient name for this territory. It comprises the complete dated Mansehra, Baffa-Pakhal (Pakhli) and Balakot tehsil polygons. Balakot’s full mountain extent and Kaghan Valley are retained. Oghi and Darband belong to the separate Amb Union Territory."
+    }
+  ],
+  "aliases": {"PK53101": ["Lahor"], "PK53103": ["Topi"], "PK50503": ["Khado Khel", "Khudu Khel", "Khado Khel / Khudu Khel"], "PK50103": ["Lora"], "PK50104": ["Lower Tanawal"], "PK52204": ["Baffa-Pakhal", "Baffa Pakhal"], "PK52201": ["Bala Kot"]},
+  "amb": {
+    "id": "amb", "name": "Amb", "officialName": "Union Territory of Amb", "capital": "Darband", "royalCentre": "Shergarh", "color": "#DCC89F",
+    "members": {"PK52205": "Darband", "PK52203": "Oghi"},
+    "heritage": ["Historic Amb princely state", "Tanoli dynasty", "Darband capital", "Shergarh royal residence", "Agror Valley", "Tanawal history", "Historical relationships with the Sikh Empire and British administration", "Hindko and Pashto cultural heritage"],
+    "limitation": "Only the verified Oghi and Darband source polygons are assigned. Additional Tanawal and Phulra sub-tehsil boundaries are unavailable. Shergarh and Phulra are historical references, not invented administrative polygons. The modern fictional UT does not assert an exact reconstruction of the historical princely state. Former Lower Tanawal / Sherwan is excluded."
+  }
+}

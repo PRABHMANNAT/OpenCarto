@@ -1,4 +1,5 @@
 import polygonClipping from 'polygon-clipping';
+import reorganization from './united-punjab-reorganization.json';
 import type {
   Feature,
   FeatureCollection,
@@ -16,6 +17,7 @@ export type DistrictEdits = {
   groups: DistrictGroup[];
   names: Record<string, string>;
   colors: Record<string, string>;
+  revision?: string;
 };
 
 export type HypotheticalDemographics = {
@@ -89,21 +91,29 @@ export const districtEditsStorageKey = 'private-atlas-punjab-districts-v1';
 
 export function defaultDistrictEdits(): DistrictEdits {
   return {
-    groups: [
-      {
-        id: 'punjab-d-katas-raj-salt-range',
-        members: ['punjab-d-katas-raj-salt-range', 'punjab-d-chakwal'],
-        name: 'Katas',
-      },
-      {
-        id: 'punjab-d-kartarpur-ravi',
-        members: ['punjab-d-kartarpur-ravi', 'punjab-d-narowal'],
-        name: 'Kartarpur Sahib',
-      },
-    ],
+    groups: [], // Approved merges now live in the canonical hierarchy.
     names: { 'punjab-d-kasur-bulleh-shah': 'Bulleh Shah' },
     colors: {},
+    revision: reorganization.revision,
   };
+}
+
+export function canonicalDistrictId(id: string): string {
+  return (reorganization.retiredDistrictIds as Record<string, string>)[id] || id;
+}
+
+export function migrateDistrictEdits(saved: DistrictEdits): DistrictEdits {
+  const protectedIds = new Set(Object.values(reorganization.retiredDistrictIds));
+  const groups = saved.groups.flatMap(group => {
+    const members = [...new Set(group.members.map(canonicalDistrictId))];
+    if (members.length < 2 || members.some(id => protectedIds.has(id))) return [];
+    return [{...group, id: members[0], members}];
+  });
+  const names = Object.fromEntries(Object.entries(saved.names).filter(([id]) =>
+    id === canonicalDistrictId(id) && !protectedIds.has(id)));
+  // Apply the requested existing palette afresh once for the new hierarchy.
+  const colors = saved.revision === reorganization.revision ? saved.colors : {};
+  return {...saved, groups, names, colors, revision: reorganization.revision};
 }
 
 export function readDistrictEdits(): DistrictEdits {
@@ -166,7 +176,7 @@ export function readDistrictEdits(): DistrictEdits {
           /^#[0-9a-f]{6}$/i.test(color),
       ),
     ) as Record<string, string>;
-    return { groups, names, colors };
+    return migrateDistrictEdits({ groups, names, colors, revision: saved.revision });
   } catch {
     return fallback;
   }
@@ -259,7 +269,7 @@ export function mergeDistrictFeatures(
     const id = districtId(feature);
     return hidden.has(id) ? [] : [replaced.get(id) || feature];
   });
-  const ranked = [...features].sort(
+  const ranked = features.filter(feature => feature.properties?.hypotheticalDemographics).sort(
     (a, b) =>
       Number(b.properties?.hypotheticalDemographics?.total || 0) -
         Number(a.properties?.hypotheticalDemographics?.total || 0) ||
@@ -275,6 +285,7 @@ export function mergeDistrictFeatures(
       properties: {
         ...feature.properties,
         populationRank: populationRanks.get(districtId(feature)),
+        populationRankCount: populationRanks.has(districtId(feature)) ? ranked.length : undefined,
         density: feature.properties?.hypotheticalDemographics
           ? Math.round(
               feature.properties.hypotheticalDemographics.total /
@@ -334,14 +345,16 @@ export const punjabPalette = [
   { name: 'Aqua', color: '#AFCDD1' },
 ] as const;
 
-export function paletteColor(index: number): string {
-  return punjabPalette[index % punjabPalette.length].color;
+export function paletteColor(index: number, palette: readonly {color: string}[] = punjabPalette): string {
+  const active = palette.length ? palette : punjabPalette;
+  return active[index % active.length].color;
 }
 
 export function styleDistrictFeatures(
   merged: FeatureCollection,
   source: FeatureCollection,
   edits: DistrictEdits,
+  palette: readonly {color: string}[] = punjabPalette,
 ): FeatureCollection {
   const ids = [...merged.features]
     .sort(
@@ -360,7 +373,7 @@ export function styleDistrictFeatures(
         properties: {
           ...feature.properties,
           name: edits.names[id]?.trim() || feature.properties?.name,
-          color: edits.colors[id] || paletteColor(ids.indexOf(id)),
+          color: edits.colors[id] || paletteColor(ids.indexOf(id), palette),
         },
       };
     }),
@@ -374,11 +387,13 @@ export function styleTehsilFeatures(
   districts: FeatureCollection,
   edits: DistrictEdits,
   mode: TehsilColorMode,
+  palette: readonly {color: string}[] = punjabPalette,
 ): FeatureCollection {
   const styledDistricts = styleDistrictFeatures(
     mergeDistrictFeatures(districts, edits.groups),
     districts,
     edits,
+    palette,
   );
   const displayedNames = districtDisplayNames(districts, edits);
   const districtByName = new Map(
@@ -411,7 +426,7 @@ export function styleTehsilFeatures(
           color:
             mode === 'district'
               ? String(parent?.properties?.color || '#ffffff')
-              : paletteColor(tehsilOrder.get(districtId(feature)) || 0),
+              : paletteColor(tehsilOrder.get(districtId(feature)) || 0, palette),
         },
       };
     }),

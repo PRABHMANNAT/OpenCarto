@@ -69,6 +69,13 @@ try {
     'Overview fits function response limit',
   );
   const data = JSON.parse(text);
+  const northernReview = await (await call('territorial-review', { headers })).json();
+  if (northernReview?.revision === 'united-punjab-48-amb-2026-10-15') {
+    const {checkReorganizationApi} = await import('./check-united-punjab-reorganization.mjs');
+    await checkReorganizationApi(call, data);
+  } else if (northernReview) {
+    await import('./check-northern-territorial-review.mjs');
+  } else {
   assert.equal(data.provinces.length, 42);
   assert.equal(data.geometry.features.length, 42);
   assert.equal(new Set(data.provinces.map((p) => p.id)).size, 42);
@@ -685,6 +692,7 @@ try {
   console.log(
     'Verified password-free access without session credentials, origin checks, 42 profiles, northern regrouping, five attributed Punjab photos, proposed official languages, coverage audit, paged detail and absence of credentials/private data in client assets.',
   );
+  }
 } finally {
   server.closeAllConnections();
   await new Promise((resolve) => server.close(resolve));

@@ -1,0 +1,18 @@
+{
+  "retrieved": "2026-10-15",
+  "source": "OpenStreetMap, retrieved through Nominatim; mapped nodes or polygon label points, not surveyed coordinates",
+  "license": "ODbL-1.0",
+  "licenseUrl": "https://www.openstreetmap.org/copyright",
+  "places": [
+    {"id": "up-totalai", "name": "Totalai", "coordinates": [72.4999736, 34.1947009], "sourceUrl": "https://www.openstreetmap.org/node/3334994693", "sourceTehsil": "PK50503", "kind": "settlement"},
+    {"id": "up-kaghan", "name": "Kaghan", "coordinates": [73.5241551, 34.7806262], "sourceUrl": "https://www.openstreetmap.org/node/274100046", "sourceTehsil": "PK52201", "kind": "settlement"},
+    {"id": "up-shogran", "name": "Shogran", "coordinates": [73.4639560, 34.6409377], "sourceUrl": "https://www.openstreetmap.org/node/895114229", "sourceTehsil": "PK52201", "kind": "settlement"},
+    {"id": "up-saif-ul-maluk", "name": "Saif-ul-Maluk Lake", "aliases": ["Saif-ul-Malook"], "coordinates": [73.6937901, 34.8772137], "sourceUrl": "https://www.openstreetmap.org/way/23335438", "sourceTehsil": "PK52201", "kind": "landscape"},
+    {"id": "up-lulusar", "name": "Lulusar Lake", "coordinates": [73.9250006, 35.0836011], "sourceUrl": "https://www.openstreetmap.org/way/23335449", "sourceTehsil": "PK52201", "kind": "landscape"},
+    {"id": "up-babusar", "name": "Babusar Pass", "coordinates": [74.0466335, 35.1459047], "sourceUrl": "https://www.openstreetmap.org/node/2433473451", "sourceTehsil": "PK52201", "kind": "landscape"},
+    {"id": "up-darband", "name": "Darband", "coordinates": [72.8601862, 34.3654635], "sourceUrl": "https://www.openstreetmap.org/node/745365492", "sourceTehsil": "PK52205", "kind": "settlement"},
+    {"id": "up-shergarh", "name": "Shergarh Fort", "coordinates": [72.9918959, 34.4583985], "sourceUrl": "https://www.openstreetmap.org/node/12076201047", "sourceTehsil": "PK52203", "kind": "heritage", "description": "Historical royal centre of Amb; a heritage reference point, distinct from the fictional UT boundary."},
+    {"id": "up-phulra", "name": "Phulra", "coordinates": [73.0562755, 34.3350627], "sourceUrl": "https://www.openstreetmap.org/node/3122120514", "sourceTehsil": "PK52202", "kind": "historical reference", "description": "Historical Tanawal reference. This mapped village lies within the approved dated Mansehra polygon in Hazarawala; no separate historical Phulra polygon is assigned to Amb."}
+  ],
+  "unresolvedReferences": [{"name": "Panjtar", "note": "No unambiguous mapped point was returned by the bounded source searches. The complete existing Khado Khel / Ranigat polygon is retained; no new tehsil or territorial expansion is inferred."}]
+}

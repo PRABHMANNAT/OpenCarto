@@ -11,6 +11,8 @@
     "build:vercel": "vite build --config vite.vercel.config.ts",
     "preview:vercel": "vite preview --config vite.vercel.config.ts",
     "check:private-atlas": "node scripts/check-private-atlas.mjs",
+    "check:northern-review": "npm run check:united-punjab",
+    "check:northern-review-browser": "npm run check:united-punjab-browser",
     "check:private-atlas-browser": "node scripts/verify-private-atlas-browser.mjs",
     "check:punjab-division-profiles-browser": "node scripts/verify-punjab-division-profiles.mjs",
     "data:punjab-district-profiles": "node scripts/build-punjab-district-profiles.mjs",
@@ -58,7 +60,10 @@
     "check:map-navigation-browser": "node scripts/verify-map-navigation-browser.mjs",
     "check:paint-palette": "node scripts/check-paint-palette.mjs",
     "check:paint-palette-browser": "node scripts/verify-paint-palette-browser.mjs",
-    "check:paint-interactions-browser": "node scripts/verify-paint-interactions-browser.mjs"
+    "check:paint-interactions-browser": "node scripts/verify-paint-interactions-browser.mjs",
+    "data:united-punjab": "node scripts/run-atlas-python.mjs apply-united-punjab-reorganization.py && node scripts/pack-private-atlas.mjs",
+    "check:united-punjab": "node scripts/run-atlas-python.mjs check-united-punjab-geometry.py && npm run check:private-atlas",
+    "check:united-punjab-browser": "node scripts/verify-united-punjab-browser.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

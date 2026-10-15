@@ -1,5 +1,7 @@
 # Custom alternative political atlas
 
+**Current edition:** [48-district United Punjab and separate Amb Union Territory](united-punjab-48-and-amb.md), revision 2026-10-15. There are now 43 state/province/UT profiles. Use `npm run data:united-punjab`, `npm run check:united-punjab` and `npm run check:united-punjab-browser` for this edition. The earlier construction and population notes below describe prior snapshots; their district/province totals and scaffold regeneration commands are superseded. Compatible allocations are retained, but changed boundaries have unavailable totals rather than extrapolated population estimates.
+
 Open **My maps → United Subcontinent — Alternative Political Geography → Open custom map**. The atlas opens directly without a password, session cookie, lock button or access timeout. Opening and closing it preserves the editor draft and the saved-map library. Its overview, research and paged detail API are available without authentication.
 
 ## Local operation

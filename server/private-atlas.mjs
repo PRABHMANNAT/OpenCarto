@@ -85,7 +85,17 @@ export async function privateAtlasHandler(req, res) {
     }
     const data = await payload(key);
     if (action === 'overview') return respond(res, 200, data.overview);
+    if (action === 'search') {
+      const query = (url.searchParams.get('q') || '').trim().toLowerCase();
+      if (query.length < 2 || query.length > 100)
+        return respond(res, 400, {error: 'Use between 2 and 100 characters to find an administrative area.'});
+      const matches = (data.administrativeSearch || []).filter(item =>
+        [item.name, ...item.aliases].join(' ').toLowerCase().includes(query));
+      return respond(res, 200, matches.slice(0, 30));
+    }
     if (action === 'analysis') return respond(res, 200, data.analysis);
+    if (action === 'territorial-review')
+      return respond(res, 200, data.territorialReview || null);
     if (action === 'detail') {
       const id = url.searchParams.get('province'),
         level = url.searchParams.get('level');

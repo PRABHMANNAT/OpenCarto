@@ -35,6 +35,7 @@ import type { ExpressionSpecification } from '@maplibre/maplibre-gl-style-spec';
 import type { FeatureCollection, Feature } from 'geojson';
 import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import natureSources from './nature-sources.json';
+import type {PaletteColor} from './paint-palette-model';
 import {
   defaultDistrictEdits,
   districtDisplayNames,
@@ -128,6 +129,10 @@ type Overview = {
     unassignedSourceFootprintKm2: number;
   };
 };
+type AdministrativeSearchResult = {
+  id: string; name: string; province: string; level: 'district' | 'tehsil';
+  aliases: string[]; capital: string; bbox: number[]; parentDistrictId?: string;
+};
 type Change = {
   sourceId: string;
   currentDistrict: string;
@@ -213,6 +218,7 @@ type DistrictInfo = {
   tehsilCount: number;
   hypotheticalDemographics?: HypotheticalDemographics;
   populationRank?: number;
+  populationRankCount?: number;
   scenarioZone?: string;
   keyCities?: string[];
   density?: number;
@@ -221,6 +227,10 @@ type DistrictInfo = {
   wikiUrl?: string;
   reason?: string;
   sourceName?: string;
+  designation?: string;
+  heritage?: string[] | string;
+  limitation?: string;
+  memberTehsils?: {sourceCode: string; name: string; sourceName: string; aliases: string[]}[];
 };
 function DistrictProfile({
   district,
@@ -251,11 +261,11 @@ function DistrictProfile({
         <span>{district.name}</span>
       </div>
       <div className="ua-profile-heading">
-        <small>PROPOSED DISTRICT · ALTERNATIVE WORLD</small>
+        <small>PROPOSED {district.designation || 'DISTRICT'} · ALTERNATIVE WORLD</small>
         <h2>{district.name}</h2>
-        <p>
-          {district.division} division · {district.scenarioZone}
-        </p>
+        {(district.division || district.scenarioZone) && <p>
+          {[district.division ? district.division + ' division' : '', district.scenarioZone].filter(Boolean).join(' · ')}
+        </p>}
       </div>
       <div className="ua-division-content">
         <PhotoGallery
@@ -263,11 +273,11 @@ function DistrictProfile({
           photos={district.photos || []}
           subject="district"
         />
-        <p className="ua-data-note">
+        {!!district.photos?.length && <p className="ua-data-note">
           Real location photographs from current Wikimedia listings. Dates and
           credits are shown for each image; these are not images of the
           fictional world.
-        </p>
+        </p>}
         <dl className="ua-division-facts">
           <div>
             <dt>Headquarters</dt>
@@ -299,7 +309,7 @@ function DistrictProfile({
               <div>
                 <dt>Population rank · fictional</dt>
                 <dd>
-                  #{district.populationRank} of {districtCount}
+                  #{district.populationRank} of {district.populationRankCount || districtCount}
                 </dd>
               </div>
               <div>
@@ -319,12 +329,25 @@ function DistrictProfile({
             <a href={district.wikiUrl} target="_blank" rel="noreferrer">
               Read the real location on Wikipedia
             </a>{' '}
-            · Summary adapted from Wikipedia, CC BY-SA 4.0. Historical source
-            boundaries may differ from this proposed district.
+            · Real location reference. Historical source boundaries may differ from this proposed district.
           </p>
         )}
         <h3>Name and proposed boundaries</h3>
         <p>{district.reason}</p>
+        {district.memberTehsils && <>
+          <h3>Constituent tehsils</h3>
+          <ul>{district.memberTehsils.map(tehsil => <li key={tehsil.sourceCode}>
+            {tehsil.name}{tehsil.aliases.length > 0 && <small> · formerly {tehsil.sourceName}</small>}
+          </li>)}</ul>
+        </>}
+        {district.heritage && <>
+          <h3>Historical and cultural heritage</h3>
+          {Array.isArray(district.heritage)
+            ? <ul>{district.heritage.map(item => <li key={item}>{item}</li>)}</ul>
+            : <p>{district.heritage}</p>}
+        </>}
+        {district.limitation && <p className="ua-data-note">{district.limitation}</p>}
+        {!scenario && <p className="ua-data-note">Population, density and religious totals are unavailable for this boundary edition.</p>}
         <p>
           Source district: {district.sourceName}. Area and density use the
           proposed geometry.
@@ -556,7 +579,7 @@ function PhotoGallery({
 }) {
   const [index, setIndex] = useState(0),
     photo = photos[index];
-  if (!photo) return null;
+  if (!photo?.url || !photo.title) return null;
   return (
     <>
       <div className="ua-gallery">
@@ -696,7 +719,7 @@ function DivisionPanel({
   const activeAreaRank = info
     ? ranked.findIndex((feature) => feature.properties?.id === info.id) + 1
     : 0;
-  const populationRanked = [...divisions].sort(
+  const populationRanked = divisions.filter(feature => feature.properties?.hypotheticalDemographics).sort(
     (a, b) =>
       Number(b.properties?.hypotheticalDemographics?.total || 0) -
         Number(a.properties?.hypotheticalDemographics?.total || 0) ||
@@ -960,7 +983,8 @@ function DistrictOverviewPanel({
     (feature) => feature.properties as DistrictInfo,
   );
   const scenario = sumDistrictDemographics(districts);
-  const religions = scenario?.religions.map((item) => item.name) || [];
+  const comparable = records.filter(record => record.hypotheticalDemographics);
+  const religions = [...new Set(comparable.flatMap(record => record.hypotheticalDemographics!.religions.map(item => item.name)))];
   const selectedReligion = religions.includes(religion)
     ? religion
     : religions[0] || 'Sikhism';
@@ -969,19 +993,19 @@ function DistrictOverviewPanel({
   );
   const population = (record: DistrictInfo) =>
     record.hypotheticalDemographics?.total || 0;
-  const populationRanked = [...records].sort(byRankingValue(population));
+  const populationRanked = [...comparable].sort(byRankingValue(population));
   const religionPopulation = (record: DistrictInfo) =>
     record.hypotheticalDemographics?.religions.find(
       (item) => item.name === selectedReligion,
     )?.population || 0;
-  const religionRanked = [...records]
+  const religionRanked = [...comparable]
     .sort(byRankingValue(religionPopulation))
     .slice(0, 10);
   const divisions = summarizeDistrictDivisions(districts);
   const divisionAreaRanked = [...divisions].sort(
     byRankingValue((division: (typeof divisions)[number]) => division.areaKm2),
   );
-  const divisionPopulationRanked = [...divisions].sort(
+  const divisionPopulationRanked = divisions.filter(division => division.hypotheticalDemographics).sort(
     byRankingValue(
       (division: (typeof divisions)[number]) =>
         division.hypotheticalDemographics?.total || 0,
@@ -1037,7 +1061,7 @@ function DistrictOverviewPanel({
           <>
             <h3>Population · fictional scenario</h3>
             <p>
-              Punjab: <strong>{formatPopulation(scenario?.total || 0)}</strong>{' '}
+              Punjab: <strong>{scenario ? formatPopulation(scenario.total) : 'Unavailable for the current boundaries'}</strong>{' '}
               ·{' '}
               {scenario?.religions
                 .map(
@@ -1047,11 +1071,9 @@ function DistrictOverviewPanel({
               .
             </p>
             <p className="ua-data-note">
-              Fictional allocations reflect religious heritage centres and the
-              urban and rural settlement mix. Statistics use the same{' '}
-              {records.length} districts shown on the map, including merged
-              districts. Select a district to see its allocation and source
-              profile.
+              Existing fictional allocations are available for {comparable.length} of {records.length} districts.
+              Rankings include only districts with compatible values. Missing populations are not zero;
+              no total is extrapolated to the transferred territory.
             </p>
             <div className="ua-ranking-highlights">
               <div>
@@ -1098,7 +1120,7 @@ function DistrictOverviewPanel({
             <section className="ua-ranking-section">
               <h3>District population ranking · fictional</h3>
               <p className="ua-data-note">
-                All {records.length} districts · total residents
+                {comparable.length} districts with compatible allocations · total residents
               </p>
               <RankingList
                 className="ua-district-population-ranking"
@@ -1126,7 +1148,7 @@ function DistrictOverviewPanel({
             <section className="ua-ranking-section">
               <h3>Division population ranking · fictional</h3>
               <p className="ua-data-note">
-                All {divisions.length} divisions · combined district population
+                {divisionPopulationRanked.length} divisions with complete compatible allocations · combined district population
               </p>
               <RankingList
                 className="ua-division-population-ranking"
@@ -2056,7 +2078,7 @@ function AtlasMap({
           map.addControl(
             new gl.AttributionControl({
               customAttribution:
-                'Hypothetical geography · LGD/Bharatlas · Esri India · WFP/OCHA CC BY-IGO · Natural Earth',
+                'Hypothetical geography · LGD/Bharatlas · Esri India · WFP/OCHA CC BY-IGO · Natural Earth · © OpenStreetMap contributors (ODbL)',
               compact: true,
             }),
           );
@@ -2516,7 +2538,8 @@ function AtlasMap({
   );
 }
 
-export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
+export default function PrivateAtlas({ onClose, palette }: { onClose: () => void; palette?: PaletteColor[] }) {
+  const districtPalette = useMemo(() => palette?.length ? palette.map(item => ({name: item.name, color: item.hex})) : punjabPalette, [palette]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const sidebarId = useId();
   const [data, setData] = useState<Overview | null>(null),
@@ -2535,6 +2558,8 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     [mergeWith, setMergeWith] = useState(''),
     [hover, setHover] = useState(''),
     [query, setQuery] = useState(''),
+    [administrativeResults, setAdministrativeResults] = useState<AdministrativeSearchResult[]>([]),
+    [searchLoading, setSearchLoading] = useState(false),
     [provinceDetails, setProvinceDetails] = useState(readProvinceDetails),
     [loadedDetails, setLoadedDetails] = useState<Record<string, FeatureCollection>>({}),
     [dark, setDark] = useState(false),
@@ -2555,6 +2580,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
   const map = useRef<GLMap | null>(null),
     sidebar = useRef<HTMLElement | null>(null),
     detailCache = useRef(new Map<string, FeatureCollection>());
+  const pendingSearch = useRef<AdministrativeSearchResult | null>(null);
   const level: Level = selected ? provinceDetails[selected] || 'province' : 'province';
   function setLevel(next: Level, provinceId = selected) {
     if (!provinceId) return;
@@ -2577,8 +2603,9 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
         mergeDistrictFeatures(districtSource, districtEdits.groups),
         districtSource,
         districtEdits,
+        districtPalette,
       ),
-    [districtSource, districtEdits],
+    [districtSource, districtEdits, districtPalette],
   );
   const displayChanges = useMemo(
     () =>
@@ -2602,9 +2629,9 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       let styled = raw;
       if (id === 'punjab') {
         if (mode === 'district')
-          styled = styleDistrictFeatures(mergeDistrictFeatures(raw, districtEdits.groups), raw, districtEdits);
+          styled = styleDistrictFeatures(mergeDistrictFeatures(raw, districtEdits.groups), raw, districtEdits, districtPalette);
         else if (mode === 'tehsil')
-          styled = styleTehsilFeatures(raw, districtSource, districtEdits, tehsilColorMode);
+          styled = styleTehsilFeatures(raw, districtSource, districtEdits, tehsilColorMode, districtPalette);
         else {
           const summaries = summarizeDistrictDivisions(styledPunjabDistricts.features);
           styled = {...raw, features: raw.features.map(feature => ({...feature, properties: {
@@ -2618,7 +2645,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       result[id] = tagAtlasDetail(styled, id, mode);
     }
     return result;
-  }, [data, provinceDetails, loadedDetails, districtSource, districtEdits, styledPunjabDistricts, tehsilColorMode, colors.fills]);
+  }, [data, provinceDetails, loadedDetails, districtSource, districtEdits, styledPunjabDistricts, tehsilColorMode, colors.fills, districtPalette]);
   const displayedDetail = detailsByProvince[selected] || empty;
   const nationalDetail = useMemo<FeatureCollection>(() => ({
     type: 'FeatureCollection',
@@ -2758,6 +2785,17 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       ) || [],
     [data, query],
   );
+  useEffect(() => {
+    if (query.trim().length < 2) return;
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      void request<AdministrativeSearchResult[]>('action=search&q=' + encodeURIComponent(query.trim()), {signal: controller.signal})
+        .then(results => {if (!controller.signal.aborted) setAdministrativeResults(results);})
+        .catch(() => {if (!controller.signal.aborted) setAdministrativeResults([]);})
+        .finally(() => {if (!controller.signal.aborted) setSearchLoading(false);});
+    }, 200);
+    return () => {window.clearTimeout(timer); controller.abort();};
+  }, [query]);
   const fetchOverview = useCallback(async (signal?: AbortSignal) => {
     try {
       setLoading(true);
@@ -2822,6 +2860,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
     return () => controller.abort();
   }, [data]);
   function national() {
+    pendingSearch.current = null;
     setPunjabOnly(false);
     setFocusedDistrictId('');
     setDistrictEditing(false);
@@ -2833,6 +2872,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       fit(map.current, data.bbox, window.innerWidth < 760);
   }
   function choose(id: string, focus = false) {
+    pendingSearch.current = null;
     setDistrictEditing(false);
     setFocusedDistrictId('');
     if (id !== 'punjab') {
@@ -2966,7 +3006,7 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
       context2d.fillStyle = '#344d5e';
       context2d.font = `${Math.max(8, Math.min(11, canvas.width / 90))}px Arial`;
       context2d.fillText(
-        'Hypothetical geography · LGD/Bharatlas · Esri India · WFP/OCHA CC BY-IGO · Natural Earth' +
+        'Hypothetical geography · LGD/Bharatlas · Esri India · WFP/OCHA CC BY-IGO · Natural Earth · © OpenStreetMap contributors (ODbL)' +
           (mapStyle !== 'political'
             ? ' · Basemap © Esri and contributors'
             : '') +
@@ -3047,6 +3087,16 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
           ...(districts ? {[atlasDetailKey(id, 'district')]: districts} : {}),
         }));
         if (id === 'punjab') setDistrictSource(districts || result);
+        const pending = pendingSearch.current;
+        if (pending?.province === id && pending.level === mode) {
+          const feature = result.features.find(item => item.properties?.id === pending.id);
+          if (feature) {
+            setInspected(feature);
+            if (id === 'punjab' && mode === 'district') setFocusedDistrictId(pending.id);
+            setSidebarCollapsed(false);
+            pendingSearch.current = null;
+          }
+        }
       } catch (cause) {
         if (controller.signal.aborted) return;
         const name = data!.provinces.find(p => p.id === id)?.name || id;
@@ -3214,12 +3264,17 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                   id="ua-province"
                   type="search"
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Find a province or capital"
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setAdministrativeResults([]);
+                    setSearchLoading(e.target.value.trim().length >= 2);
+                  }}
+                  maxLength={100}
+                  placeholder="Find province, district or tehsil"
                 />
                 {query && (
                   <ul>
-                    {visible.length ? (
+                    {visible.length > 0 && (
                       visible.map((p) => (
                         <li key={p.id}>
                           <button
@@ -3235,9 +3290,20 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                           </button>
                         </li>
                       ))
-                    ) : (
-                      <li>No matching provinces</li>
                     )}
+                    {administrativeResults.map(item => <li key={`${item.province}:${item.level}:${item.id}`}>
+                      <button type="button" onClick={() => {
+                        choose(item.province);
+                        setLevel(item.level, item.province);
+                        pendingSearch.current = item;
+                        setQuery('');
+                        if (map.current) fit(map.current, item.bbox, window.innerWidth < 760);
+                      }}>
+                        {item.name}<small>{item.level === 'tehsil' ? 'Tehsil / subdistrict' : 'District'} · {data?.provinces.find(p => p.id === item.province)?.name}</small>
+                      </button>
+                    </li>)}
+                    {searchLoading && <li>Searching administrative areas…</li>}
+                    {!searchLoading && !visible.length && !administrativeResults.length && <li>No matching administrative areas</li>}
                   </ul>
                 )}
               </div>
@@ -3376,8 +3442,8 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                       }}
                     >
                       <option value="">Choose color</option>
-                      {punjabPalette.map(({ name, color }) => (
-                        <option key={name} value={color}>
+                      {districtPalette.map(({ name, color }, index) => (
+                        <option key={`${color}:${index}`} value={color}>
                           {name} · {color}
                         </option>
                       ))}
@@ -3601,6 +3667,8 @@ export default function PrivateAtlas({ onClose }: { onClose: () => void }) {
                               ...focusedDistrict,
                               properties: {
                                 ...focusedDistrict.properties,
+                                atlasProvince: 'punjab',
+                                atlasLevel: 'district',
                                 color:
                                   displayedDetail.features.find(
                                     (f) =>
