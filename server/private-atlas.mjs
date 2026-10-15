@@ -91,6 +91,8 @@ export async function privateAtlasHandler(req, res) {
         return respond(res, 400, {error: 'Use between 2 and 100 characters to find an administrative area.'});
       const matches = (data.administrativeSearch || []).filter(item =>
         [item.name, ...item.aliases].join(' ').toLowerCase().includes(query));
+      const exact = item => [item.name, ...item.aliases].some(name => name.toLowerCase() === query);
+      matches.sort((a, b) => Number(exact(b)) - Number(exact(a)));
       return respond(res, 200, matches.slice(0, 30));
     }
     if (action === 'analysis') return respond(res, 200, data.analysis);
@@ -102,7 +104,7 @@ export async function privateAtlasHandler(req, res) {
       if (
         !id ||
         !Object.hasOwn(data.details, id) ||
-        !['province', 'division', 'district', 'tehsil'].includes(level)
+        !['province', 'region', 'division', 'district', 'tehsil'].includes(level)
       )
         return respond(res, 400, {
           error: 'Choose a valid province and detail level.',

@@ -1,5 +1,7 @@
 # Custom alternative political atlas
 
+**Latest map view:** [Six historical regions](punjab-historical-regions.md) groups all 48 Punjab districts into Majha (13), Malwa (10), Doaba (4), Puadh (4), Bar (9) and Pothohar (8). Historical Regions appears immediately above Divisions; the 12 administrative divisions, existing geography and statistics remain intact.
+
 **Current edition:** [48 districts across 12 divisions, with updated fictional statistics](punjab-final-divisions-and-statistics.md), revision 2026-10-15. Amb is a separate Union Territory; there are 43 state/province/UT profiles. Rawalpindi has five districts and Hazara has three; the other ten divisions retain their assignments and boundaries. Punjab's user-defined fictional population is 7 crore. See the current record for environmental estimates, regeneration and validation commands. The earlier construction and population notes below describe prior snapshots; their district/province totals, population models and scaffold regeneration commands are superseded.
 
 Open **My maps → United Subcontinent — Alternative Political Geography → Open custom map**. The atlas opens directly without a password, session cookie, lock button or access timeout. Opening and closing it preserves the editor draft and the saved-map library. Its overview, research and paged detail API are available without authentication.

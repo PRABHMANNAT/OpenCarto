@@ -646,6 +646,40 @@
     serif;
   color: #29495e;
 }
+.ua-region-legend {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+.ua-region-legend button {
+  justify-content: flex-start;
+  text-align: left;
+  padding: 10px 12px;
+}
+.ua-region-legend i {
+  width: 22px;
+  height: 22px;
+  border: 1px solid #38536a;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+.ua-region-legend strong,
+.ua-region-legend small {
+  display: block;
+}
+.ua-region-legend small {
+  margin-top: 3px;
+  font-size: 10px;
+}
+.ua-region-table,
+.ua-district-directory-section {
+  overflow-x: auto;
+}
+.ua-region-districts td button {
+  padding: 3px 5px;
+  font-size: 11px;
+  text-align: left;
+}
 .ua-division-facts {
   margin: 18px 0;
   border-top: 1px solid #dce4df;

@@ -1,5 +1,7 @@
 # United Punjab: final 12 divisions and statistics
 
+**Subsequent view:** [Six historical regions](punjab-historical-regions.md) adds a parallel grouping of the 48 districts. All division assignments, boundaries and statistics in this record remain unchanged.
+
 Revision `punjab-final-12-divisions-2026-10-15` finalizes the existing fictional map as **48 districts, 12 divisions and 193 mapped tehsils**. It does not alter district, tehsil or state boundaries. Amb remains an independent Union Territory with Darband as its capital and is excluded from all Punjab division and population totals.
 
 ## Division assignments

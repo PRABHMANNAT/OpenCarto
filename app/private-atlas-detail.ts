@@ -1,11 +1,12 @@
 import type {FeatureCollection} from 'geojson';
 import {paletteColor} from './private-atlas-districts';
 
-export type AtlasDetailLevel = 'division' | 'district' | 'tehsil';
+export type AtlasDetailLevel = 'region' | 'division' | 'district' | 'tehsil';
 export type ProvinceDetails = Record<string, AtlasDetailLevel>;
 export const provinceDetailsStorageKey = 'private-atlas-province-details-v1';
 export const nationalBorderColor = '#182d3b';
 export const atlasDetailLabels = {
+  region: 'Historical Regions',
   division: 'Divisions',
   district: 'Districts',
   tehsil: 'Tehsils / subdistricts',
@@ -17,7 +18,7 @@ export function readProvinceDetails(): ProvinceDetails {
     const saved: unknown = JSON.parse(localStorage.getItem(provinceDetailsStorageKey) || '{}');
     if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return {};
     return Object.fromEntries(Object.entries(saved).filter(([id, level]) =>
-      /^[a-z][a-z0-9-]*$/.test(id) && ['division', 'district', 'tehsil'].includes(level),
+      /^[a-z][a-z0-9-]*$/.test(id) && ['region', 'division', 'district', 'tehsil'].includes(level) && (level !== 'region' || id === 'punjab'),
     ));
   } catch {
     return {};

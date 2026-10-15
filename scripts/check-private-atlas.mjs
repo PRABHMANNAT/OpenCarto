@@ -73,6 +73,10 @@ try {
   if (northernReview?.revision === 'united-punjab-48-amb-2026-10-15') {
     const {checkReorganizationApi} = await import('./check-united-punjab-reorganization.mjs');
     await checkReorganizationApi(call, data);
+    if (data.provinces.find(p => p.id === 'punjab').detailCounts.region) {
+      const {checkHistoricalRegionsApi} = await import('./check-punjab-historical-regions.mjs');
+      await checkHistoricalRegionsApi(call, data);
+    }
   } else if (northernReview) {
     await import('./check-northern-territorial-review.mjs');
   } else {

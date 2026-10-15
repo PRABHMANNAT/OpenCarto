@@ -71,6 +71,14 @@ if (payload.divisionFinalization) {
       throw Error('Punjab district/division population does not reconcile to 7 crore.');
   }
 }
+if (payload.historicalRegions) {
+  const regions = payload.details.punjab.region.features;
+  const members = regions.flatMap(f => f.properties.memberDistrictIds);
+  if (regions.length !== 6 || members.length !== 48 || new Set(members).size !== 48 ||
+      regions.reduce((sum, f) => sum + f.properties.hypotheticalPopulation.total, 0) !== 70000000 ||
+      payload.details.punjab.district.features.some(f => !members.includes(f.properties.id)))
+    throw Error('Historical regions must cover exactly 48 districts with a 7-crore aggregate.');
+}
 // Keep full independent source geometry in private/; serve its precise display
 // derivative. Avoid decrypting unused, duplicated source geometry into memory.
 delete payload.exactGeometry;
