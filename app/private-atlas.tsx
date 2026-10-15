@@ -47,9 +47,12 @@ import {
   styleDistrictFeatures,
   styleTehsilFeatures,
   sumDistrictDemographics,
+  sumDistrictPopulation,
+  populationScenario,
   summarizeDistrictDivisions,
   type DistrictEdits,
   type HypotheticalDemographics,
+  type HypotheticalPopulation,
   type TehsilColorMode,
 } from './private-atlas-districts';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -92,6 +95,9 @@ type Province = {
   statisticsNote: string;
   census: Census | null;
   hypotheticalDemographics?: HypotheticalDemographics;
+  hypotheticalPopulation?: HypotheticalPopulation;
+  forestEstimate?: {note: string; sourceUrl: string; year: number};
+  highestPoint?: {elevationMeters: number; coordinates: number[]; note: string; sourceUrl: string; resolutionMeters: number};
   etymology: string;
   emblem: string;
   silhouette: string;
@@ -130,7 +136,7 @@ type Overview = {
   };
 };
 type AdministrativeSearchResult = {
-  id: string; name: string; province: string; level: 'district' | 'tehsil';
+  id: string; name: string; province: string; level: 'district' | 'tehsil' | 'division';
   aliases: string[]; capital: string; bbox: number[]; parentDistrictId?: string;
 };
 type Change = {
@@ -208,6 +214,7 @@ type DivisionInfo = {
   photo: Photo;
   areaNote: string;
   hypotheticalDemographics?: HypotheticalDemographics;
+  hypotheticalPopulation?: HypotheticalPopulation;
 };
 type DistrictInfo = {
   id: string;
@@ -217,6 +224,7 @@ type DistrictInfo = {
   areaKm2: number;
   tehsilCount: number;
   hypotheticalDemographics?: HypotheticalDemographics;
+  hypotheticalPopulation?: HypotheticalPopulation;
   populationRank?: number;
   populationRankCount?: number;
   scenarioZone?: string;
@@ -247,7 +255,8 @@ function DistrictProfile({
   onEdit: () => void;
   onIsolate?: () => void;
 }) {
-  const scenario = district.hypotheticalDemographics;
+  const scenario = populationScenario(district);
+  const demographics = district.hypotheticalDemographics;
   return (
     <article
       className="ua-profile ua-single-district"
@@ -357,12 +366,12 @@ function DistrictProfile({
         <p className="ua-data-note">
           Illustrative local centres, not a measured city population ranking.
         </p>
-        {scenario && (
+        {demographics && (
           <section className="ua-scenario-population">
             <h3>Religion and population · fictional scenario</h3>
-            <p className="ua-data-note">{scenario.note}</p>
-            {scenario.religions.map((r, i) => {
-              const share = (r.population / scenario.total) * 100;
+            <p className="ua-data-note">{demographics.note}</p>
+            {demographics.religions.map((r, i) => {
+              const share = (r.population / demographics.total) * 100;
               return (
                 <div className="ua-demographic" key={r.name}>
                   <strong>{r.name}</strong>
@@ -719,10 +728,10 @@ function DivisionPanel({
   const activeAreaRank = info
     ? ranked.findIndex((feature) => feature.properties?.id === info.id) + 1
     : 0;
-  const populationRanked = divisions.filter(feature => feature.properties?.hypotheticalDemographics).sort(
+  const populationRanked = divisions.filter(feature => populationScenario(feature.properties)).sort(
     (a, b) =>
-      Number(b.properties?.hypotheticalDemographics?.total || 0) -
-        Number(a.properties?.hypotheticalDemographics?.total || 0) ||
+      Number(populationScenario(b.properties)?.total || 0) -
+        Number(populationScenario(a.properties)?.total || 0) ||
       String(a.properties?.name).localeCompare(String(b.properties?.name)),
   );
   const activePopulationRank = info
@@ -804,12 +813,12 @@ function DivisionPanel({
                 <dt>Mapped tehsils / subdistricts</dt>
                 <dd>{info.tehsilCount}</dd>
               </div>
-              {info.hypotheticalDemographics && (
+              {populationScenario(info) && (
                 <>
                   <div>
                     <dt>Estimated population · fictional</dt>
                     <dd>
-                      {formatPopulation(info.hypotheticalDemographics.total)}
+                      {formatPopulation(populationScenario(info)!.total)}
                     </dd>
                   </div>
                   <div>
@@ -933,7 +942,7 @@ function DivisionPanel({
               name: String(feature.properties?.name),
               context: `HQ: ${feature.properties?.capital}`,
               value: Number(
-                feature.properties?.hypotheticalDemographics?.total || 0,
+                populationScenario(feature.properties)?.total || 0,
               ),
             }))}
             formatValue={formatPopulation}
@@ -969,6 +978,21 @@ const byRankingValue =
     value(b) - value(a) || a.name.localeCompare(b.name);
 const formatArea = (value: number) => format(value) + ' km²';
 
+function downloadDistrictStatistics(records: DistrictInfo[]) {
+  const rows = [
+    ['District', 'Division', 'District capital', 'Mapped tehsils', 'Area km2', 'Fictional population', 'Fictional density per km2'],
+    ...records.map(record => [record.name, record.division, record.capital, record.tehsilCount, record.areaKm2,
+      populationScenario(record)?.total ?? '', record.density ?? '']),
+  ];
+  const content = rows.map(row => row.map(value => '"' + String(value).replaceAll('"', '""') + '"').join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob(['\uFEFF' + content], {type: 'text/csv;charset=utf-8'}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'united-punjab-48-district-statistics.csv';
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 function DistrictOverviewPanel({
   districts,
   loading,
@@ -982,9 +1006,11 @@ function DistrictOverviewPanel({
   const records = districts.map(
     (feature) => feature.properties as DistrictInfo,
   );
-  const scenario = sumDistrictDemographics(districts);
-  const comparable = records.filter(record => record.hypotheticalDemographics);
-  const religions = [...new Set(comparable.flatMap(record => record.hypotheticalDemographics!.religions.map(item => item.name)))];
+  const scenario = sumDistrictPopulation(districts);
+  const demographics = sumDistrictDemographics(districts);
+  const comparable = records.filter(record => populationScenario(record));
+  const religionRecords = records.filter(record => record.hypotheticalDemographics);
+  const religions = [...new Set(religionRecords.flatMap(record => record.hypotheticalDemographics!.religions.map(item => item.name)))];
   const selectedReligion = religions.includes(religion)
     ? religion
     : religions[0] || 'Sikhism';
@@ -992,23 +1018,23 @@ function DistrictOverviewPanel({
     byRankingValue((record: DistrictInfo) => record.areaKm2),
   );
   const population = (record: DistrictInfo) =>
-    record.hypotheticalDemographics?.total || 0;
+    populationScenario(record)?.total || 0;
   const populationRanked = [...comparable].sort(byRankingValue(population));
   const religionPopulation = (record: DistrictInfo) =>
     record.hypotheticalDemographics?.religions.find(
       (item) => item.name === selectedReligion,
     )?.population || 0;
-  const religionRanked = [...comparable]
+  const religionRanked = [...religionRecords]
     .sort(byRankingValue(religionPopulation))
     .slice(0, 10);
   const divisions = summarizeDistrictDivisions(districts);
   const divisionAreaRanked = [...divisions].sort(
     byRankingValue((division: (typeof divisions)[number]) => division.areaKm2),
   );
-  const divisionPopulationRanked = divisions.filter(division => division.hypotheticalDemographics).sort(
+  const divisionPopulationRanked = divisions.filter(division => populationScenario(division)).sort(
     byRankingValue(
       (division: (typeof divisions)[number]) =>
-        division.hypotheticalDemographics?.total || 0,
+        populationScenario(division)?.total || 0,
     ),
   );
   const alphabetical = [...records].sort((a, b) =>
@@ -1061,9 +1087,8 @@ function DistrictOverviewPanel({
           <>
             <h3>Population · fictional scenario</h3>
             <p>
-              Punjab: <strong>{scenario ? formatPopulation(scenario.total) : 'Unavailable for the current boundaries'}</strong>{' '}
-              ·{' '}
-              {scenario?.religions
+              Punjab: <strong>{scenario ? formatPopulation(scenario.total) : 'Unavailable for the current boundaries'}</strong>
+              {demographics && ' · ' + demographics.religions
                 .map(
                   (item) => item.name + ' ' + formatPopulation(item.population),
                 )
@@ -1071,9 +1096,8 @@ function DistrictOverviewPanel({
               .
             </p>
             <p className="ua-data-note">
-              Existing fictional allocations are available for {comparable.length} of {records.length} districts.
-              Rankings include only districts with compatible values. Missing populations are not zero;
-              no total is extrapolated to the transferred territory.
+              Fictional allocations are available for {comparable.length} of {records.length} districts.
+              {scenario ? ' ' + scenario.note : ' Rankings include only compatible values; missing populations are not zero.'}
             </p>
             <div className="ua-ranking-highlights">
               <div>
@@ -1096,7 +1120,7 @@ function DistrictOverviewPanel({
                 <strong>{populationRanked[0]?.name}</strong>
                 <span>
                   {formatPopulation(
-                    populationRanked[0]?.hypotheticalDemographics?.total || 0,
+                    populationScenario(populationRanked[0])?.total || 0,
                   )}
                 </span>
               </div>
@@ -1155,12 +1179,12 @@ function DistrictOverviewPanel({
                 label="Divisions ranked by population"
                 entries={divisionEntries(
                   divisionPopulationRanked,
-                  (division) => division.hypotheticalDemographics?.total || 0,
+                  (division) => populationScenario(division)?.total || 0,
                 )}
                 formatValue={formatPopulation}
               />
             </section>
-            <section className="ua-ranking-section ua-religion-ranking">
+            {!!religions.length && <section className="ua-ranking-section ua-religion-ranking">
               <h3>{religionHeading}</h3>
               <label className="ua-division-picker">
                 Rank by religious population
@@ -1187,7 +1211,7 @@ function DistrictOverviewPanel({
                 formatValue={formatPopulation}
                 onSelect={onSelect}
               />
-            </section>
+            </section>}
             <details className="ua-district-directory-section">
               <summary>District directory · {records.length} districts</summary>
               <p className="ua-data-note">
@@ -1199,6 +1223,8 @@ function DistrictOverviewPanel({
                   <tr>
                     <th>District</th>
                     <th>Capital / HQ</th>
+                    <th>Division</th>
+                    <th>Population · fictional</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1206,11 +1232,16 @@ function DistrictOverviewPanel({
                     <tr key={district.id}>
                       <td>{district.name}</td>
                       <td>{district.capital}</td>
+                      <td>{district.division}</td>
+                      <td>{populationScenario(district) ? formatPopulation(populationScenario(district)!.total) : 'Unavailable'}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </details>
+            <button type="button" onClick={() => downloadDistrictStatistics(alphabetical)}>
+              <Download size={14} /> Download district statistics CSV
+            </button>
             <p className="ua-data-note">
               Area uses WGS84 ellipsoidal polygon measurement. Tehsil counts
               reflect retained map coverage.
@@ -1232,7 +1263,8 @@ function ProvincePanel({
   onDetail: (level: Level) => void;
 }) {
   const p = province,
-    scenario = p.hypotheticalDemographics;
+    scenario = populationScenario(p),
+    demographics = p.hypotheticalDemographics;
   return (
     <article
       className="ua-profile"
@@ -1268,7 +1300,7 @@ function ProvincePanel({
       </div>
       <dl className="ua-facts">
         <div>
-          <dt>Polygon area</dt>
+          <dt>{p.id === 'punjab' ? 'State area' : 'Polygon area'}</dt>
           <dd>
             {format(p.areaKm2, ' km²')}
             <small>Calculated proposal</small>
@@ -1289,16 +1321,18 @@ function ProvincePanel({
           </dd>
         </div>
         <div>
-          <dt>Density</dt>
+          <dt>{p.highestPoint ? 'Highest point · estimate' : 'Density'}</dt>
           <dd>
-            {format(
+            {p.highestPoint ? '≈ ' + format(p.highestPoint.elevationMeters, ' m') : format(
               scenario
                 ? Math.round((scenario.total / p.areaKm2) * 10) / 10
                 : p.density,
               ' / km²',
             )}
             <small>
-              {scenario
+              {p.highestPoint
+                ? `${p.highestPoint.coordinates[1].toFixed(4)}° N, ${p.highestPoint.coordinates[0].toFixed(4)}° E · ${p.highestPoint.resolutionMeters} m elevation model`
+                : scenario
                 ? 'Hypothetical total / atlas area'
                 : p.density !== null
                   ? 'Census / atlas polygon area'
@@ -1309,18 +1343,21 @@ function ProvincePanel({
         <div>
           <dt>Forest area / cover</dt>
           <dd>
-            {format(p.forestArea)} / {format(p.forestPercent)}
-            <small>No verified land-cover aggregation</small>
+            {p.forestEstimate ? '≈ ' + format(p.forestArea, ' km²') + ' / ' + format(p.forestPercent, '%') : format(p.forestArea) + ' / ' + format(p.forestPercent)}
+            <small>{p.forestEstimate ? `Estimated tree cover · ESA ${p.forestEstimate.year}` : 'No verified land-cover aggregation'}</small>
           </dd>
         </div>
       </dl>
       {!scenario && <p className="ua-data-note">{p.statisticsNote}</p>}
-      {scenario && (
+      {scenario && <p className="ua-data-note">{scenario.note} Density: {format(scenario.total / p.areaKm2)} people / km².</p>}
+      {p.forestEstimate && <p className="ua-data-note">{p.forestEstimate.note} <a href={p.forestEstimate.sourceUrl} target="_blank" rel="noreferrer">Land-cover source ↗</a></p>}
+      {p.highestPoint && <p className="ua-data-note">{p.highestPoint.note} <a href={p.highestPoint.sourceUrl} target="_blank" rel="noreferrer">Elevation source ↗</a></p>}
+      {demographics && (
         <details open className="ua-scenario-population">
           <summary>Hypothetical population by religion</summary>
-          <p className="ua-data-note">{scenario.note}</p>
-          {scenario.religions.map((r, i) => {
-            const share = (r.population / scenario.total) * 100,
+          <p className="ua-data-note">{demographics.note}</p>
+          {demographics.religions.map((r, i) => {
+            const share = (r.population / demographics.total) * 100,
               color = ['#628BAC', '#D8B387', '#86B5AA'][i % 3];
             return (
               <div className="ua-demographic" key={r.name}>
@@ -3299,7 +3336,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                         setQuery('');
                         if (map.current) fit(map.current, item.bbox, window.innerWidth < 760);
                       }}>
-                        {item.name}<small>{item.level === 'tehsil' ? 'Tehsil / subdistrict' : 'District'} · {data?.provinces.find(p => p.id === item.province)?.name}</small>
+                        {item.name}<small>{item.level === 'tehsil' ? 'Tehsil / subdistrict' : item.level === 'division' ? 'Division' : 'District'} · {data?.provinces.find(p => p.id === item.province)?.name}</small>
                       </button>
                     </li>)}
                     {searchLoading && <li>Searching administrative areas…</li>}

@@ -62,7 +62,7 @@ try {
     assert.match(await profile.locator('.ua-division-facts').innerText(), new RegExp(capital));
     const names = await profile.locator('h3').filter({hasText: 'Constituent tehsils'}).evaluate(heading => [...heading.nextElementSibling.querySelectorAll('li')].map(li => li.childNodes[0].textContent.trim()));
     assert.deepEqual(names.sort(), [...tehsils].sort());
-    assert.match(await profile.innerText(), /Population, density and religious totals are unavailable/);
+    assert.match(await profile.innerText(), overview.provinces.find(p => p.id === 'punjab').hypotheticalPopulation ? /Estimated population · fictional/ : /Population, density and religious totals are unavailable/);
     if (name === 'Hazarawala') assert.match(await profile.innerText(), /new fictional commemorative district name|not an ancient name/);
     assert.equal(JSON.parse(await page.locator('.ua-map').getAttribute('data-province-details')).punjab, 'district');
     await page.waitForTimeout(750); // Let the existing fit-bounds animation finish.
@@ -72,7 +72,7 @@ try {
   const overviewPanel = page.getByLabel('Punjab district rankings and directory');
   await overviewPanel.waitFor();
   assert.match(await overviewPanel.innerText(), /48 districts/);
-  assert.match(await overviewPanel.innerText(), /Unavailable for the current boundaries/);
+  assert.match(await overviewPanel.innerText(), overview.provinces.find(p => p.id === 'punjab').hypotheticalPopulation ? /7(?:\.0+)? crore/ : /Unavailable for the current boundaries/);
   await snapshot('punjab-48-directory');
   for (const [term, name] of [['Khado Khel', 'Ranigat'], ['Khudu Khel', 'Ranigat'], ['Lahor', 'Hund'], ['Topi', 'Mahabanpur'], ['Lower Tanawal', 'Sherwan'], ['Lora', 'Haro'], ['Baffa-Pakhal', 'Pakhli']]) {
     await search(term, name, 'Tehsil / subdistrict');

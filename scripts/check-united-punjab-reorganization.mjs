@@ -22,7 +22,7 @@ export async function checkReorganizationApi(call, overview) {
   assert.ok(amb.areaKm2 > 0);
   for (const p of [punjab, amb, overview.provinces.find(p => p.id === 'kp')]) {
     assert.equal(p.population, null);
-    assert.equal(p.density, null);
+    if (p.id !== 'punjab' || !analysis.audit.divisionFinalization) assert.equal(p.density, null);
     assert.ok(!p.hypotheticalDemographics);
   }
   async function detail(province, level) {
@@ -72,8 +72,28 @@ export async function checkReorganizationApi(call, overview) {
   const styledTehsils = model.styleTehsilFeatures(tehsils, districts, edits, 'district', palette);
   assert.ok(styledTehsils.features.every(f => f.properties.color === byId.get(f.properties.parentDistrictId).color));
   const ranked = model.mergeDistrictFeatures(districts, []).features;
-  assert.ok(ranked.filter(f => !f.properties.hypotheticalDemographics).every(f => f.properties.populationRank === undefined));
+  assert.ok(ranked.filter(f => !model.populationScenario(f.properties)).every(f => f.properties.populationRank === undefined));
   assert.equal(model.sumDistrictDemographics(districts.features), undefined);
+  if (analysis.audit.divisionFinalization) {
+    const divisions = await detail('punjab', 'division');
+    assert.equal(divisions.features.length, 12);
+    assert.equal(model.sumDistrictPopulation(districts.features).total, 70000000);
+    assert.equal(model.sumDistrictPopulation(divisions.features).total, 70000000);
+    assert.equal(model.summarizeDistrictDivisions(districts.features).length, 12);
+    assert.equal(punjab.hypotheticalPopulation.total, 70000000);
+    assert.ok(punjab.silhouette.length > 500);
+    assert.ok(punjab.forestArea > 0 && punjab.forestPercent > 0);
+    assert.ok(punjab.highestPoint.elevationMeters > 4000);
+    const config = JSON.parse(await fs.readFile('app/united-punjab-divisions.json', 'utf8'));
+    for (const target of config.updatedDivisions) {
+      const division = divisions.features.find(f => f.properties.name === target.name);
+      assert.equal(division.properties.capital, target.capital);
+      assert.deepEqual([...division.properties.memberDistricts].sort(), [...target.districts].sort());
+      assert.deepEqual(districts.features.filter(f => f.properties.division === target.name).map(f => f.properties.name).sort(), [...target.districts].sort());
+      const results = await (await call('search&q=' + encodeURIComponent(target.name + ' Division'))).json();
+      assert.ok(results.some(item => item.level === 'division' && item.id === target.id));
+    }
+  }
   for (const aliases of Object.values(spec.aliases)) {
     for (const alias of aliases) {
       const results = await (await call('search&q=' + encodeURIComponent(alias))).json();
@@ -91,5 +111,5 @@ export async function checkReorganizationApi(call, overview) {
     const source = await fs.readFile('dist-vercel/assets/' + file, 'utf8');
     if (process.env.PRIVATE_ATLAS_DATA_KEY) assert.ok(!source.includes(process.env.PRIVATE_ATLAS_DATA_KEY));
   }
-  console.log('Verified 43 province/UT profiles, canonical 48 districts, 193 Punjab tehsils, independent Amb, retired-ID migration, alias search, uploaded palette inheritance, unknown statistics, API pagination and server-key isolation.');
+  console.log('Verified 43 province/UT profiles, 48 districts, 193 Punjab tehsils, independent Amb, population provenance and totals, division assignments, aliases, palette inheritance, API pagination and server-key isolation.');
 }

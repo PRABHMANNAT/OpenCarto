@@ -3,7 +3,7 @@ import {homedir} from 'node:os';
 import {join} from 'node:path';
 import {spawn} from 'node:child_process';
 const script = process.argv[2];
-if (!['apply-united-punjab-reorganization.py', 'check-united-punjab-geometry.py'].includes(script)) throw Error('Choose a supported atlas script.');
+if (!['apply-united-punjab-reorganization.py', 'check-united-punjab-geometry.py', 'finalize-punjab-divisions.py', 'estimate-punjab-environment.py', 'check-punjab-final-divisions.py'].includes(script)) throw Error('Choose a supported atlas script.');
 const bundled = join(homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe');
 const python = process.env.ATLAS_PYTHON || (process.platform === 'win32' && existsSync(bundled) ? bundled : 'python');
 const child = spawn(python, ['-X', 'utf8', 'scripts/' + script], {stdio: 'inherit'});

@@ -108,7 +108,8 @@ for identifier, old in old_districts.items():
     if not old_geometry.is_valid: old_geometry = shapely.make_valid(old_geometry)
     assert old_geometry.equals(shape(new['geometry'])), identifier + ' unrelated district changed'
     for key in ('name', 'capital', 'hypotheticalDemographics', 'sourceId'):
-        assert old['properties'].get(key) == new['properties'].get(key), identifier + ' statistics or identity changed'
+        actual = new['properties'].get('previousPopulationScenario') if key == 'hypotheticalDemographics' and d.get('divisionFinalization') else new['properties'].get(key)
+        assert old['properties'].get(key) == actual, identifier + ' source statistics or identity changed'
     preserved += 1
 for old_id, target_id in s['retiredDistrictIds'].items():
     if old_id in ('punjab-d-swabi', 'punjab-d-abbottabad'): continue
@@ -116,7 +117,7 @@ for old_id, target_id in s['retiredDistrictIds'].items():
     assert expected.equals(shape(districts[target_id]['geometry'])), target_id + ' consolidated territory changed'
     scenarios = [old_districts[x]['properties'].get('hypotheticalDemographics') for x in (old_id, target_id)]
     if all(scenarios):
-        new = districts[target_id]['properties']['hypotheticalDemographics']
+        new = districts[target_id]['properties']['previousPopulationScenario' if d.get('divisionFinalization') else 'hypotheticalDemographics']
         assert new['total'] == sum(p['total'] for p in scenarios)
         assert new['total'] == sum(r['population'] for r in new['religions'])
 

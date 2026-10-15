@@ -1,0 +1,570 @@
+{
+  "revision": "punjab-environment-estimates-2026-10-15",
+  "retrieved": "2026-10-15",
+  "boundarySha256": "90c124b6405b2383bf63a772c21ee1eb495d730c19d3758780869cd9c391f9fe",
+  "boundaryHashMethod": "SHA-256 of WGS84 geometry WKB; independent of JSON integer/decimal formatting",
+  "forest": {
+    "treeCoverShare": 0.10151537178868594,
+    "sourceUrl": "https://esa-worldcover.org/en/data-access",
+    "year": 2021,
+    "classCode": 10,
+    "gridSpacingDegrees": 0.001,
+    "coveragePercent": 100.0,
+    "method": "Area-weighted count of class-10 cells from numeric ESA WorldCover 2021 v200 COGs resampled by nearest-neighbour to a 0.001-degree classified grid, using available categorical overviews. Boundary-cell centres must lie inside Punjab. Share is applied to the exact geodesic state area. This is a generalized tree-cover estimate, includes plantations, and is not official recorded forest area.",
+    "tiles": [
+      {
+        "tile": "N27E072",
+        "sourceUrl": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N27E072_Map.tif",
+        "treeAreaKm2": 28.712048487813757,
+        "coveredAreaKm2": 581.5267432033033,
+        "gridAreaKm2": 581.5267432033033
+      },
+      {
+        "tile": "N27E075",
+        "sourceUrl": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N27E075_Map.tif",
+        "treeAreaKm2": 48.91983986462672,
+        "coveredAreaKm2": 3043.0342149568396,
+        "gridAreaKm2": 3043.0342149568396
+      },
+      {
+        "tile": "N30E069",
+        "sourceUrl": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N30E069_Map.tif",
+        "treeAreaKm2": 283.3644514666009,
+        "coveredAreaKm2": 4303.928832024501,
+        "gridAreaKm2": 4303.928832024501
+      },
+      {
+        "tile": "N33E069",
+        "sourceUrl": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N33E069_Map.tif",
+        "treeAreaKm2": 97.53513856198961,
+        "coveredAreaKm2": 1828.1049629456647,
+        "gridAreaKm2": 1828.1049629456647
+      },
+      {
+        "tile": "N30E075",
+        "sourceUrl": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N30E075_Map.tif",
+        "treeAreaKm2": 3514.2163346231737,
+        "coveredAreaKm2": 33944.35039370025,
+        "gridAreaKm2": 33944.35039370025
+      },
+      {
+        "tile": "N33E072",
+        "sourceUrl": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N33E072_Map.tif",
+        "treeAreaKm2": 5409.254434043227,
+        "coveredAreaKm2": 23305.271948280428,
+        "gridAreaKm2": 23305.271948280428
+      },
+      {
+        "tile": "N30E072",
+        "sourceUrl": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N30E072_Map.tif",
+        "treeAreaKm2": 6081.329300625568,
+        "coveredAreaKm2": 85318.80792535012,
+        "gridAreaKm2": 85318.80792535012
+      }
+    ],
+    "credit": "\u00a9 ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium",
+    "license": "CC BY 4.0"
+  },
+  "highestPoint": {
+    "tile": [
+      73,
+      34
+    ],
+    "sourceUrl": "https://registry.opendata.aws/copernicus-dem/",
+    "elevationMeters": 5200,
+    "coordinates": [
+      73.72444444444444,
+      34.82222222222222
+    ],
+    "resolutionMeters": 30,
+    "gridAreaKm2": 4457.075285590203,
+    "coveredAreaKm2": 4457.075285590203,
+    "rawElevationMeters": 5202.28076171875,
+    "note": "Highest mapped raster elevation estimate: complete 90m Copernicus surface-model coverage, with available 30m refinement of tiles within 300m of the coarse maximum. Rounded to 10m; not a surveyed summit height.",
+    "coveragePercent": 100.0,
+    "coarseTiles": [
+      {
+        "tile": [
+          72,
+          29
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N29_00_E072_00_DEM/Copernicus_DSM_COG_30_N29_00_E072_00_DEM.tif",
+        "elevationMeters": 153.61138916015625,
+        "coordinates": [
+          72.98083333333334,
+          29.965
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 13.186204187637435,
+        "coveredAreaKm2": 13.186204187637435
+      },
+      {
+        "tile": [
+          73,
+          29
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N29_00_E073_00_DEM/Copernicus_DSM_COG_30_N29_00_E073_00_DEM.tif",
+        "elevationMeters": 181.22474670410156,
+        "coordinates": [
+          73.9925,
+          29.97083333333333
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 38.65100461316629,
+        "coveredAreaKm2": 38.65100461316629
+      },
+      {
+        "tile": [
+          74,
+          29
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N29_00_E074_00_DEM/Copernicus_DSM_COG_30_N29_00_E074_00_DEM.tif",
+        "elevationMeters": 216.86471557617188,
+        "coordinates": [
+          74.96,
+          29.9225
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 534.3946119306103,
+        "coveredAreaKm2": 534.3946119306103
+      },
+      {
+        "tile": [
+          76,
+          29
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N29_00_E076_00_DEM/Copernicus_DSM_COG_30_N29_00_E076_00_DEM.tif",
+        "elevationMeters": 241.33494567871094,
+        "coordinates": [
+          76.05083333333333,
+          29.9575
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 464.0521856278623,
+        "coveredAreaKm2": 464.0521856278623
+      },
+      {
+        "tile": [
+          71,
+          30
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N30_00_E071_00_DEM/Copernicus_DSM_COG_30_N30_00_E071_00_DEM.tif",
+        "elevationMeters": 161.58912658691406,
+        "coordinates": [
+          71.82666666666667,
+          30.9625
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 902.6036133621305,
+        "coveredAreaKm2": 902.6036133621305
+      },
+      {
+        "tile": [
+          75,
+          29
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N29_00_E075_00_DEM/Copernicus_DSM_COG_30_N29_00_E075_00_DEM.tif",
+        "elevationMeters": 240.33631896972656,
+        "coordinates": [
+          75.58333333333333,
+          29.956666666666667
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 2584.8557943036303,
+        "coveredAreaKm2": 2584.8557943036303
+      },
+      {
+        "tile": [
+          72,
+          30
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N30_00_E072_00_DEM/Copernicus_DSM_COG_30_N30_00_E072_00_DEM.tif",
+        "elevationMeters": 182.75277709960938,
+        "coordinates": [
+          72.74,
+          30.551666666666666
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 6121.0591228309695,
+        "coveredAreaKm2": 6121.0591228309695
+      },
+      {
+        "tile": [
+          73,
+          30
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N30_00_E073_00_DEM/Copernicus_DSM_COG_30_N30_00_E073_00_DEM.tif",
+        "elevationMeters": 202.4176483154297,
+        "coordinates": [
+          73.97916666666667,
+          30.9625
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 8766.204075861428,
+        "coveredAreaKm2": 8766.204075861428
+      },
+      {
+        "tile": [
+          74,
+          30
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N30_00_E074_00_DEM/Copernicus_DSM_COG_30_N30_00_E074_00_DEM.tif",
+        "elevationMeters": 227.22596740722656,
+        "coordinates": [
+          74.99416666666667,
+          30.946666666666665
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 10642.348757994889,
+        "coveredAreaKm2": 10642.348757994889
+      },
+      {
+        "tile": [
+          71,
+          31
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N31_00_E071_00_DEM/Copernicus_DSM_COG_30_N31_00_E071_00_DEM.tif",
+        "elevationMeters": 200.7714385986328,
+        "coordinates": [
+          71.72333333333333,
+          31.955833333333334
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 1732.1330069818227,
+        "coveredAreaKm2": 1732.1330069818227
+      },
+      {
+        "tile": [
+          75,
+          30
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N30_00_E075_00_DEM/Copernicus_DSM_COG_30_N30_00_E075_00_DEM.tif",
+        "elevationMeters": 266.1755676269531,
+        "coordinates": [
+          75.96833333333333,
+          30.863333333333333
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 10642.348757994889,
+        "coveredAreaKm2": 10642.348757994889
+      },
+      {
+        "tile": [
+          76,
+          30
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N30_00_E076_00_DEM/Copernicus_DSM_COG_30_N30_00_E076_00_DEM.tif",
+        "elevationMeters": 568.8433837890625,
+        "coordinates": [
+          76.79083333333334,
+          30.87
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 7527.609878788705,
+        "coveredAreaKm2": 7527.609878788705
+      },
+      {
+        "tile": [
+          72,
+          31
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N31_00_E072_00_DEM/Copernicus_DSM_COG_30_N31_00_E072_00_DEM.tif",
+        "elevationMeters": 492.299072265625,
+        "coordinates": [
+          72.7025,
+          31.965833333333332
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 10501.130820632574,
+        "coveredAreaKm2": 10501.130820632574
+      },
+      {
+        "tile": [
+          73,
+          31
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N31_00_E073_00_DEM/Copernicus_DSM_COG_30_N31_00_E073_00_DEM.tif",
+        "elevationMeters": 225.13796997070312,
+        "coordinates": [
+          73.97333333333333,
+          31.961666666666666
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 10533.49667510666,
+        "coveredAreaKm2": 10533.49667510666
+      },
+      {
+        "tile": [
+          74,
+          31
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N31_00_E074_00_DEM/Copernicus_DSM_COG_30_N31_00_E074_00_DEM.tif",
+        "elevationMeters": 249.9830780029297,
+        "coordinates": [
+          74.99833333333333,
+          31.8075
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 10533.49667510666,
+        "coveredAreaKm2": 10533.49667510666
+      },
+      {
+        "tile": [
+          76,
+          31
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N31_00_E076_00_DEM/Copernicus_DSM_COG_30_N31_00_E076_00_DEM.tif",
+        "elevationMeters": 1003.5479125976562,
+        "coordinates": [
+          76.60083333333333,
+          31.259166666666665
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 2455.1021038137387,
+        "coveredAreaKm2": 2455.1021038137387
+      },
+      {
+        "tile": [
+          71,
+          32
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N32_00_E071_00_DEM/Copernicus_DSM_COG_30_N32_00_E071_00_DEM.tif",
+        "elevationMeters": 1516.304443359375,
+        "coordinates": [
+          71.93416666666667,
+          32.5425
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 1660.6310847450595,
+        "coveredAreaKm2": 1660.6310847450595
+      },
+      {
+        "tile": [
+          75,
+          31
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N31_00_E075_00_DEM/Copernicus_DSM_COG_30_N31_00_E075_00_DEM.tif",
+        "elevationMeters": 737.9820556640625,
+        "coordinates": [
+          75.87666666666667,
+          31.85333333333333
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 10338.384599352508,
+        "coveredAreaKm2": 10338.384599352508
+      },
+      {
+        "tile": [
+          72,
+          32
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N32_00_E072_00_DEM/Copernicus_DSM_COG_30_N32_00_E072_00_DEM.tif",
+        "elevationMeters": 1228.51904296875,
+        "coordinates": [
+          72.18166666666667,
+          32.541666666666664
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 10421.428753663997,
+        "coveredAreaKm2": 10421.428753663997
+      },
+      {
+        "tile": [
+          73,
+          32
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N32_00_E073_00_DEM/Copernicus_DSM_COG_30_N32_00_E073_00_DEM.tif",
+        "elevationMeters": 1100.68994140625,
+        "coordinates": [
+          73.08666666666667,
+          32.79083333333333
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 10390.683323335126,
+        "coveredAreaKm2": 10390.683323335126
+      },
+      {
+        "tile": [
+          74,
+          32
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N32_00_E074_00_DEM/Copernicus_DSM_COG_30_N32_00_E074_00_DEM.tif",
+        "elevationMeters": 363.96990966796875,
+        "coordinates": [
+          74.1625,
+          32.888333333333335
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 7410.192241509077,
+        "coveredAreaKm2": 7410.192241509077
+      },
+      {
+        "tile": [
+          75,
+          32
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N32_00_E075_00_DEM/Copernicus_DSM_COG_30_N32_00_E075_00_DEM.tif",
+        "elevationMeters": 965.5039672851562,
+        "coordinates": [
+          75.90416666666667,
+          32.44166666666666
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 2986.883612955984,
+        "coveredAreaKm2": 2986.883612955984
+      },
+      {
+        "tile": [
+          71,
+          33
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N33_00_E071_00_DEM/Copernicus_DSM_COG_30_N33_00_E071_00_DEM.tif",
+        "elevationMeters": 1464.1953125,
+        "coordinates": [
+          71.84333333333333,
+          33.7825
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 1638.039852967787,
+        "coveredAreaKm2": 1638.039852967787
+      },
+      {
+        "tile": [
+          71,
+          34
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N34_00_E071_00_DEM/Copernicus_DSM_COG_30_N34_00_E071_00_DEM.tif",
+        "elevationMeters": 334.22161865234375,
+        "coordinates": [
+          71.98916666666668,
+          34.028333333333336
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 184.8700131130308,
+        "coveredAreaKm2": 184.8700131130308
+      },
+      {
+        "tile": [
+          72,
+          34
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N34_00_E072_00_DEM/Copernicus_DSM_COG_30_N34_00_E072_00_DEM.tif",
+        "elevationMeters": 2234.8515625,
+        "coordinates": [
+          72.70833333333333,
+          34.300000000000004
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 2775.1065073144487,
+        "coveredAreaKm2": 2775.1065073144487
+      },
+      {
+        "tile": [
+          73,
+          33
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N33_00_E073_00_DEM/Copernicus_DSM_COG_30_N33_00_E073_00_DEM.tif",
+        "elevationMeters": 2646.4306640625,
+        "coordinates": [
+          73.395,
+          33.994166666666665
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 5573.672932408092,
+        "coveredAreaKm2": 5573.672932408092
+      },
+      {
+        "tile": [
+          74,
+          34
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N34_00_E074_00_DEM/Copernicus_DSM_COG_30_N34_00_E074_00_DEM.tif",
+        "elevationMeters": 4584.068359375,
+        "coordinates": [
+          74.01833333333333,
+          34.93
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 39.866853148436185,
+        "coveredAreaKm2": 39.866853148436185
+      },
+      {
+        "tile": [
+          72,
+          33
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N33_00_E072_00_DEM/Copernicus_DSM_COG_30_N33_00_E072_00_DEM.tif",
+        "elevationMeters": 1336.7811279296875,
+        "coordinates": [
+          72.9625,
+          33.84583333333333
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 10102.483357045308,
+        "coveredAreaKm2": 10102.483357045308
+      },
+      {
+        "tile": [
+          74,
+          35
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N35_00_E074_00_DEM/Copernicus_DSM_COG_30_N35_00_E074_00_DEM.tif",
+        "elevationMeters": 4608.58740234375,
+        "coordinates": [
+          74.00083333333333,
+          35.06916666666667
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 125.69125420960968,
+        "coveredAreaKm2": 125.69125420960968
+      },
+      {
+        "tile": [
+          73,
+          35
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N35_00_E073_00_DEM/Copernicus_DSM_COG_30_N35_00_E073_00_DEM.tif",
+        "elevationMeters": 4740.9765625,
+        "coordinates": [
+          73.90166666666667,
+          35.01166666666666
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 227.9401800659631,
+        "coveredAreaKm2": 227.9401800659631
+      },
+      {
+        "tile": [
+          73,
+          34
+        ],
+        "sourceUrl": "https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_N34_00_E073_00_DEM/Copernicus_DSM_COG_30_N34_00_E073_00_DEM.tif",
+        "elevationMeters": 5187.3671875,
+        "coordinates": [
+          73.72416666666666,
+          34.8225
+        ],
+        "resolutionMeters": 90,
+        "gridAreaKm2": 4457.162972401025,
+        "coveredAreaKm2": 4457.162972401025
+      }
+    ],
+    "refinedTiles": [
+      {
+        "tile": [
+          73,
+          34
+        ],
+        "sourceUrl": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N34_00_E073_00_DEM/Copernicus_DSM_COG_10_N34_00_E073_00_DEM.tif",
+        "elevationMeters": 5202.28076171875,
+        "coordinates": [
+          73.72444444444444,
+          34.82222222222222
+        ],
+        "resolutionMeters": 30,
+        "gridAreaKm2": 4457.075285590203,
+        "coveredAreaKm2": 4457.075285590203
+      }
+    ]
+  }
+}

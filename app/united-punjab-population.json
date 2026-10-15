@@ -1,0 +1,247 @@
+{
+  "revision": "punjab-population-70m-2026-10-15",
+  "total": 70000000,
+  "method": "Largest-remainder apportionment of the user-defined 7 crore total using retained district scenario weights. The three missing KP-origin weights use the existing settlement/area model. Population only; no new religious allocations.",
+  "weights": [
+    {
+      "id": "punjab-d-panja-sahib",
+      "weight": 1725062,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-katas-raj-salt-range",
+      "weight": 1880825,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-chiniot",
+      "weight": 748105,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-faisalabad",
+      "weight": 6037722,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-gujranwala",
+      "weight": 3967645,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-gujrat",
+      "weight": 2070075,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-hafizabad",
+      "weight": 654759,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-jhang",
+      "weight": 2242584,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-jhelum",
+      "weight": 1020829,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-kasur-bulleh-shah",
+      "weight": 2156328,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-khushab",
+      "weight": 1725062,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-lahore",
+      "weight": 10350379,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-mandi-bahauddin",
+      "weight": 788261,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-nankana-sahib",
+      "weight": 630979,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-kartarpur-ravi",
+      "weight": 796553,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-pakpattan",
+      "weight": 829261,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-rawalpindi",
+      "weight": 4140153,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-taxila",
+      "weight": 388140,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-sahiwal",
+      "weight": 3881394,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-sargodha",
+      "weight": 2673848,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-sheikhupura",
+      "weight": 2415088,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-sialkot",
+      "weight": 2242584,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-toba-tek-singh",
+      "weight": 885970,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-ludhiana",
+      "weight": 3562681,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-sri-anandpur-sahib",
+      "weight": 445336,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-rupnagar",
+      "weight": 445336,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-mansa",
+      "weight": 716312,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-sri-muktsar-sahib",
+      "weight": 871199,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-s-a-s-nagar",
+      "weight": 445335,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-jalandhar",
+      "weight": 2177195,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-faridkot",
+      "weight": 481935,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-moga",
+      "weight": 742476,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-hoshiarpur",
+      "weight": 1583414,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-bathinda",
+      "weight": 1484451,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-patiala",
+      "weight": 1880305,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-shahid-bhagat-singh-nagar",
+      "weight": 445334,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-kapurthala",
+      "weight": 538295,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-fatehgarh-sahib",
+      "weight": 445334,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-sangrur",
+      "weight": 2350148,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-amritsar",
+      "weight": 2177195,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-ferozepur",
+      "weight": 782289,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-gurdaspur",
+      "weight": 858900,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-tarn-taran",
+      "weight": 796677,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-fazilka",
+      "weight": 948649,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-pathankot",
+      "weight": 445334,
+      "basis": "Previous fictional district allocation"
+    },
+    {
+      "id": "punjab-d-haripur-hazara",
+      "weight": 1011749,
+      "basis": "Existing settlement/area model fallback; fictional weight"
+    },
+    {
+      "id": "punjab-d-akali-phula-singh",
+      "weight": 883972,
+      "basis": "Existing settlement/area model fallback; fictional weight"
+    },
+    {
+      "id": "punjab-d-hazarawala",
+      "weight": 988876,
+      "basis": "Existing settlement/area model fallback; fictional weight"
+    }
+  ]
+}

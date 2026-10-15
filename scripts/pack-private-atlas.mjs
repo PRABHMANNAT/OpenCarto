@@ -41,7 +41,11 @@ const areas = JSON.parse(
 );
 for (const p of payload.overview.provinces) {
   p.areaKm2 = areas[p.id];
-  if (p.population !== null)
+  if (p.hypotheticalPopulation) {
+    if (!Number.isSafeInteger(p.hypotheticalPopulation.total) || p.hypotheticalPopulation.total <= 0)
+      throw Error('Invalid fictional population for ' + p.id);
+    p.density = Math.round((p.hypotheticalPopulation.total / p.areaKm2) * 10) / 10;
+  } else if (p.population !== null)
     p.density = Math.round((p.population / p.areaKm2) * 10) / 10;
   if (p.hypotheticalDemographics) {
     const religions = p.hypotheticalDemographics.religions;
@@ -56,6 +60,15 @@ for (const p of payload.overview.provinces) {
     if (!Number.isSafeInteger(total) || total <= 0)
       throw Error('Invalid hypothetical population total for ' + p.id);
     p.hypotheticalDemographics.total = total;
+  }
+}
+if (payload.divisionFinalization) {
+  const districts = payload.details.punjab.district.features;
+  const divisions = payload.details.punjab.division.features;
+  for (const collection of [districts, divisions]) {
+    if (collection.some(f => !Number.isSafeInteger(f.properties.hypotheticalPopulation?.total) || f.properties.hypotheticalPopulation.total <= 0) ||
+        collection.reduce((total, f) => total + f.properties.hypotheticalPopulation.total, 0) !== 70000000)
+      throw Error('Punjab district/division population does not reconcile to 7 crore.');
   }
 }
 // Keep full independent source geometry in private/; serve its precise display

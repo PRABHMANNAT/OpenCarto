@@ -1,5 +1,7 @@
 # United Punjab: 48 districts and separate Amb Union Territory
 
+**Current follow-up:** [Final 12 divisions and statistics](punjab-final-divisions-and-statistics.md) assigns Akali Phula Singh to Hazara, finalizes Rawalpindi's five districts and Hazara's three, and introduces the user-defined 7-crore population scenario and calculated environmental estimates. The territorial geometry and district directory below remain valid; the earlier population-availability paragraph is superseded by that record.
+
 Implemented revision: `united-punjab-48-amb-2026-10-15`. This is the approved fictional alternative-history map. The user confirmed **48 districts after Barnala merges into Sangrur**, and approved using the **complete dated 2022 Mansehra tehsil polygon**, including any later Tanawal land inside it.
 
 ## Result

@@ -26,6 +26,20 @@ export type HypotheticalDemographics = {
   note: string;
 };
 
+export type HypotheticalPopulation = {total: number; note: string};
+type ScenarioProperties = {
+  hypotheticalPopulation?: HypotheticalPopulation;
+  hypotheticalDemographics?: HypotheticalDemographics;
+};
+export function populationScenario(properties: ScenarioProperties | null | undefined): HypotheticalPopulation | undefined {
+  return properties?.hypotheticalPopulation || properties?.hypotheticalDemographics;
+}
+export function sumDistrictPopulation(features: Feature[]): HypotheticalPopulation | undefined {
+  const scenarios = features.map(feature => populationScenario(feature.properties));
+  if (!scenarios.length || scenarios.some(scenario => !scenario)) return undefined;
+  return {total: scenarios.reduce((sum, scenario) => sum + scenario!.total, 0), note: scenarios[0]!.note};
+}
+
 export function sumDistrictDemographics(
   features: Feature[],
 ): HypotheticalDemographics | undefined {
@@ -84,6 +98,7 @@ export function summarizeDistrictDivisions(districts: Feature[]) {
       }))
       .sort((a, b) => a.name.localeCompare(b.name)),
     hypotheticalDemographics: sumDistrictDemographics(features),
+    hypotheticalPopulation: sumDistrictPopulation(features),
   }));
 }
 
@@ -247,6 +262,7 @@ export function mergeDistrictFeatures(
           0,
         ),
         hypotheticalDemographics: sumDistrictDemographics(features),
+        hypotheticalPopulation: sumDistrictPopulation(features),
         sourceName: [
           ...new Set(
             features
@@ -269,10 +285,10 @@ export function mergeDistrictFeatures(
     const id = districtId(feature);
     return hidden.has(id) ? [] : [replaced.get(id) || feature];
   });
-  const ranked = features.filter(feature => feature.properties?.hypotheticalDemographics).sort(
+  const ranked = features.filter(feature => populationScenario(feature.properties)).sort(
     (a, b) =>
-      Number(b.properties?.hypotheticalDemographics?.total || 0) -
-        Number(a.properties?.hypotheticalDemographics?.total || 0) ||
+      Number(populationScenario(b.properties)?.total || 0) -
+        Number(populationScenario(a.properties)?.total || 0) ||
       String(a.properties?.name).localeCompare(String(b.properties?.name)),
   );
   const populationRanks = new Map(
@@ -286,11 +302,11 @@ export function mergeDistrictFeatures(
         ...feature.properties,
         populationRank: populationRanks.get(districtId(feature)),
         populationRankCount: populationRanks.has(districtId(feature)) ? ranked.length : undefined,
-        density: feature.properties?.hypotheticalDemographics
+        density: populationScenario(feature.properties)
           ? Math.round(
-              feature.properties.hypotheticalDemographics.total /
-                feature.properties.areaKm2,
-            )
+              populationScenario(feature.properties)!.total /
+                feature.properties?.areaKm2 * 10,
+            ) / 10
           : undefined,
       },
     })),

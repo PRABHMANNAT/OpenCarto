@@ -61,9 +61,12 @@
     "check:paint-palette": "node scripts/check-paint-palette.mjs",
     "check:paint-palette-browser": "node scripts/verify-paint-palette-browser.mjs",
     "check:paint-interactions-browser": "node scripts/verify-paint-interactions-browser.mjs",
-    "data:united-punjab": "node scripts/run-atlas-python.mjs apply-united-punjab-reorganization.py && node scripts/pack-private-atlas.mjs",
+    "data:united-punjab": "node scripts/run-atlas-python.mjs apply-united-punjab-reorganization.py && node scripts/prepare-punjab-population.mjs && node scripts/run-atlas-python.mjs finalize-punjab-divisions.py && node scripts/pack-private-atlas.mjs",
     "check:united-punjab": "node scripts/run-atlas-python.mjs check-united-punjab-geometry.py && npm run check:private-atlas",
-    "check:united-punjab-browser": "node scripts/verify-united-punjab-browser.mjs"
+    "check:united-punjab-browser": "node scripts/verify-united-punjab-browser.mjs",
+    "data:punjab-environment": "node scripts/prepare-punjab-population.mjs && node scripts/run-atlas-python.mjs estimate-punjab-environment.py",
+    "check:punjab-final-divisions": "node scripts/run-atlas-python.mjs check-punjab-final-divisions.py && npm run check:private-atlas",
+    "check:punjab-final-divisions-browser": "node scripts/verify-punjab-final-divisions.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

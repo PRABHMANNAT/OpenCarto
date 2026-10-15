@@ -1,0 +1,21 @@
+{
+  "revision": "punjab-final-12-divisions-2026-10-15",
+  "districtCount": 48,
+  "divisionCount": 12,
+  "updatedDivisions": [
+    {"id": "punjab-div-rawalpindi", "name": "Rawalpindi", "capital": "Rawalpindi", "districts": ["Rawalpindi", "Taxila", "Panja Sahib", "Katas", "Jhelum"]},
+    {"id": "punjab-div-hazara", "name": "Hazara", "capital": "Abbottabad", "districts": ["Haripur", "Hazarawala", "Akali Phula Singh"]}
+  ],
+  "preservedDivisions": {
+    "Lahore": ["Bulleh Shah", "Lahore", "Nankana Sahib", "Sacha Sauda"],
+    "Sandalbar": ["Sandalbar", "Jhang", "Nanaksar", "Harappa", "Toba Tek Singh"],
+    "Kartarpur": ["Kartarpur Sahib", "Amritsar", "Gurdaspur", "Tarn Taran", "Pathankot"],
+    "Jalandhar": ["Jalandhar", "Hoshiarpur", "Shahid Bhagat Singh Nagar", "Kapurthala"],
+    "Anandpur Sahib": ["Sri Anandpur Sahib", "Rupnagar", "S A S Nagar", "Fatehgarh Sahib"],
+    "Ludhiana": ["Ludhiana", "Moga"],
+    "Patiala": ["Mansa", "Patiala", "Sangrur"],
+    "Ranjitgarh": ["Ranjitgarh", "Dinga", "Rori Sahib", "Kair Sahib", "Babe Di Ber"],
+    "Sargodha": ["Chenab", "Khushab", "Sargodha"],
+    "Bathinda": ["Sri Muktsar Sahib", "Faridkot", "Bathinda", "Ferozepur", "Fazilka"]
+  }
+}
