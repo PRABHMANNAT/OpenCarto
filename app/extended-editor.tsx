@@ -13,6 +13,7 @@ import {historyActive,recordHistoryChange,normalMapPatch,completeMapPatch,select
 import {boundaryDisplayBounds} from './boundary-seam-model';
 import CustomMaps,{type CustomMapsAPI} from './custom-maps';
 import './private-atlas.css';
+import {readAtlasExportRecovery} from './atlas-export-recovery';
 const PrivateAtlas=lazy(()=>import('./private-atlas'));
 import {mapSnapshot,type CustomMap} from './custom-map-storage';
 import {areas,areaById,regions,regionById,divisionRegions,coverageNotes,initial,validate,visible,bounds,allBounds,paintKey,mapPaintGroups,effectivePaint,type MapDoc,type RegionState} from './map-model';
@@ -54,7 +55,7 @@ const tools=[['paint','Color',Paintbrush],['erase','Erase',Eraser],['pick','Pick
 const backgrounds=[['political','Political',MapIcon],['satellite','Satellite',Satellite],['physical','Physical',Mountain],['rivers','Rivers',Waves],['streets','Streets',Route]] as const;
 function LegendRows({groups,labels,onLabel,onColor}:{groups:[string,{color:string;pattern:string}][];labels:Record<string,string>;onLabel:(k:string,v:string)=>void;onColor:(k:string,v:string)=>void}){return <>{groups.map(([k,p],i)=><div className="legend-entry" key={k}><input aria-label={'Group '+(i+1)+' color'} type="color" value={p.color} onChange={e=>onColor(k,e.target.value)}/><input aria-label={'Group '+(i+1)+' label'} placeholder={'Group '+(i+1)} maxLength={80} value={labels[k]||''} onChange={e=>onLabel(k,e.target.value)}/></div>)}</>}
 export default function RegionalEditor(){
- const [privateAtlasOpen,setPrivateAtlasOpen]=useState(false);
+ const [privateAtlasOpen,setPrivateAtlasOpen]=useState(()=>!!readAtlasExportRecovery()?.pending);
  const [savedDoc,setDoc]=useState<MapDoc>(initial),[past,setPast]=useState<MapDoc[]>([]),[future,setFuture]=useState<MapDoc[]>([]),[tool,setTool]=useState('paint'),[pattern,setPattern]=useState('solid'),[status,setStatus]=useState('Preparing the regional map'),[hover,setHover]=useState(''),[help,setHelp]=useState(false),[ready,setReady]=useState(false),[format,setFormat]=useState('png'),[width,setWidth]=useState(2400),[viewExport,setViewExport]=useState(true),[exporting,setExporting]=useState(false),[zoom,setZoom]=useState(5),[mapReady,setMapReady]=useState(false);
  const doc=useMemo(()=>({...savedDoc,kashmirView:savedDoc.kashmirView||'separate',regions:{...initial.regions,...savedDoc.regions}}),[savedDoc]);
  const color=doc.paintColor;

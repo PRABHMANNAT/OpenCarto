@@ -6,5 +6,10 @@
   "functions": {
     "api/private-atlas.mjs": {"includeFiles": "server/atlas-runtime/**", "excludeFiles": "server/private-atlas.enc"}
   },
-  "routes": [{"handle":"filesystem"},{"src":"/.*","dest":"/index.html"}]
+  "routes": [
+    {"src":"/(?:|index\\.html)","headers":{"Cache-Control":"no-cache"},"continue":true},
+    {"handle":"filesystem"},
+    {"src":"/assets/.*","status":404},
+    {"src":"/.*","dest":"/index.html","headers":{"Cache-Control":"no-cache"}}
+  ]
 }

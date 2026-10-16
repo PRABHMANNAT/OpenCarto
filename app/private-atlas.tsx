@@ -37,6 +37,7 @@ import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import natureSources from './nature-sources.json';
 import type {PaletteColor} from './paint-palette-model';
 import type {PunjabPdfScope} from './private-atlas-pdf';
+import {consumeAtlasExportRecovery, isModuleLoadError, readAtlasExportRecovery, recoverAtlasExport} from './atlas-export-recovery';
 import {
   defaultDistrictEdits,
   districtDisplayNames,
@@ -2734,15 +2735,17 @@ function AtlasMap({
 }
 
 export default function PrivateAtlas({ onClose, palette }: { onClose: () => void; palette?: PaletteColor[] }) {
+  const [exportRecovery] = useState(()=>{const saved=readAtlasExportRecovery();return saved?.pending?saved:null;});
+  const restoredView=exportRecovery?.view;
   const districtPalette = useMemo(() => palette?.length ? palette.map(item => ({name: item.name, color: item.hex})) : punjabPalette, [palette]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(restoredView?.sidebarCollapsed??false);
   const sidebarId = useId();
   const [data, setData] = useState<Overview | null>(null),
     [loading, setLoading] = useState(true),
     [error, setError] = useState(''),
-    [selected, setSelected] = useState(''),
-    [punjabOnly, setPunjabOnly] = useState(false),
-    [focusedDistrictId, setFocusedDistrictId] = useState(''),
+    [selected, setSelected] = useState(restoredView?.selected??''),
+    [punjabOnly, setPunjabOnly] = useState(restoredView?.punjabOnly??false),
+    [focusedDistrictId, setFocusedDistrictId] = useState(restoredView?.focusedDistrictId??''),
     [mapStyle, setMapStyle] = useState<MapStyle>('political'),
     [colors, setColors] = useState(readAtlasColors),
     [districtEditing, setDistrictEditing] = useState(false),
@@ -2757,11 +2760,11 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
     [searchLoading, setSearchLoading] = useState(false),
     [provinceDetails, setProvinceDetails] = useState(readProvinceDetails),
     [loadedDetails, setLoadedDetails] = useState<Record<string, FeatureCollection>>({}),
-    [dark, setDark] = useState(false),
-    [context, setContext] = useState(false),
-    [labels, setLabels] = useState(true),
-    [places, setPlaces] = useState(true),
-    [headquarters, setHeadquarters] = useState(true),
+    [dark, setDark] = useState(restoredView?.dark??false),
+    [context, setContext] = useState(restoredView?.context??false),
+    [labels, setLabels] = useState(restoredView?.labels??true),
+    [places, setPlaces] = useState(restoredView?.places??true),
+    [headquarters, setHeadquarters] = useState(restoredView?.headquarters??true),
     [districtSource, setDistrictSource] = useState<FeatureCollection>(empty),
     [detailLoading, setDetailLoading] = useState(false),
     [precise, setPrecise] = useState<FeatureCollection>(empty),
@@ -2775,6 +2778,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
   const [demographicsOpen,setDemographicsOpen] = useState(false);
   const [pdfProgress,setPdfProgress] = useState('');
   const pdfController=useRef<AbortController|null>(null);
+  const resumedExport=useRef(false);
   useEffect(()=>()=>pdfController.current?.abort(),[]);
   const [demographicsData,setDemographicsData] = useState<DemographicDataset|null>(null);
   const [demographicsLoading,setDemographicsLoading] = useState(false);
@@ -3341,7 +3345,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
     })();
     return () => controller.abort();
   }, [provinceDetails, data]);
-  async function downloadPunjabPdf(scope:PunjabPdfScope='all') {
+  const downloadPunjabPdf=useCallback(async(scope:PunjabPdfScope='all')=>{
     if(pdfController.current)return;
     const controller=new AbortController();pdfController.current=controller;
     setDownloadMenuOpen(false);setError('');setPdfProgress('Loading complete Punjab boundaries...');
@@ -3361,7 +3365,17 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
       const parents=new Map(namedDistricts.features.map(f=>[f.properties?.id,f.properties]));
       const namedTehsils:FeatureCollection={...tehsil,features:tehsil.features.map(f=>({...f,properties:{...f.properties,district:parents.get(f.properties?.parentDistrictId)?.name||f.properties?.district,color:parents.get(f.properties?.parentDistrictId)?.color||f.properties?.color}}))};
       const coloredDivisions:FeatureCollection={...division,features:division.features.map(f=>({...f,properties:{...f.properties,color:colors.fills[String(f.properties?.id)]||f.properties?.color}}))};
-      const {createPunjabAtlasPdf}=await import('./private-atlas-pdf');
+      let exporter;
+      try { exporter=await import('./private-atlas-pdf'); }
+      catch(cause) {
+        if(!isModuleLoadError(cause))throw cause;
+        if(!controller.signal.aborted&&recoverAtlasExport(scope,{selected,punjabOnly,focusedDistrictId,labels,places,headquarters,dark,context,sidebarCollapsed})) {
+          setPdfProgress('Updating the atlas and resuming your PDF download...');
+          return;
+        }
+        throw new Error(navigator.onLine?'The PDF exporter could not load. Refresh this page and try again. If it continues, check that your browser or network is not blocking app files.':'You are offline. Reconnect, refresh this page, and download the PDF again.');
+      }
+      const {createPunjabAtlasPdf}=exporter;
       const result=await createPunjabAtlasPdf({district:namedDistricts,division:coloredDivisions,tehsil:namedTehsils},scope,message=>{
         controller.signal.throwIfAborted();setPdfProgress(message);
       });
@@ -3371,7 +3385,14 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
       setTimeout(()=>URL.revokeObjectURL(url),60000);
     }catch(cause){if(!controller.signal.aborted)setError(cause instanceof Error?cause.message:'The detailed Punjab PDF could not be prepared.');}
     finally{pdfController.current=null;setPdfProgress('');}
-  }
+  },[districtEdits,districtPalette,colors,selected,punjabOnly,focusedDistrictId,labels,places,headquarters,dark,context,sidebarCollapsed]);
+  useEffect(()=>{
+    if(!data||!exportRecovery||resumedExport.current)return;
+    // Defer until the committed mount; StrictMode's discarded mount cancels this.
+    const timer=setTimeout(()=>{resumedExport.current=true;consumeAtlasExportRecovery();void downloadPunjabPdf(exportRecovery.scope);},0);
+    return ()=>clearTimeout(timer);
+    // Resume once, after overview access succeeds. Subsequent UI changes must not export again.
+  },[data,exportRecovery,downloadPunjabPdf]);
   async function openResearch() {
     setResearch(true);
     if (analysis && districtSource.features.length) return;
