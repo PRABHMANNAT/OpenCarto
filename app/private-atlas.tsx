@@ -3850,7 +3850,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                 <button
                   type="button"
                   onClick={() => setDownloadMenuOpen((open) => !open)}
-                  disabled={detailLoading || precisionLoading || downloading}
+                  disabled={downloading}
                   aria-expanded={downloadMenuOpen}
                   aria-controls="ua-download-options"
                 >
@@ -3867,6 +3867,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                     <button
                       type="button"
                       onClick={() => void downloadMap('current')}
+                      disabled={detailLoading || precisionLoading || downloading}
                     >
                       <strong>Current view</strong>
                       <small>Exactly what is on screen</small>
@@ -3874,6 +3875,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                     <button
                       type="button"
                       onClick={() => void downloadMap('full')}
+                      disabled={detailLoading || precisionLoading || downloading}
                     >
                       <strong>Full selected area</strong>
                       <small>Fit {exportAreaName} in the image</small>

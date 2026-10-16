@@ -14,7 +14,7 @@ try{
   await page.locator('.gl-host[aria-busy=false]').waitFor({timeout:120000});
   await page.getByRole('button',{name:'My maps',exact:true}).click();
   await page.getByRole('button',{name:'Open custom map',exact:true}).click();
-  await page.locator('.ua-map[aria-busy=false]').waitFor({timeout:120000});
+  await page.getByRole('button',{name:'Download detailed Punjab PDF',exact:true}).waitFor({timeout:120000});
   await page.getByRole('button',{name:'Punjab only',exact:true}).click();
   const picker=page.getByLabel('Show separate Punjab district');
   await picker.locator('option').nth(48).waitFor({state:'attached'});
