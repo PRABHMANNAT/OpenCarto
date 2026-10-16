@@ -36,6 +36,7 @@ import type { FeatureCollection, Feature } from 'geojson';
 import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import natureSources from './nature-sources.json';
 import type {PaletteColor} from './paint-palette-model';
+import type {PunjabPdfScope} from './private-atlas-pdf';
 import {
   defaultDistrictEdits,
   districtDisplayNames,
@@ -2770,6 +2771,9 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
     [downloadMenuOpen, setDownloadMenuOpen] = useState(false),
     [downloading, setDownloading] = useState(false);
   const [demographicsOpen,setDemographicsOpen] = useState(false);
+  const [pdfProgress,setPdfProgress] = useState('');
+  const pdfController=useRef<AbortController|null>(null);
+  useEffect(()=>()=>pdfController.current?.abort(),[]);
   const [demographicsData,setDemographicsData] = useState<DemographicDataset|null>(null);
   const [demographicsLoading,setDemographicsLoading] = useState(false);
   const [demographicsError,setDemographicsError] = useState('');
@@ -3335,6 +3339,37 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
     })();
     return () => controller.abort();
   }, [provinceDetails, data]);
+  async function downloadPunjabPdf(scope:PunjabPdfScope='all') {
+    if(pdfController.current)return;
+    const controller=new AbortController();pdfController.current=controller;
+    setDownloadMenuOpen(false);setError('');setPdfProgress('Loading complete Punjab boundaries...');
+    try {
+      const load=async(level:'district'|'division'|'tehsil')=>{
+        const key=atlasDetailKey('punjab',level),cached=detailCache.current.get(key);
+        if(cached)return cached;
+        const result:FeatureCollection={type:'FeatureCollection',features:[]};let offset:number|null=0;
+        do {
+          const page:DetailPage=await request<DetailPage>('action=detail&province=punjab&level='+level+'&offset='+offset,{signal:controller.signal});
+          result.features.push(...page.features);offset=page.next;
+        }while(offset!==null);
+        detailCache.current.set(key,result);return result;
+      };
+      const [district,division,tehsil]=await Promise.all([load('district'),load('division'),load('tehsil')]);
+      const namedDistricts=styleDistrictFeatures(district,district,{...districtEdits,groups:[]},districtPalette);
+      const parents=new Map(namedDistricts.features.map(f=>[f.properties?.id,f.properties]));
+      const namedTehsils:FeatureCollection={...tehsil,features:tehsil.features.map(f=>({...f,properties:{...f.properties,district:parents.get(f.properties?.parentDistrictId)?.name||f.properties?.district,color:parents.get(f.properties?.parentDistrictId)?.color||f.properties?.color}}))};
+      const coloredDivisions:FeatureCollection={...division,features:division.features.map(f=>({...f,properties:{...f.properties,color:colors.fills[String(f.properties?.id)]||f.properties?.color}}))};
+      const {createPunjabAtlasPdf}=await import('./private-atlas-pdf');
+      const result=await createPunjabAtlasPdf({district:namedDistricts,division:coloredDivisions,tehsil:namedTehsils},scope,message=>{
+        controller.signal.throwIfAborted();setPdfProgress(message);
+      });
+      controller.signal.throwIfAborted();
+      const url=URL.createObjectURL(new Blob([new Uint8Array(result.bytes).buffer],{type:'application/pdf'}));
+      const link=document.createElement('a');link.href=url;link.download='united-punjab-'+(scope==='all'?'detailed-atlas':scope+'-maps')+'.pdf';link.click();
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+    }catch(cause){if(!controller.signal.aborted)setError(cause instanceof Error?cause.message:'The detailed Punjab PDF could not be prepared.');}
+    finally{pdfController.current=null;setPdfProgress('');}
+  }
   async function openResearch() {
     setResearch(true);
     if (analysis && districtSource.features.length) return;
@@ -3843,10 +3878,18 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
                       <strong>Full selected area</strong>
                       <small>Fit {exportAreaName} in the image</small>
                     </button>
+                    {(['division','district','tehsil'] as const).map(scope=><button key={scope} type="button" disabled={!!pdfProgress} onClick={()=>void downloadPunjabPdf(scope)}>
+                      <strong>Punjab {scope} maps - PDF</strong>
+                      <small>{scope==='tehsil'?'All 193 labels plus 12 enlarged division maps':'Complete province with every '+scope+' labelled'}</small>
+                    </button>)}
                   </div>
                 )}
               </div>
+              <button type="button" onClick={()=>void downloadPunjabPdf()} disabled={!!pdfProgress} aria-label="Download detailed Punjab PDF">
+                <Download size={16}/>{pdfProgress?'Preparing Punjab PDF...':'Detailed Punjab PDF'}
+              </button>
             </nav>
+            {pdfProgress&&<div className="ua-pdf-progress"><output aria-live="polite">{pdfProgress}</output><button type="button" onClick={()=>pdfController.current?.abort()}>Cancel PDF export</button></div>}
             <section className="ua-province-details" aria-label="Active province detail layers">
               <p>Click a province, then choose its view. Other provinces keep their detail.</p>
               <div>

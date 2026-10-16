@@ -72,7 +72,9 @@
     "check:punjab-historical-regions-browser": "node scripts/verify-punjab-historical-regions.mjs",
     "data:punjab-demographics": "node scripts/run-atlas-python.mjs prepare-punjab-demographics.py && node scripts/build-punjab-demographics.mjs && node scripts/run-atlas-python.mjs apply-punjab-demographics.py && node scripts/pack-private-atlas.mjs",
     "check:punjab-demographics": "node scripts/run-atlas-python.mjs check-punjab-demographic-geometry.py && npm run check:private-atlas",
-    "check:punjab-demographics-browser": "node scripts/verify-punjab-demographics.mjs"
+    "check:punjab-demographics-browser": "node scripts/verify-punjab-demographics.mjs",
+    "export:punjab-pdf": "node scripts/export-punjab-atlas-pdf.mjs",
+    "check:punjab-pdf-browser": "node scripts/verify-punjab-pdf.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
@@ -85,6 +87,8 @@
     "input-otp": "1.4.2",
     "lucide-react": "1.31.0",
     "maplibre-gl": "^6.7.0",
+    "pdf-lib": "1.17.1",
+    "polygon-clipping": "^0.15.7",
     "react": "19.2.6",
     "react-day-picker": "9.8.1",
     "react-dom": "19.2.6",
@@ -94,8 +98,7 @@
     "shadcn": "4.18.0",
     "tailwind-merge": "3.6.0",
     "tw-animate-css": "1.4.0",
-    "vinext": "1.0.0-beta.5",
-    "polygon-clipping": "^0.15.7"
+    "vinext": "1.0.0-beta.5"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",

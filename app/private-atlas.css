@@ -1578,3 +1578,6 @@
   background: #deebe2;
   border-color: #9cb8a5;
 }
+/* The PDF renders from complete vector data independently of the viewport. */
+.ua-pdf-progress {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 22px;background:#edf4f1;color:#183f5a;font-size:12px;flex-wrap:wrap}
+.ua-pdf-progress button {border:1px solid #c4d4cc;background:white;border-radius:6px;padding:5px 9px;cursor:pointer}

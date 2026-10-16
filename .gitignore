@@ -36,5 +36,6 @@ next-env.d.ts
 /dist-vercel/
 /.wrangler/
 /outputs/
+/output/
 /work/
 /private/
