@@ -4,7 +4,7 @@
   "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist-vercel",
   "functions": {
-    "api/private-atlas.mjs": {"includeFiles": "server/private-atlas.enc"}
+    "api/private-atlas.mjs": {"includeFiles": "server/atlas-runtime/**", "excludeFiles": "server/private-atlas.enc"}
   },
   "routes": [{"handle":"filesystem"},{"src":"/.*","dest":"/index.html"}]
 }

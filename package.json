@@ -8,7 +8,10 @@
   "scripts": {
     "dev": "vinext dev",
     "build": "vinext build",
+    "prebuild:vercel": "node scripts/build-private-atlas-shards.mjs --check",
     "build:vercel": "vite build --config vite.vercel.config.ts",
+    "data:atlas-runtime": "node scripts/build-private-atlas-shards.mjs",
+    "check:atlas-runtime": "node scripts/check-private-atlas-runtime.mjs && node scripts/check-private-atlas-deployment.mjs",
     "preview:vercel": "vite preview --config vite.vercel.config.ts",
     "check:private-atlas": "node scripts/check-private-atlas.mjs",
     "check:northern-review": "npm run check:united-punjab",

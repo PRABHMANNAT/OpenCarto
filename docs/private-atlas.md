@@ -1,5 +1,7 @@
 # Custom alternative political atlas
 
+**Deployment reliability:** [Paged encrypted runtime](atlas-runtime-loading.md) replaces the full-archive cold-start load with small encrypted API sections. Vercel bundles `server/atlas-runtime/` and excludes the editorial monolith. Existing geography, statistics and the server data key are preserved.
+
 **Detailed map downloads:** [Vector Punjab PDF atlas](punjab-detailed-pdf.md) adds a one-click 15-page labelled atlas and separate division, district and tehsil PDF choices. Every 12/48/193 name is included independently of map zoom and screen-label visibility, with enlarged tehsil maps for all 12 divisions.
 
 **Current demographic edition:** [Fictional Alternate-History Demographic Scenario — 2026](punjab-demographics-2026.md) replaces previous population allocations with exactly **6,75,36,450** Punjab residents: **4,98,05,065 Sikhs**, **1,48,58,019 Hindus (22%)**, **27,00,000 Muslims**, **45,000 Buddhists**, **52,000 Christians** and **76,366 others**. All 48 districts and 193 tehsils have reconciled fictional community counts, urban/rural values and density. The dashboard adds composition, sortable rankings, exports and 13 choropleths. Urbanization is 40%. Amb is independent and excluded. This is a fictional scenario, not a census or real-world religious projection.

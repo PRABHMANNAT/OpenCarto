@@ -115,3 +115,5 @@ await fs.writeFile(
 console.log(
   'Private atlas encrypted. Server credentials stored only in ignored .env.local.',
 );
+const {buildAtlasShards}=await import('./build-private-atlas-shards.mjs');
+await buildAtlasShards({key:process.env.PRIVATE_ATLAS_DATA_KEY,payload});

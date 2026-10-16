@@ -16,6 +16,7 @@ try {
     new URL('../server/private-atlas.mjs', import.meta.url),
     join(root, 'api/private-atlas.mjs'),
   );
+  await fs.copyFile(new URL('../server/atlas-store.mjs',import.meta.url),join(root,'api/atlas-store.mjs'));
   const key = randomBytes(32);
   const iv = randomBytes(12);
   const cipher = createCipheriv('aes-256-gcm', key, iv);

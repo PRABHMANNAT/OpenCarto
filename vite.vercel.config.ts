@@ -17,6 +17,7 @@ export default defineConfig({
         '**/.git/**',
         '**/private/**',
         '**/server/private-atlas.enc',
+        '**/server/atlas-runtime/**',
       ],
     },
   },

@@ -17,6 +17,7 @@ export function privateAtlasPlugin() {
       if (
         /(^|\/)private\//i.test(path) ||
         /private-atlas\.enc$/i.test(path) ||
+        /(^|\/)atlas-runtime(?:\/|$)/i.test(path) ||
         /(^|\/)\.env(?:\.|$)/i.test(path)
       ) {
         res.statusCode = 404;

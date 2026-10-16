@@ -513,8 +513,10 @@ async function request<T>(
   });
   if (!response.headers.get('content-type')?.includes('application/json'))
     throw new AtlasError(
-      'This custom atlas requires the map server. Open the server-enabled app to continue.',
-      503,
+      response.status >= 500
+        ? 'The custom atlas server could not respond (HTTP '+response.status+'). Please try again.'
+        : 'The atlas API is unavailable on this deployment. Please check the map server configuration.',
+      response.status >= 400 ? response.status : 503,
     );
   const data = (await response.json()) as { error?: string };
   if (!response.ok)

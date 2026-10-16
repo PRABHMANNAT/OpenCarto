@@ -1,9 +1,4 @@
-import { createDecipheriv } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
-import { gunzipSync } from 'node:zlib';
-import { fileURLToPath } from 'node:url';
-import { resolve } from 'node:path';
-let payloadPromise;
+import {atlasStore} from './atlas-store.mjs';
 function settings() {
   const key = process.env.PRIVATE_ATLAS_DATA_KEY;
   if (!key || !/^[0-9a-f]{64}$/i.test(key))
@@ -23,43 +18,6 @@ function sameOrigin(req) {
     );
   } catch {
     return false;
-  }
-}
-async function payload(key) {
-  if (!payloadPromise)
-    payloadPromise = readDataset()
-      .then((encoded) => {
-        if (encoded.subarray(0, 4).toString() !== 'UAT1')
-          throw Error('Invalid custom atlas dataset');
-        const decipher = createDecipheriv(
-          'aes-256-gcm',
-          Buffer.from(key, 'hex'),
-          encoded.subarray(4, 16),
-        );
-        decipher.setAuthTag(encoded.subarray(16, 32));
-        return JSON.parse(
-          gunzipSync(
-            Buffer.concat([
-              decipher.update(encoded.subarray(32)),
-              decipher.final(),
-            ]),
-          ).toString('utf8'),
-        );
-      })
-      .catch((error) => {
-        payloadPromise = null;
-        throw error;
-      });
-  return payloadPromise;
-}
-async function readDataset() {
-  // Vercel bundles the handler into api/, but includeFiles retains server/.
-  // The adjacent path remains useful for an unbundled local server.
-  try {
-    return await readFile(resolve(process.cwd(), 'server/private-atlas.enc'));
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error;
-    return readFile(fileURLToPath(new URL('./private-atlas.enc', import.meta.url)));
   }
 }
 function respond(res, status, value) {
@@ -83,46 +41,40 @@ export async function privateAtlasHandler(req, res) {
       res.setHeader('Allow', 'GET');
       return respond(res, 405, { error: 'Method not allowed.' });
     }
-    const data = await payload(key);
-    if (action === 'overview') return respond(res, 200, data.overview);
-    if (action === 'demographics') return data.demographics ? respond(res,200,data.demographics) : respond(res,404,{error:'The 2026 demographic scenario is not available.'});
+    const store = await atlasStore(key);
+    if (action === 'overview') return respond(res, 200, await store.section('overview'));
+    if (action === 'demographics') {
+      const demographics=await store.section('demographics');
+      return demographics ? respond(res,200,demographics) : respond(res,404,{error:'The 2026 demographic scenario is not available.'});
+    }
     if (action === 'search') {
       const query = (url.searchParams.get('q') || '').trim().toLowerCase();
       if (query.length < 2 || query.length > 100)
         return respond(res, 400, {error: 'Use between 2 and 100 characters to find an administrative area.'});
-      const matches = (data.administrativeSearch || []).filter(item =>
+      const matches = ((await store.section('administrativeSearch')) || []).filter(item =>
         [item.name, ...item.aliases].join(' ').toLowerCase().includes(query));
       const exact = item => [item.name, ...item.aliases].some(name => name.toLowerCase() === query);
       matches.sort((a, b) => Number(exact(b)) - Number(exact(a)));
       return respond(res, 200, matches.slice(0, 30));
     }
-    if (action === 'analysis') return respond(res, 200, data.analysis);
+    if (action === 'analysis') return respond(res, 200, await store.section('analysis'));
     if (action === 'territorial-review')
-      return respond(res, 200, data.territorialReview || null);
+      return respond(res, 200, (await store.section('territorialReview')) || null);
     if (action === 'detail') {
       const id = url.searchParams.get('province'),
         level = url.searchParams.get('level');
       if (
         !id ||
-        !Object.hasOwn(data.details, id) ||
+        !store.hasProvince(id) ||
         !['province', 'region', 'division', 'district', 'tehsil'].includes(level)
       )
         return respond(res, 400, {
           error: 'Choose a valid province and detail level.',
         });
-      const collection = data.details[id][level] || {
-          type: 'FeatureCollection',
-          features: [],
-        },
-        offset = Number(url.searchParams.get('offset') || 0);
+      const offset = Number(url.searchParams.get('offset') || 0);
       if (!Number.isInteger(offset) || offset < 0)
         return respond(res, 400, { error: 'Choose a valid detail page.' });
-      return respond(res, 200, {
-        ...collection,
-        features: collection.features.slice(offset, offset + 20),
-        next: offset + 20 < collection.features.length ? offset + 20 : null,
-        total: collection.features.length,
-      });
+      return respond(res, 200, await store.detail(id,level,offset));
     }
     return respond(res, 404, { error: 'Custom map resource not found.' });
   } catch (error) {
