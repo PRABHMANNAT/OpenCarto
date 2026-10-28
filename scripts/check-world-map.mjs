@@ -20,7 +20,7 @@ assert.deepEqual(doc.fills,before.fills,'World view preserves regional custom co
 assert.deepEqual(model.validate(doc).mapScope,'world');
 assert.deepEqual(model.validate(doc).regions.world,doc.regions.world);
 assert.equal(model.areas.filter(a=>model.visible(a,model.initial)&&a.region==='world').length,0);
-assert.deepEqual(scope.scopeFocusBounds(doc),[-180,-85,180,85]);
+assert.deepEqual(scope.scopeFocusBounds(doc),[-180,-90,180,90]);
 assert.deepEqual(visibility.hiddenGeometryKeys({...doc,hidden:['in-punjab']}),[],'Regional hidden masks cannot punch holes in the world view');
 assert.deepEqual(visibility.hiddenGeometryKeys({...model.initial,hidden:['world-c-ind']}),[],'World hidden masks cannot change the regional map');
 const focusedWorld={...doc,scopeAreas:['world-c-gbr']};

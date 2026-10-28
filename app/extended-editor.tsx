@@ -27,6 +27,7 @@ import {StudioMark,StudioAbout} from './studio-brand';
 import ScopeControls from './scope-controls';
 import WorldMapControls from './world-map-controls';
 import {worldSource} from './world-map-model';
+import {equalEarthView,worldScope} from './world-equal-earth';
 import RegionExplorer from './region-explorer';
 import OverlayControls from './overlay-controls';
 import NatureControls from './nature-controls';
@@ -84,12 +85,12 @@ export default function RegionalEditor(){
  // oxlint-disable-next-line react/react-compiler
  useEffect(()=>{if(ready)try{localStorage.setItem('punjab-studio-regional-v2',JSON.stringify(doc))}catch{setStatus('Auto-save unavailable — use Save to keep a copy')}},[doc,ready]);
  function commit(next:MapDoc){const prev=current.current;if(JSON.stringify(prev)===JSON.stringify(next))return;setPast(p=>[...p.slice(-79),prev]);setFuture([]);current.current=next;setDoc(next)}
- function change(p:Partial<MapDoc>){const newGeography=['mapScope','scopeAreas','scopeRegions','scopeRegion','historicRegions','countryView','delhiView'].some(key=>key in p);commit({...current.current,...p,...(newGeography&&!('viewReturn' in p)?{viewReturn:null}:{})})}
+ function change(p:Partial<MapDoc>){if(p.basemap&&worldScope(current.current)&&equalEarthView(current.current)!==equalEarthView({...current.current,...p})){pendingMapBounds.current=api.current?.bounds()||null;setMapReady(false);}const newGeography=['mapScope','scopeAreas','scopeRegions','scopeRegion','historicRegions','countryView','delhiView'].some(key=>key in p);commit({...current.current,...p,...(newGeography&&!('viewReturn' in p)?{viewReturn:null}:{})})}
  function changeDemographics(p:Partial<MapDoc>){change(p);if(p.demographicMode&&p.demographicMode!=='none')setTool('inspect')}
  function changeHistory(p:Partial<MapDoc>){const entering=p.caseStudyId==='sikh-heritage-core'||p.empireId&&p.empireId!=='none';if(!entering&&historyActive(current.current)&&(p.empireId==='none'||p.caseStudyId==='none')){returnToNormal();return;}change(recordHistoryChange(current.current,p));if(entering)setTool('inspect')}
  function fitPatch(patch:Partial<MapDoc>){const next={...current.current,...patch};change(patch);const b=scopeFocusBounds(next);if(b)api.current?.fit(b)}
  function returnToNormal(){fitPatch(normalMapPatch(current.current));setInspectedId('');setTool('paint');api.current?.clearSelection?.();setStatus('Normal map restored · your custom edits are retained')}
- function openWorldMap(){setPrivateAtlasOpen(false);change(scopePreset(current.current,'world',{scopeAreas:[]}));api.current?.fit([-180,-85,180,85]);openPanel('layers');setStatus('World map · countries and first-level divisions only')}
+ function openWorldMap(){setPrivateAtlasOpen(false);if(!equalEarthView(current.current))setMapReady(false);change(scopePreset(current.current,'world',{scopeAreas:[]}));api.current?.fit([-180,-90,180,90]);openPanel('layers');setStatus('World map · countries and first-level divisions only')}
  function viewCompleteMap(){fitPatch(completeMapPatch(current.current));setStatus('Complete map · use View → Selected map to return')}
  function viewSelectedMap(){fitPatch(selectedMapPatch(current.current));setStatus('Showing your selected map')}
  function focusEditedArea(){if(!selectedArea)return;change(focusAreaPatch(current.current,selectedArea));api.current?.fit(boundaryDisplayBounds(selectedArea.id,selectedArea.bbox));setStatus('Focused '+areaDisplayName(selectedArea,current.current))}

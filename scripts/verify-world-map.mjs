@@ -17,7 +17,8 @@ try{
   await page.locator('.gl-host[aria-busy=false]').waitFor();
   assert.ok(requested.some(u=>u.includes('/world-region.geojson')));
   assert.ok(requested.some(u=>u.includes('/world-province.geojson')));
-  assert.ok(Number((await page.locator('.zoom-controls span').innerText()).replace('z','').trim())<1,'Whole-world desktop fit allows space around the globe');
+  assert.equal(await page.locator('.equal-earth-svg').getAttribute('preserveAspectRatio'),'xMidYMid meet');
+  assert.equal(await page.locator('[data-world-internal-borders]').getAttribute('display'),'none','Internal borders are hidden in the world overview');
   assert.equal(await page.getByLabel('World country',{exact:true}).locator('option').count(),219);
   await fs.mkdir('outputs/world-map',{recursive:true});
   await page.screenshot({path:'outputs/world-map/world.png'});
@@ -26,7 +27,7 @@ try{
   assert.equal(await page.getByLabel('World first-level division',{exact:true}).locator('option').count(),5);
   await page.getByLabel('World administrative level',{exact:true}).selectOption('country');
   await page.locator('.gl-host[aria-busy=false]').waitFor();
-  const canvas=page.locator('.gl-host canvas');
+  const canvas=page.locator('.equal-earth-svg');
   const box=await canvas.boundingBox();assert.ok(box);
   await page.mouse.click(box.x+box.width*.5,box.y+box.height*.5);
   // Verify a country selection through the search UI, independent of label placement.
@@ -53,7 +54,7 @@ try{
   await page.getByRole('button',{name:'Open world map',exact:true}).click();
   await page.getByLabel('World country',{exact:true}).waitFor();
   await page.locator('.gl-host[aria-busy=false]').waitFor();
-  assert.ok(Number((await page.locator('.zoom-controls span').innerText()).replace('z','').trim())<0,'Whole world fits the narrow mobile viewport');
+  assert.equal(await page.locator('.equal-earth-svg').getAttribute('preserveAspectRatio'),'xMidYMid meet');
   await page.screenshot({path:'outputs/world-map/mobile.png'});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth)<=392);
   assert.deepEqual(errors,[]);

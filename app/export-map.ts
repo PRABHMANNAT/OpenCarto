@@ -1,3 +1,5 @@
+import {equalEarthView} from './world-equal-earth';
+import {exportEqualEarthMap} from './world-map-export';
 import {worldSource} from './world-map-model';
 import type {FeatureCollection,Geometry,Position} from 'geojson';
 import {loadBoundaryDisplay,boundaryDisplayBounds,boundarySeamNotice,boundarySeamSources} from './boundary-seam-model';
@@ -22,6 +24,7 @@ import {photoMarkerSvg} from './gurdwara-photos';
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]!));
 const creditLines=(text:string)=>text.split(' ').reduce<string[]>((lines,word)=>{const last=lines.length-1;if(last<0||lines[last].length+word.length>155)lines.push(word);else lines[last]+=' '+word;return lines},[]);
 export async function exportMap(doc:MapDoc,api:MapAPI,format:string,width:number,current:boolean){
+ if(equalEarthView(doc))return exportEqualEarthMap(api,format,width,current);
  const height=Math.round(width*.82),groups=mapPaintGroups(doc),exportTitle=doc.mapScope==='world'?'World · countries & first-level divisions':doc.title;
  const metroLines=activeMetroLines(doc),naturalLegend=doc.legend?natureLegendRows(doc):[];
  const activeCountries=countries.filter(c=>doc.regions[c.id]?.show&&scopeRegionAllowed(c.id,doc)&&inCountryScope({region:c.id} as Area,doc));

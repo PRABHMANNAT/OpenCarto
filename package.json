@@ -79,7 +79,9 @@
     "export:punjab-pdf": "node scripts/export-punjab-atlas-pdf.mjs",
     "check:punjab-pdf-browser": "node scripts/verify-punjab-pdf.mjs",
     "check:world-map": "node scripts/check-world-map.mjs",
-    "check:world-map-browser": "node scripts/verify-world-map.mjs"
+    "check:world-map-browser": "node scripts/verify-world-map.mjs",
+    "check:world-projection": "node scripts/check-equal-earth.mjs",
+    "check:world-projection-browser": "node scripts/check-equal-earth.mjs && node scripts/verify-equal-earth.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
@@ -87,6 +89,9 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
+    "d3-geo": "^3.1.1",
+    "d3-selection": "^3.0.0",
+    "d3-zoom": "^3.0.0",
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.2",
     "input-otp": "1.4.2",
@@ -110,6 +115,9 @@
     "@cloudflare/workers-types": "4.20260515.1",
     "@openai/sites-vite-plugin": "0.2.0",
     "@tailwindcss/postcss": "4.2.1",
+    "@types/d3-geo": "^3.1.1",
+    "@types/d3-selection": "^3.0.12",
+    "@types/d3-zoom": "^3.0.9",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",

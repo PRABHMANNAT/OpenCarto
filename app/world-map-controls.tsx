@@ -8,6 +8,8 @@ export default function WorldMapControls({doc,onChange,onFit}:{doc:MapDoc;onChan
   const showDivisions=doc.regions.world.province;
   return <section className="world-map-controls" aria-label="World map controls">
     <h2>World map</h2>
+    <p className="muted"><strong>{doc.basemap==='political'?'Equal Earth · equal-area':'Imagery view · Mercator'}</strong><br/>{doc.basemap==='political'?'Country sizes retain their geographic proportions. Zoom in for lighter internal boundaries and smaller labels.':'This existing imagery basemap uses Mercator. Return to Equal Earth to compare land areas.'}</p>
+    {doc.basemap!=='political'&&<button type="button" onClick={()=>onChange({basemap:'political'})}>Return to Equal Earth</button>}
     <p className="muted">{worldCountries.length} countries / territories · {worldSource.layers['world-province'].count.toLocaleString()} first-level divisions.</p>
     <label className="field">Country or territory<select aria-label="World country" value={country?.id||''} onChange={e=>{const id=e.target.value;onChange({scopeAreas:id?[id]:[]});onFit(id?worldFocusBounds(areaById.get(id)):[...worldBounds]);}}>
       <option value="">All countries · world view</option>{worldCountries.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
