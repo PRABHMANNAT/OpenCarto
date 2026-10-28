@@ -12,9 +12,10 @@ export default function ScopeControls({doc,onChange,onFit,onNcr}:Props){
  const qualification=scopeQualification(doc);
  return <section className="scope-controls" aria-labelledby="scope-heading">
   <h2 id="scope-heading">Map views & combinations</h2>
-  <GeographyPicker doc={doc} onChange={onChange} onFit={onFit}/>
+  {mode!=='world'&&<GeographyPicker doc={doc} onChange={onChange} onFit={onFit}/>}
   <label className="field">Geographic view<select aria-label="Geographic map scope" value={mode} onChange={event=>choose(event.target.value as ScopeMode)}>
    <option value="atlas">Regional atlas · enabled layers</option>
+   <option value="world">World · countries & first-level divisions</option>
    <option value="selection">Selected countries / provinces / divisions</option>
    <option value="full">Full available map · outlines first</option>
    <option value="single">Individual state / territory / country</option>

@@ -77,7 +77,9 @@
     "check:punjab-demographics": "node scripts/run-atlas-python.mjs check-punjab-demographic-geometry.py && npm run check:private-atlas",
     "check:punjab-demographics-browser": "node scripts/verify-punjab-demographics.mjs",
     "export:punjab-pdf": "node scripts/export-punjab-atlas-pdf.mjs",
-    "check:punjab-pdf-browser": "node scripts/verify-punjab-pdf.mjs"
+    "check:punjab-pdf-browser": "node scripts/verify-punjab-pdf.mjs",
+    "check:world-map": "node scripts/check-world-map.mjs",
+    "check:world-map-browser": "node scripts/verify-world-map.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

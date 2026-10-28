@@ -12,7 +12,7 @@ export default function AreaSearch({doc,onChange,onFit,onPaint,onInspect,variant
  const initialLimit=variant==='layers'?6:20;
  const [query,setQuery]=useState(''),[level,setLevel]=useState('all'),[region,setRegion]=useState('all'),[hiddenOnly,setHiddenOnly]=useState(false),[limit,setLimit]=useState(initialLimit);
  const deferred=useDeferredValue(query);
- const matches=useMemo(()=>findAreas(deferred,level,region,doc).filter(a=>!(variant==='layers'&&!deferred.trim()&&level==='all'&&region==='all')||a.level==='region'&&a.region!=='pk-lahore-study').filter(a=>!hiddenOnly||!areaShown(a,doc)),[deferred,level,region,hiddenOnly,doc,variant]);
+ const matches=useMemo(()=>findAreas(deferred,level,doc.mapScope==='world'&&region==='all'?'world':region,doc).filter(a=>!(variant==='layers'&&!deferred.trim()&&level==='all'&&region==='all')||a.level==='region'&&a.region!=='pk-lahore-study').filter(a=>!hiddenOnly||!areaShown(a,doc)),[deferred,level,region,hiddenOnly,doc,variant]);
  const selected=doc.mapScope==='selection'?selectionAreas(doc):[];
  function only(a:Area){const patch=addArea(doc,a.id,true);onChange(patch);const b=scopeFocusBounds({...doc,...patch});if(b)onFit(b);}
  function toggle(a:Area){if(areaShown(a,doc)){onChange({hidden:[...new Set([...doc.hidden,a.id])]});return;}const patch=showArea(doc,a);onChange(patch);onFit(a.bbox);}

@@ -2734,7 +2734,7 @@ function AtlasMap({
   );
 }
 
-export default function PrivateAtlas({ onClose, palette }: { onClose: () => void; palette?: PaletteColor[] }) {
+export default function PrivateAtlas({ onClose, palette, onOpenWorld }: { onClose: () => void; palette?: PaletteColor[]; onOpenWorld?:()=>void }) {
   const [exportRecovery] = useState(()=>{const saved=readAtlasExportRecovery();return saved?.pending?saved:null;});
   const restoredView=exportRecovery?.view;
   const districtPalette = useMemo(() => palette?.length ? palette.map(item => ({name: item.name, color: item.hex})) : punjabPalette, [palette]);
@@ -3514,6 +3514,7 @@ export default function PrivateAtlas({ onClose, palette }: { onClose: () => void
         ) : (
           <>
             <nav className="ua-controls" aria-label="Custom atlas navigation">
+              {onOpenWorld&&<button type="button" onClick={onOpenWorld}><Globe2 size={17}/>World map</button>}
               <button type="button" aria-pressed={demographicsOpen} onClick={()=>{
                 if (!demographicsOpen) {choose('punjab',true);setSidebarCollapsed(false);setDistrictEditing(false);setDemographicsLoading(!demographicsData);setDemographicsError('');sidebar.current?.scrollTo({top:0});}
                 setDemographicsOpen(value=>!value);

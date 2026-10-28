@@ -42,6 +42,7 @@ export function normalMapPatch(doc:MapDoc):Partial<MapDoc>{
  return structuredClone({...merged,...geography,regions:merged.regions,areaDetails:merged.areaDetails,hidden,empireId:'none',caseStudyId:'none',historyReturn:null,viewReturn:before.viewReturn});
 }
 export function completeMapPatch(doc:MapDoc):Partial<MapDoc>{
+ if(doc.mapScope==='world')return {...scopePreset(doc,'world',{scopeAreas:[]}),regions:doc.regions,hidden:[],areaDetails:{},viewReturn:doc.viewReturn||scopeNavigation(doc)};
  return {...(isCaseStudyMap(doc)?caseStudyCompleteView(doc):scopePreset(doc,'full',{fullDetail:doc.empireId!=='none'})),hidden:[],areaDetails:{},viewReturn:doc.viewReturn||scopeNavigation(doc)};
 }
 export function selectedMapPatch(doc:MapDoc):Partial<MapDoc>{

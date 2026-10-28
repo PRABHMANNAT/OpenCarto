@@ -70,7 +70,7 @@ export function validateAreaVisibility(value:unknown):AreaVisibilitySettings{
 
 // Shape tools select the finest visible linked units, including local overrides.
 export function selectableAreas(doc:MapDoc){
- const candidates=areas.filter(a=>a.level!=='region'&&a.level!=='division'&&visible(a,doc)),parents=new Set<string>();
+ const candidates=areas.filter(a=>(a.level!=='region'||a.region==='world')&&a.level!=='division'&&visible(a,doc)),parents=new Set<string>();
  for(const area of candidates){const seen=new Set<string>();let parent=area.parent;while(parent&&!seen.has(parent)){seen.add(parent);parents.add(parent);parent=areaById.get(parent)?.parent||'';}}
  return candidates.filter(a=>!parents.has(a.id));
 }

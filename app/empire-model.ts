@@ -1,4 +1,5 @@
 import data from './empire-data.json';
+import {worldDefaultPaint} from './world-map-model';
 import type {Polygon,MultiPolygon} from 'geojson';
 import type {Area,MapDoc,Paint} from './map-model';
 import {areas,visible,effectivePaint,areasByLayer} from './map-model';
@@ -18,7 +19,7 @@ export function empireAreas(id:string){
 // Region outlines provide context. Coloring is assigned independently to each
 // modern administrative unit's source label point, never inherited from a state.
 export function empirePaint(a:Area,doc:MapDoc):Paint|undefined{return doc.empireId!=='none'&&a.level!=='region'&&a.level!=='division'&&empireAreas(doc.empireId).has(a.id)?{color:doc.empireColor,pattern:'solid'}:undefined;}
-export function displayedPaint(a:Area,doc:MapDoc){return doc.demographicMode!=='none'?undefined:doc.empireId!=='none'?empirePaint(a,doc):effectivePaint(a,doc);}
+export function displayedPaint(a:Area,doc:MapDoc){return doc.demographicMode!=='none'?undefined:doc.empireId!=='none'?empirePaint(a,doc):effectivePaint(a,doc)||worldDefaultPaint(a,doc);}
 export const displayedBaseColor=(doc:MapDoc)=>doc.demographicMode!=='none'||doc.empireId!=='none'?'#ffffff':doc.uncolored;
 export function empirePreset(doc:MapDoc,id:string,detail=doc.empireDetail):Partial<MapDoc>{
  const empire=empireById.get(id);if(!empire)return {empireId:'none'};

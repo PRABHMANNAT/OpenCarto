@@ -1,9 +1,10 @@
 import raw from './catalog.json';
+import {worldAreas,worldBounds,worldFocusBounds,worldAreaAllowed,worldNotice} from './world-map-model';
 import caseStudyAreas from './case-study-area-data.json';
 import pakistanDivisions from './pakistan-division-areas.json';
 import type {Area,MapDoc} from './map-model';
 
-export const scopeModes=['atlas','full','single','combination','tricity','historic-punjab','selection'] as const;
+export const scopeModes=['atlas','world','full','single','combination','tricity','historic-punjab','selection'] as const;
 export type ScopeMode=typeof scopeModes[number];
 export type ScopeSettings={mapScope:ScopeMode;scopeRegion:string;scopeRegions:string[];historicRegions:string[];fullDetail:boolean;scopeAreas:string[]};
 export type ScopeDocument=Pick<MapDoc,'regions'|'countryView'|'delhiView'|'kashmirView'>&Partial<ScopeSettings>&Partial<Pick<MapDoc,'caseStudyId'>>;
@@ -14,10 +15,10 @@ export function scopeNavigation(doc:MapDoc):ScopeNavigation{
 }
 export const defaultHistoricRegions=['in-punjab','pk-punjab','in-haryana','in-himachal','chandigarh'];
 export const scopeDefaults:ScopeSettings={mapScope:'atlas',scopeRegion:'in-delhi',scopeRegions:['in-punjab','pk-punjab'],historicRegions:[...defaultHistoricRegions],fullDetail:false,scopeAreas:[]};
-const catalog=[...raw,...pakistanDivisions,...caseStudyAreas] as Area[];
+const catalog=[...raw,...pakistanDivisions,...caseStudyAreas,...worldAreas] as Area[];
 const byId=new Map(catalog.map(a=>[a.id,a]));
 const syntheticRegions=new Set(['delhi-ncr','kashmir-united','tibet-modern-three','pk-lahore-study']);
-export const scopeRegions=catalog.filter(a=>a.level==='region'&&!syntheticRegions.has(a.region)).map(a=>({id:a.region,name:a.name,bbox:a.bbox}));
+export const scopeRegions=catalog.filter(a=>a.level==='region'&&a.region!=='world'&&!syntheticRegions.has(a.region)).map(a=>({id:a.region,name:a.name,bbox:a.bbox}));
 const regionIds=new Set(scopeRegions.map(r=>r.id));
 export const tricityAreaIds=['chandigarh','in-d-608','in-haryana-d-70'];
 const tricityParents=new Set(tricityAreaIds);
@@ -57,6 +58,7 @@ export function validateScopeSettings(value:unknown):ScopeSettings{
 }
 export function selectedScopeRegions(d:ScopeDocument){
  switch(d.mapScope||'atlas'){
+  case 'world':return ['world'];
   case 'selection':return [...new Set((d.scopeAreas||[]).map(id=>byId.get(id)?.region).filter((id):id is string=>!!id))];
   case 'full':return scopeRegions.map(r=>r.id);
   case 'single':return [d.scopeRegion||scopeDefaults.scopeRegion];
@@ -69,7 +71,8 @@ export function selectedScopeRegions(d:ScopeDocument){
 export function scopeRegionAllowed(id:string,d:ScopeDocument){
  const mode=d.mapScope||'atlas';
  if(id==='pk-lahore-study'&&mode==='full'&&d.fullDetail&&d.regions[id]?.show)return true;
- if(mode==='atlas')return true;
+ if(mode==='world')return id==='world';
+ if(mode==='atlas')return id!=='world';
  const ids=selectedScopeRegions(d);
  if(id==='kashmir-united')return ids.includes('in-jammu-kashmir')&&ids.includes('in-ladakh');
  if(id==='tibet-modern-three')return tibetRegions.every(region=>ids.includes(region));
@@ -84,7 +87,7 @@ function inTricity(a:Area){
 }
 // Geographic filtering is separate from layer visibility: overlay markers can
 // use the same selected polygon union without depending on a detail checkbox.
-export function scopeAreaAllowed(a:Area,d:ScopeDocument){return d.mapScope==='selection'?(d.scopeAreas||[]).some(id=>areaBelongsTo(a,id)):(d.mapScope==='tricity'?inTricity(a):scopeRegionAllowed(a.region,d));}
+export function scopeAreaAllowed(a:Area,d:ScopeDocument){if(d.mapScope==='world')return worldAreaAllowed(a,{scopeAreas:d.scopeAreas||[]});return d.mapScope==='selection'?(d.scopeAreas||[]).some(id=>areaBelongsTo(a,id)):(d.mapScope==='tricity'?inTricity(a):scopeRegionAllowed(a.region,d));}
 export function scopeLevelAllowed(a:Area,d:ScopeDocument){return d.mapScope!=='full'||!!d.fullDetail||a.level==='region';}
 // The two district polygons serve as Tricity context outlines even when a
 // previously saved district-detail checkbox was off. Child details still use
@@ -92,13 +95,16 @@ export function scopeLevelAllowed(a:Area,d:ScopeDocument){return d.mapScope!=='f
 export function scopePrimaryArea(a:Area,d:ScopeDocument){return d.mapScope==='selection'?(d.scopeAreas||[]).includes(a.id):d.mapScope==='tricity'&&tricityParents.has(a.id);}
 export function scopePreset(d:ScopeDocument,mode:ScopeMode,settings:Partial<ScopeSettings>={}):Partial<MapDoc>&ScopeSettings{
  const validated=validateScopeSettings({...d,...settings,mapScope:mode}),nextRegions={...d.regions};
+ if(mode==='world')validated.scopeAreas=(settings.scopeAreas||[]).filter(id=>byId.get(id)?.region==='world');
  const selected=selectedScopeRegions({...d,...validated});
  for(const id of selected)if(nextRegions[id])nextRegions[id]={...nextRegions[id],show:true};
+ if(mode==='world')return {...validated,regions:{...nextRegions,world:{show:true,province:true,district:false,tehsil:false,division:false,uc:false}},countryView:'',delhiView:'none',kashmirView:'separate',basemap:'political',empireId:'none',caseStudyId:'none',demographicMode:'none',delhiMetro:false,cities:false,rivers:false,gurdwaras:false,communityShrines:false,mountains:false,plateaus:false,forests:false};
  return {...validated,regions:nextRegions,countryView:'',delhiView:'none',kashmirView:'separate'};
 }
 
 export function scopeGeometryAreas(d:ScopeDocument):Area[]{
  const mode=d.mapScope||'atlas';
+ if(mode==='world')return worldAreas.filter(a=>a.level==='region'&&worldAreaAllowed(a,{scopeAreas:d.scopeAreas||[]}));
  if(mode==='selection')return selectionAreas(d);
  if(mode==='tricity')return tricityAreaIds.map(id=>byId.get(id)!).filter(Boolean);
  if(mode==='atlas'){
@@ -116,14 +122,16 @@ export function scopeGeometryAreas(d:ScopeDocument):Area[]{
 }
 export const scopeGeometryKeys=(d:ScopeDocument)=>[...new Set(scopeGeometryAreas(d).map(a=>a.region+'-'+a.level))];
 export function scopeFocusBounds(d:ScopeDocument){
+ if(d.mapScope==='world'){const selected=worldAreas.find(a=>a.id===d.scopeAreas?.[0]);return selected?worldFocusBounds(selected):[...worldBounds];}
  const areas=scopeGeometryAreas(d);
  if(!areas.length)return undefined;
  return areas.reduce((b,a)=>[Math.min(b[0],a.bbox[0]),Math.min(b[1],a.bbox[1]),Math.max(b[2],a.bbox[2]),Math.max(b[3],a.bbox[3])],[180,90,-180,-90]);
 }
-export function scopeQualification(d:ScopeDocument){return d.mapScope==='tricity'?scopeQualifications.tricity:d.mapScope==='historic-punjab'?scopeQualifications.historicPunjab:d.mapScope==='full'?scopeQualifications.full:'';}
+export function scopeQualification(d:ScopeDocument){return d.mapScope==='world'?worldNotice:d.mapScope==='tricity'?scopeQualifications.tricity:d.mapScope==='historic-punjab'?scopeQualifications.historicPunjab:d.mapScope==='full'?scopeQualifications.full:'';}
 export function scopeLabel(d:ScopeDocument){
  switch(d.mapScope||'atlas'){
   case 'selection':{const selected=selectionAreas(d);return selected.length===1?selected[0].name:selected.length+' selected territories';}
+  case 'world':return 'World · countries & first-level divisions';
   case 'full':return 'Full available map';
   case 'single':return scopeRegions.find(r=>r.id===(d.scopeRegion||scopeDefaults.scopeRegion))?.name||'Individual region';
   case 'combination':return 'Custom region combination';
