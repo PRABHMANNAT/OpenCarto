@@ -2734,7 +2734,7 @@ function AtlasMap({
   );
 }
 
-export default function PrivateAtlas({ onClose, palette, onOpenWorld }: { onClose: () => void; palette?: PaletteColor[]; onOpenWorld?:()=>void }) {
+export default function PrivateAtlas({ onClose, palette, onOpenWorld, onOpenIndia, initialPunjabView }: { onClose: () => void; palette?: PaletteColor[]; onOpenWorld?:()=>void; onOpenIndia?:()=>void; initialPunjabView?:'district'|'division'|'tehsil' }) {
   const [exportRecovery] = useState(()=>{const saved=readAtlasExportRecovery();return saved?.pending?saved:null;});
   const restoredView=exportRecovery?.view;
   const districtPalette = useMemo(() => palette?.length ? palette.map(item => ({name: item.name, color: item.hex})) : punjabPalette, [palette]);
@@ -2743,8 +2743,8 @@ export default function PrivateAtlas({ onClose, palette, onOpenWorld }: { onClos
   const [data, setData] = useState<Overview | null>(null),
     [loading, setLoading] = useState(true),
     [error, setError] = useState(''),
-    [selected, setSelected] = useState(restoredView?.selected??''),
-    [punjabOnly, setPunjabOnly] = useState(restoredView?.punjabOnly??false),
+    [selected, setSelected] = useState(restoredView?.selected??(initialPunjabView?'punjab':'')),
+    [punjabOnly, setPunjabOnly] = useState(restoredView?.punjabOnly??!!initialPunjabView),
     [focusedDistrictId, setFocusedDistrictId] = useState(restoredView?.focusedDistrictId??''),
     [mapStyle, setMapStyle] = useState<MapStyle>('political'),
     [colors, setColors] = useState(readAtlasColors),
@@ -2758,12 +2758,12 @@ export default function PrivateAtlas({ onClose, palette, onOpenWorld }: { onClos
     [query, setQuery] = useState(''),
     [administrativeResults, setAdministrativeResults] = useState<AdministrativeSearchResult[]>([]),
     [searchLoading, setSearchLoading] = useState(false),
-    [provinceDetails, setProvinceDetails] = useState(readProvinceDetails),
+    [provinceDetails, setProvinceDetails] = useState<Record<string,AtlasDetailLevel>>(()=>({...readProvinceDetails(),...(initialPunjabView?{punjab:initialPunjabView}:{})})),
     [loadedDetails, setLoadedDetails] = useState<Record<string, FeatureCollection>>({}),
     [dark, setDark] = useState(restoredView?.dark??false),
     [context, setContext] = useState(restoredView?.context??false),
     [labels, setLabels] = useState(restoredView?.labels??true),
-    [places, setPlaces] = useState(restoredView?.places??true),
+    [places, setPlaces] = useState(restoredView?.places??!initialPunjabView),
     [headquarters, setHeadquarters] = useState(restoredView?.headquarters??true),
     [districtSource, setDistrictSource] = useState<FeatureCollection>(empty),
     [detailLoading, setDetailLoading] = useState(false),
@@ -3514,6 +3514,7 @@ export default function PrivateAtlas({ onClose, palette, onOpenWorld }: { onClos
         ) : (
           <>
             <nav className="ua-controls" aria-label="Custom atlas navigation">
+              {onOpenIndia&&<button type="button" onClick={onOpenIndia}><Globe2 size={17}/>India + United Punjab</button>}
               {onOpenWorld&&<button type="button" onClick={onOpenWorld}><Globe2 size={17}/>World map</button>}
               <button type="button" aria-pressed={demographicsOpen} onClick={()=>{
                 if (!demographicsOpen) {choose('punjab',true);setSidebarCollapsed(false);setDistrictEditing(false);setDemographicsLoading(!demographicsData);setDemographicsError('');sidebar.current?.scrollTo({top:0});}

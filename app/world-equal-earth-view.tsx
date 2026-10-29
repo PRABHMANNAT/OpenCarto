@@ -13,6 +13,7 @@ import {displayedPaint,displayedBaseColor} from './empire-model';
 import {scopeFocusBounds} from './scope-model';
 import {distanceKm} from './map-tools';
 import {worldSource} from './world-map-model';
+import {indiaPunjabScenario,indiaScenarioArea,indiaScenarioCollection,loadIndiaPunjabOverrides} from './india-punjab-scenario';
 import {worldProjection,sphericalFeature,worldRenderedGeometry,equalEarthFit,WORLD_WIDTH,WORLD_HEIGHT} from './world-equal-earth';
 import {rasterizeWorldSvg} from './world-map-export';
 import type {MapAPI,MapViewProps} from './map-view';
@@ -25,7 +26,7 @@ const inside=(p:number[],ring:number[][])=>{let hit=false;for(let i=0,j=ring.len
 function placeLabels(rows:Projected[],doc:MapDoc,view:{k:number;x:number;y:number},scale:number){
   if(!doc.names)return [];
   const occupied:number[][]=[],labels:{row:Projected;name:string;font:number}[]=[];
-  const candidates=rows.filter(row=>row.area.level==='region'||view.k>=8).sort((a,b)=>Number(b.area.level==='region')-Number(a.area.level==='region')||b.size-a.size);
+  const candidates=rows.filter(row=>row.area.level==='region'||view.k>=8||doc.indiaPunjabScenario&&[indiaPunjabScenario.punjabId,indiaPunjabScenario.ladakhId].includes(row.area.id)).sort((a,b)=>Number(b.area.level==='region')-Number(a.area.level==='region')||b.size-a.size);
   for(const row of candidates){
     const country=row.area.level==='region',screenArea=row.size*(view.k*scale)**2;
     if(country?screenArea<1600:screenArea<1100)continue;
@@ -44,7 +45,9 @@ export default function WorldEqualEarthView(props:MapViewProps){
   const cache=useRef<Record<string,FeatureCollection>>({}),scene=useRef<Projected[]>([]),ready=useRef(false);
   const drag=useRef<number[]|null>(null),polygon=useRef<number[][]>([]),suppressClick=useRef(false);
   const [data,setData]=useState<Record<string,FeatureCollection>>({});
-  const [loading,setLoading]=useState(true),[error,setError]=useState(''),[view,setView]=useState(zoomIdentity);
+  const [rawLoading,setLoading]=useState(true),[error,setError]=useState(''),[view,setView]=useState(zoomIdentity);
+  const [scenario,setScenario]=useState<FeatureCollection|null>(null);
+  const loading=rawLoading||props.doc.indiaPunjabScenario&&!scenario;
   const [size,setSize]=useState({width:1200,height:660}),[hover,setHover]=useState(''),[selected,setSelected]=useState('');
   const [selection,setSelection]=useState<number[][]>([]),[measurement,setMeasurement]=useState<number[][]>([]);
   const measurementRef=useRef<number[][]>([]),prefix=useId().replace(/:/g,'');
@@ -64,15 +67,18 @@ export default function WorldEqualEarthView(props:MapViewProps){
     })).then(entries=>{if(!abort.signal.aborted){cache.current=Object.fromEntries(entries);setData(cache.current);setLoading(false);}}).catch(cause=>{if(!abort.signal.aborted){setError(cause instanceof Error?cause.message:'World map unavailable.');setLoading(false);}});
     return()=>abort.abort();
   },[]);
+  useEffect(()=>{let active=true;if(props.doc.indiaPunjabScenario&&!scenario)void loadIndiaPunjabOverrides().then(value=>{if(active)setScenario(value);}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Scenario unavailable.');});return()=>{active=false;};},[props.doc.indiaPunjabScenario,scenario]);
+  const effectiveData=useMemo(()=>props.doc.indiaPunjabScenario&&scenario?Object.fromEntries(Object.entries(data).map(([key,value])=>[key,indiaScenarioCollection(value,scenario)])):data,[data,scenario,props.doc.indiaPunjabScenario]);
+  useEffect(()=>{cache.current=effectiveData;},[effectiveData]);
   const projected=useMemo(()=>{
-    const masks=hiddenMasks(props.doc,data);
-    return ['world-region','world-province'].flatMap(key=>visibleBoundaries(data[key]||empty,props.doc,masks).features.flatMap(feature=>{
-      const area=areaById.get(String(feature.id));if(!area||!visible(area,props.doc))return [];
+    const masks=hiddenMasks(props.doc,effectiveData);
+    return ['world-region','world-province'].flatMap(key=>visibleBoundaries(effectiveData[key]||empty,props.doc,masks).features.flatMap(feature=>{
+      const original=areaById.get(String(feature.id));if(!original)return [];const area=indiaScenarioArea(original,props.doc);if(!visible(area,props.doc))return [];
       const normalized=sphericalFeature(feature),point=projection(area.center as [number,number]);
       const cached=worldRenderedGeometry(feature.geometry);
       return cached.path&&point?[{feature:normalized,area,path:cached.path,size:cached.size,point:point as [number,number]}]:[];
     }));
-  },[props.doc,data]);
+  },[props.doc,effectiveData]);
   // Expensive geographic path construction is cached independently of camera updates.
   useEffect(()=>{scene.current=projected;},[projected]);
   function transform(next:{k:number;x:number;y:number}){const node=svg.current,behavior=controller.current;if(node&&behavior)d3Select(node).call(selection=>behavior.transform(selection,zoomIdentity.translate(next.x,next.y).scale(next.k)));}
@@ -92,24 +98,25 @@ export default function WorldEqualEarthView(props:MapViewProps){
     window.addEventListener('keydown',keys);return()=>{d3Select(node).on('.zoom',null);controller.current=null;window.removeEventListener('keydown',keys);};
   },[]);
   async function exportSvg(width:number,height:number,current:boolean){
-    if(!svg.current||loading||error)throw Error('Wait for the Equal Earth world map to finish loading.');
+    if(!svg.current||host.current?.getAttribute('aria-busy')==='true'||host.current?.querySelector('[role=alert]'))throw Error('Wait for the Equal Earth world map to finish loading.');
     const clone=svg.current.cloneNode(true) as SVGSVGElement;
     clone.setAttribute('xmlns','http://www.w3.org/2000/svg');clone.setAttribute('width',String(width));clone.setAttribute('height',String(height));clone.setAttribute('preserveAspectRatio','xMidYMid meet');clone.removeAttribute('style');
     clone.querySelectorAll('[data-transient]').forEach(node=>node.remove());
     const target=current?camera.current:equalEarthFit(scopeFocusBounds(latest.current.doc)||[-180,-90,180,90]);
     const group=clone.querySelector('[data-world-scene]');group?.setAttribute('transform',`translate(${target.x},${target.y}) scale(${target.k})`);
     clone.querySelector('[data-world-internal-borders]')?.setAttribute('display',target.k>=3?'inline':'none');
-    clone.querySelectorAll('[data-world-label]').forEach(label=>label.remove());
+    clone.querySelectorAll('[data-world-label],[data-scenario-context]').forEach(label=>label.remove());
     for(const {row,name,font} of placeLabels(scene.current,latest.current.doc,target,1)){
       const label=document.createElementNS('http://www.w3.org/2000/svg','text');label.textContent=name;
       for(const [key,value] of Object.entries({'data-world-label':row.area.id,x:row.point[0],y:row.point[1],'text-anchor':'middle','dominant-baseline':'middle','font-family':'Arial,sans-serif','font-size':font,fill:'#29424e',stroke:'white','stroke-width':font*.2,'paint-order':'stroke'}))label.setAttribute(key,String(value));
       group?.appendChild(label);
     }
+    if(latest.current.doc.indiaPunjabScenario&&latest.current.doc.names&&target.k>=5){const p=projection(indiaPunjabScenario.aksaiLabel.center as [number,number]);if(p){const label=document.createElementNS('http://www.w3.org/2000/svg','text');label.textContent='Aksai Chin';for(const [key,value] of Object.entries({x:p[0],y:p[1],'text-anchor':'middle','font-family':'Arial,sans-serif','font-size':10/target.k,fill:'#29424e',stroke:'white','stroke-width':2/target.k,'paint-order':'stroke'}))label.setAttribute(key,String(value));group?.appendChild(label);}}
     const text=(tag:string,value:string)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);node.textContent=value;return node;};
-    clone.insertBefore(text('title','World · Equal Earth equal-area projection'),clone.firstChild);
-    clone.insertBefore(text('metadata',JSON.stringify({projection:'Equal Earth',geographicSource:worldSource,areaNames:latest.current.doc.areaNames,view:current?{k:camera.current.k,x:camera.current.x,y:camera.current.y}:null})),clone.firstChild);
+    clone.insertBefore(text('title',latest.current.doc.indiaPunjabScenario?'Hypothetical India + United Punjab; Aksai Chin in Ladakh':'World · Equal Earth equal-area projection'),clone.firstChild);
+    clone.insertBefore(text('metadata',JSON.stringify({projection:'Equal Earth',scenario:latest.current.doc.indiaPunjabScenario?indiaPunjabScenario:null,geographicSource:worldSource,areaNames:latest.current.doc.areaNames,view:current?{k:camera.current.k,x:camera.current.x,y:camera.current.y}:null})),clone.firstChild);
     const background=document.createElementNS('http://www.w3.org/2000/svg','rect');background.setAttribute('width',String(WORLD_WIDTH));background.setAttribute('height',String(WORLD_HEIGHT));background.setAttribute('fill',latest.current.doc.bg);clone.insertBefore(background,clone.firstChild);
-    const credit=text('text','Equal Earth · geoBoundaries CGAZ · Runfola et al. (2020) · CC BY 4.0 · doi.org/10.1371/journal.pone.0231866');credit.setAttribute('x','24');credit.setAttribute('y','649');credit.setAttribute('font-size','9');credit.setAttribute('fill','#526477');clone.appendChild(credit);
+    const credit=text('text',(latest.current.doc.indiaPunjabScenario?'Hypothetical India + United Punjab; Aksai Chin in Ladakh | Punjab: LGD/Bharatlas, WFP/OCHA | ':'')+'Equal Earth · geoBoundaries CGAZ · Runfola et al. (2020) · CC BY 4.0 · doi.org/10.1371/journal.pone.0231866');credit.setAttribute('x','24');credit.setAttribute('y','649');credit.setAttribute('font-size','9');credit.setAttribute('fill','#526477');clone.appendChild(credit);
     return new XMLSerializer().serializeToString(clone);
   }
   useEffect(()=>{
@@ -159,6 +166,7 @@ export default function WorldEqualEarthView(props:MapViewProps){
         <g data-world-internal-borders="" display={detail?'inline':'none'} pointerEvents="none">{internal.filter(row=>areaBorderVisible(row.area,props.doc)).map(row=><path key={row.area.id} d={row.path} fill="none" stroke={props.doc.border} strokeOpacity=".22" strokeWidth={Math.min(.5,props.doc.width*.28)} vectorEffect="non-scaling-stroke"/>)}</g>
         <g data-world-country-borders="" pointerEvents="none">{countries.filter(row=>areaBorderVisible(row.area,props.doc)).map(row=><path key={row.area.id} d={row.path} fill="none" stroke={props.doc.border} strokeOpacity=".8" strokeWidth={Math.min(1,props.doc.width*.65)} vectorEffect="non-scaling-stroke"/>)}</g>
         {labels}
+        {props.doc.indiaPunjabScenario&&props.doc.names&&view.k>=5&&<text data-scenario-context="aksai-chin" x={projection(indiaPunjabScenario.aksaiLabel.center as [number,number])![0]} y={projection(indiaPunjabScenario.aksaiLabel.center as [number,number])![1]} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize={10/(view.k*scale)} fill="#29424e" stroke="white" strokeWidth={2/(view.k*scale)} paintOrder="stroke" pointerEvents="none">Aksai Chin</text>}
         {highlighted&&<path data-transient="highlight" d={highlighted.path} fill="none" stroke="#1d7b70" strokeWidth="1.8" vectorEffect="non-scaling-stroke" pointerEvents="none"/>}
         {measurement.length>0&&<path data-transient="measurement" d={path({type:'LineString',coordinates:measurement})||''} fill="none" stroke="#1d7b70" strokeWidth="2" vectorEffect="non-scaling-stroke" pointerEvents="none"/>}
       </g>

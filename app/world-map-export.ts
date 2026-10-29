@@ -10,9 +10,9 @@ export async function rasterizeWorldSvg(svg:string,width:number,height:number,fo
     return canvas.toDataURL(format==='jpg'?'image/jpeg':'image/png',.95);
   }finally{URL.revokeObjectURL(url);}
 }
-export async function exportEqualEarthMap(api:MapAPI,format:string,width:number,current:boolean){
+export async function exportEqualEarthMap(api:MapAPI,format:string,width:number,current:boolean,filename="world-countries-first-level-divisions"){
   if(!api.exportWorld)throw Error('The Equal Earth map is still loading. Please try again.');
   const height=Math.round(width*660/1200),svg=await api.exportWorld(width,height,current);
-  if(format==='svg'){download(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}),'world-countries-first-level-divisions.svg');return;}
-  const image=await rasterizeWorldSvg(svg,width,height,format);const response=await fetch(image);download(await response.blob(),'world-countries-first-level-divisions.'+format);
+  if(format==='svg'){download(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}),filename+'.svg');return;}
+  const image=await rasterizeWorldSvg(svg,width,height,format);const response=await fetch(image);download(await response.blob(),filename+'.'+format);
 }

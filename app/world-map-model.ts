@@ -1,4 +1,5 @@
 import raw from './world-areas.json';
+import {indiaScenarioArea,scenarioAreaVisible} from './india-punjab-scenario';
 import sources from './world-sources.json';
 import type {Area, MapDoc} from './map-model';
 
@@ -14,10 +15,11 @@ export function worldDefaultPaint(area: Area, doc: Pick<MapDoc,'paintPalette'>) 
   const hash=Array.from(code).reduce((value,letter)=>(value*31+letter.charCodeAt(0))>>>0,0);
   return {color:doc.paintPalette[hash%doc.paintPalette.length].hex,pattern:'solid'};
 }
-export function worldAreaAllowed(area: Area, doc: Pick<MapDoc, 'scopeAreas'>) {
-  return isWorldArea(area) && (!doc.scopeAreas.length || doc.scopeAreas.includes(area.id) || doc.scopeAreas.includes(area.parent));
+export function worldAreaAllowed(area: Area, doc: Pick<MapDoc, 'scopeAreas'>&{indiaPunjabScenario?:boolean}) {
+  return isWorldArea(area) && scenarioAreaVisible(area.id,doc) && (!doc.scopeAreas.length || doc.scopeAreas.includes(area.id) || doc.scopeAreas.includes(area.parent));
 }
-export function worldFocusBounds(area?: Area) {
-  const b = area?.focusBounds || area?.bbox || worldBounds;
+export function worldFocusBounds(area?: Area,doc:{indiaPunjabScenario?:boolean}={}) {
+  const updated=area?indiaScenarioArea(area,doc):undefined;
+  const b = updated?.focusBounds || updated?.bbox || worldBounds;
   return [Math.max(-180,b[0]),Math.max(-90,b[1]),Math.min(180,b[2]),Math.min(90,b[3])];
 }

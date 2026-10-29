@@ -1,7 +1,8 @@
+import {indiaScenarioArea} from './india-punjab-scenario';
 import type {Area,MapDoc} from './map-model';
 
 export const areaNameDefaults={areaNames:{} as Record<string,string>};
-export const areaDisplayName=(area:Area,doc:Pick<MapDoc,'areaNames'>)=>doc.areaNames?.[area.id]||area.name;
+export const areaDisplayName=(area:Area,doc:Pick<MapDoc,'areaNames'>&{indiaPunjabScenario?:boolean})=>doc.areaNames?.[area.id]||indiaScenarioArea(area,doc).name;
 export const cleanAreaName=(value:string)=>value.replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,100);
 export function renamedArea(doc:Pick<MapDoc,'areaNames'>,area:Area,name:string){
  const next={...doc.areaNames},clean=cleanAreaName(name);
