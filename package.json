@@ -83,7 +83,7 @@
     "check:world-projection": "node scripts/check-equal-earth.mjs",
     "check:world-projection-browser": "node scripts/check-equal-earth.mjs && node scripts/verify-equal-earth.mjs",
     "data:india-punjab": "node scripts/prepare-india-punjab-scenario.mjs && python scripts/build-india-punjab-scenario.py",
-    "check:india-punjab": "python scripts/check-india-punjab-scenario.py && node scripts/check-india-punjab-scenario.mjs",
+    "check:india-punjab": "node scripts/check-alternate-world-access.mjs && node scripts/check-alternate-world-deployment.mjs && python scripts/check-india-punjab-scenario.py && node scripts/check-india-punjab-scenario.mjs",
     "check:india-punjab-browser": "node scripts/verify-india-punjab-scenario.mjs"
   },
   "dependencies": {

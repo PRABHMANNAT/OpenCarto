@@ -1,4 +1,5 @@
 import { existsSync } from 'node:fs';
+import {alternateWorldHandler} from './alternate-world.mjs';
 import { privateAtlasHandler } from './private-atlas.mjs';
 export function privateAtlasPlugin() {
   if (existsSync('.env.local')) process.loadEnvFile('.env.local');
@@ -17,6 +18,7 @@ export function privateAtlasPlugin() {
       if (
         /(^|\/)private\//i.test(path) ||
         /private-atlas\.enc$/i.test(path) ||
+        /(?:alternate-world-overrides|india-punjab-world-overrides)\.geojson$/i.test(path) ||
         /(^|\/)atlas-runtime(?:\/|$)/i.test(path) ||
         /(^|\/)\.env(?:\.|$)/i.test(path)
       ) {
@@ -26,6 +28,7 @@ export function privateAtlasPlugin() {
       }
       next();
     });
+    server.middlewares.use('/api/alternate-world', (req,res)=>{void alternateWorldHandler(req,res);});
     server.middlewares.use('/api/private-atlas', (req, res) => {
       void privateAtlasHandler(req, res);
     });

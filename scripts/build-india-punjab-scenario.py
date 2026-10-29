@@ -32,26 +32,32 @@ if len(sys.argv)>1:
 
 country=read('public/data/world-region.geojson')['features'];states=read('public/data/world-province.geojson')['features']
 all_features={str(f['id']):f for f in country+states}
-india='world-c-ind';punjab='world-a1-1811400B91946361694107';ladakh='world-a1-1811400B23769854471902';aksai='world-c-112'
+india='world-c-ind';punjab='world-a1-1811400B91946361694107';ladakh='world-a1-1811400B23769854471902';aksai='world-c-112';kashmir='world-a1-1811400B42025667129192'
+gilgit='world-a1-70912109B54485417915534';azad='world-a1-70912109B7720427584286'
 up=unary_union([shape(f['geometry']) for f in source['district']['features']]);assert up.is_valid
 old_punjab=shape(all_features[punjab]['geometry']);ac=shape(all_features[aksai]['geometry'])
 # Different source resolutions leave a small set of pre-existing Indian Punjab
 # edge fragments. Retain their old ownership in the world context; the detailed
 # 48-district atlas remains the exact approved geometry used by the PDF.
 fringe=old_punjab.difference(up)
-new_punjab=unary_union([up,old_punjab]);new_ladakh=unary_union([shape(all_features[ladakh]['geometry']),ac])
-transfer=unary_union([new_punjab,ac]);new_india=unary_union([shape(all_features[india]['geometry']),new_punjab,ac])
+new_punjab=unary_union([up,old_punjab])
+source_jk=shape(read('public/data/in-jammu-kashmir-region.geojson')['features'][0]['geometry'])
+source_ladakh=shape(read('public/data/in-ladakh-region.geojson')['features'][0]['geometry'])
+new_ladakh=unary_union([shape(all_features[ladakh]['geometry']),source_ladakh,ac,*[shape(all_features[i]['geometry']) for i in ['world-c-114','world-c-121']]])
+new_kashmir=unary_union([shape(all_features[kashmir]['geometry']),source_jk,shape(all_features[gilgit]['geometry']),shape(all_features[azad]['geometry'])]).difference(unary_union([new_ladakh,new_punjab]))
+transfer=unary_union([new_punjab,new_ladakh,new_kashmir]);new_india=unary_union([shape(all_features[india]['geometry']),transfer])
 overrides=[];areas={};removed=[];repairs=[];journal=[]
 for f in country+states:
     p=f['properties'];ident=str(f['id']);before=shape(f['geometry']);after=before
     if ident==india:after=new_india
     elif ident==punjab:after=new_punjab
     elif ident==ladakh:after=new_ladakh
+    elif ident==kashmir:after=new_kashmir
     elif ident==aksai:removed.append(ident);journal.append({'id':ident,'name':p['name'],'operation':'Assigned to Ladakh, India'});continue
     elif before.intersection(transfer).area>1e-12:after=before.difference(transfer)
     changed=not before.equals(after)
     if not changed:continue
-    if after.is_empty:removed.append(ident);journal.append({'id':ident,'name':p['name'],'operation':'Transferred entire geometry'});continue
+    if after.is_empty or after.area<1e-12:removed.append(ident);journal.append({'id':ident,'name':p['name'],'operation':'Transferred entire geometry'});continue
     if not after.is_valid:
         after=make_valid(after);repairs.append(ident)
     if after.geom_type=='GeometryCollection':
@@ -64,14 +70,15 @@ for f in country+states:
     point=main.representative_point()
     properties={**p,'bbox':list(after.bounds),'focusBounds':list(main.bounds),'center':[point.x,point.y],'sourceName':p['name'],'source':p['source']+'; hypothetical India + United Punjab scenario'}
     if ident==punjab:properties.update(name='United Punjab',aliases=['Punjab','United Punjab','Hypothetical Punjab'])
-    if ident==ladakh:properties.update(name='Ladakh',aliases=[p['name'],'Ladakh','Aksai Chin'])
+    if ident==kashmir:properties.update(name='Jammu & Kashmir',aliases=['Kashmir','Jammu and Kashmir','Gilgit-Baltistan','Azad Kashmir'])
+    if ident==ladakh:properties.update(name='Ladakh',aliases=[p['name'],'Ladakh','Aksai Chin','Siachen-Saltoro','Demchok','Shaksgam Valley'])
     features={'type':'Feature','id':ident,'properties':properties,'bbox':list(after.bounds),'geometry':mapping(after)}
     overrides.append(features);areas[ident]=properties
-    journal.append({'id':ident,'name':properties['name'],'operation':'Union / parent update' if ident in [india,punjab,ladakh] else 'Subtract transferred territory'})
-assert removed==[aksai],removed
-write('public/data/india-punjab-world-overrides.geojson',{'type':'FeatureCollection','features':overrides})
+    journal.append({'id':ident,'name':properties['name'],'operation':'Union / parent update' if ident in [india,punjab,ladakh,kashmir] else 'Subtract transferred territory'})
+assert all(i in removed for i in [aksai,gilgit,azad,'world-c-114','world-c-121']),removed
+write('server/alternate-world-overrides.geojson',{'type':'FeatureCollection','features':overrides})
 write('work/india-punjab/reference-punjab-footprint.geojson',{'type':'FeatureCollection','features':[{'type':'Feature','properties':{'name':'Exact canonical PDF Punjab'},'geometry':mapping(up)}]})
-manifest={'revision':'india-united-punjab-aksai-2026-10-29','label':'Hypothetical India — United Punjab and Ladakh','referencePdf':pdf_info,'districtCount':48,'divisionCount':12,'tehsilCount':193,'indiaId':india,'punjabId':punjab,'ladakhId':ladakh,'aksaiId':aksai,'removedIds':removed,'areas':areas,'journal':journal,'repairs':repairs,'aksaiLabel':{'name':'Aksai Chin','center':all_features[aksai]['properties']['center']},'referenceEdgeResidual':{'angularAreaDegrees2':fringe.area,'fractionOfReferenceAngularArea':fringe.area/up.area,'method':'Retain existing Indian Punjab source-edge fragments in the world-context parent state; exact PDF district/division/tehsil geometries are unchanged.'},'credits':['geoBoundaries CGAZ · CC BY 4.0','Punjab: LGD/Bharatlas, Esri India, WFP/OCHA 2022 · source licenses retained in custom atlas'],'notes':'Fictional India configuration. United Punjab is included as an Indian state and Aksai Chin is assigned to Ladakh. Amb is not absorbed into Punjab. No additional disputed territories are reassigned. Original world source files and canonical detailed Punjab remain unchanged.','inputs':[{'file':p,'sha256':digest(p)} for p in ['public/data/world-region.geojson','public/data/world-province.geojson','work/india-punjab/punjab-source.json']],'outputSha256':digest('public/data/india-punjab-world-overrides.geojson'),'districtNames':sorted(f['properties']['name'] for f in source['district']['features'])}
+manifest={'revision':'alternate-world-punjab-kashmir-2026-10-29','label':'Alternate world map','referencePdf':pdf_info,'districtCount':48,'divisionCount':12,'tehsilCount':193,'indiaId':india,'punjabId':punjab,'ladakhId':ladakh,'aksaiId':aksai,'kashmirId':kashmir,'kashmirSourceIds':[gilgit,azad,'world-c-114','world-c-121'],'removedIds':removed,'areas':areas,'journal':journal,'repairs':repairs,'aksaiLabel':{'name':'Aksai Chin','center':all_features[aksai]['properties']['center']},'referenceEdgeResidual':{'angularAreaDegrees2':fringe.area,'fractionOfReferenceAngularArea':fringe.area/up.area,'method':'Retain existing Indian Punjab source-edge fragments in the world-context parent state; exact PDF district/division/tehsil geometries are unchanged.'},'credits':['geoBoundaries CGAZ · CC BY 4.0','Punjab: LGD/Bharatlas, Esri India, WFP/OCHA 2022 · source licenses retained in custom atlas'],'notes':'Fictional complete-world edition. United Punjab and the combined Kashmir extent are assigned to India; Aksai Chin, Siachen-Saltoro and Demchok are included in Ladakh. Gilgit-Baltistan and Azad Kashmir are merged into the Jammu & Kashmir world state, using the existing combined claimed-extent GIS. Amb remains outside Punjab. Source-world and detailed Punjab data are unchanged.','inputs':[{'file':p,'sha256':digest(p)} for p in ['public/data/world-region.geojson','public/data/world-province.geojson','public/data/in-jammu-kashmir-region.geojson','public/data/in-ladakh-region.geojson','work/india-punjab/punjab-source.json']],'outputSha256':digest('server/alternate-world-overrides.geojson'),'districtNames':sorted(f['properties']['name'] for f in source['district']['features'])}
 write('app/india-punjab-scenario.json',manifest)
 print('Built',len(overrides),'world replacements;',len(removed),'retired context outline; exact PDF names verified:',pdf_info.get('matchedDistrictNames'))
 print('Preserved source-edge residual:',fringe.area,'square degrees; fraction',fringe.area/up.area)

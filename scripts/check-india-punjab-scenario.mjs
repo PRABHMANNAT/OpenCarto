@@ -12,10 +12,12 @@ assert.ok(search.findAreas('Aksai Chin','all','world',doc).some(a=>a.id===m.lada
 assert.ok(!search.findAreas('Aksai Chin','all','world',doc).some(a=>a.id===m.aksaiId));
 assert.equal(model.visible(model.areaById.get(m.aksaiId),doc),false);
 assert.equal(names.areaDisplayName(model.areaById.get(m.punjabId),{...doc,areaNames:{[m.punjabId]:'My Punjab'}}),'My Punjab');
-const original=JSON.parse(await fs.readFile('public/data/world-province.geojson','utf8')),overrides=JSON.parse(await fs.readFile('public/data/india-punjab-world-overrides.geojson','utf8'));
+const original=JSON.parse(await fs.readFile('public/data/world-province.geojson','utf8')),overrides=JSON.parse(await fs.readFile('server/alternate-world-overrides.geojson','utf8'));
 const changed=scenario.indiaScenarioCollection(original,overrides);
 assert.deepEqual(changed.features.find(f=>f.id===m.punjabId).geometry,overrides.features.find(f=>f.id===m.punjabId).geometry);
 assert.equal(original.features.find(f=>f.id===m.punjabId).properties.name,'Punjab');
+assert.ok(search.findAreas('Gilgit-Baltistan','all','world',doc).some(a=>a.id===m.kashmirId));
+assert.deepEqual(scenario.openIndiaSettings(doc).scopeAreas,[],'Alternate edition opens the complete world');
 const navigation=scope.scopeNavigation(doc);assert.equal(navigation.indiaPunjabScenario,true);
 assert.deepEqual(scope.scopeFocusBounds(doc),m.areas[m.indiaId].focusBounds);
 console.log('Verified scenario opt-in, save/load, navigation, complete India bounds, source restoration, immutable overrides, aliases and custom names.');

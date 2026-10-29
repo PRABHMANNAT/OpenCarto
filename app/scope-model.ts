@@ -132,7 +132,7 @@ export function scopeQualification(d:ScopeDocument){return d.mapScope==='world'?
 export function scopeLabel(d:ScopeDocument){
  switch(d.mapScope||'atlas'){
   case 'selection':{const selected=selectionAreas(d);return selected.length===1?selected[0].name:selected.length+' selected territories';}
-  case 'world':return d.indiaPunjabScenario?'Hypothetical India · United Punjab · Aksai Chin in Ladakh':'World · countries & first-level divisions';
+  case 'world':return d.indiaPunjabScenario?'Alternate world · United Punjab and Kashmir in India · Aksai Chin in Ladakh':'World · countries & first-level divisions';
   case 'full':return 'Full available map';
   case 'single':return scopeRegions.find(r=>r.id===(d.scopeRegion||scopeDefaults.scopeRegion))?.name||'Individual region';
   case 'combination':return 'Custom region combination';

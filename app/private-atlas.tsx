@@ -3514,7 +3514,7 @@ export default function PrivateAtlas({ onClose, palette, onOpenWorld, onOpenIndi
         ) : (
           <>
             <nav className="ua-controls" aria-label="Custom atlas navigation">
-              {onOpenIndia&&<button type="button" onClick={onOpenIndia}><Globe2 size={17}/>India + United Punjab</button>}
+              {onOpenIndia&&<button type="button" onClick={onOpenIndia}><Globe2 size={17}/>Alternate world map</button>}
               {onOpenWorld&&<button type="button" onClick={onOpenWorld}><Globe2 size={17}/>World map</button>}
               <button type="button" aria-pressed={demographicsOpen} onClick={()=>{
                 if (!demographicsOpen) {choose('punjab',true);setSidebarCollapsed(false);setDistrictEditing(false);setDemographicsLoading(!demographicsData);setDemographicsError('');sidebar.current?.scrollTo({top:0});}

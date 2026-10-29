@@ -1,40 +1,39 @@
-# Hypothetical India with United Punjab
+# Password-protected alternate world map
 
-This optional world-map edition includes the approved United Punjab footprint in India and assigns the existing Aksai Chin source polygon to Ladakh. It is explicitly fictional. No claim of present sovereignty or control is implied.
+The **Alternate world map** option opens the complete Equal Earth world map. It reuses the existing country and first-level-division data, colors, selection, zoom and export tools, replacing only the requested United Punjab and Kashmir border footprints. **World map** opens the original source edition.
 
-Open **India + Punjab** in the editor header, or choose **World map > Boundary edition > Hypothetical India + United Punjab**. The custom atlas also has an **India + United Punjab** button. Focus shortcuts cover Punjab and Ladakh; Punjab district, division and tehsil buttons open the existing canonical detailed atlas. The detailed atlas retains its PDF download control. World exports retain the active boundary edition and include its provenance in SVG metadata.
+The alternate edition includes United Punjab as an Indian state. Jammu & Kashmir and Ladakh use the existing combined claimed-extent GIS: Gilgit-Baltistan and Azad Kashmir are merged into the Jammu & Kashmir world state; Aksai Chin, Siachen-Saltoro and Demchok are included in Ladakh. These are explicitly fictional political assignments. Amb remains outside Punjab. The detailed Punjab atlas still has exactly 48 districts, 12 divisions and 193 tehsils, with its original geometries, names, capitals, statistics and PDF download.
 
-## Reference and canonical detail
+## Access
 
-The supplied `united-punjab-detailed-atlas.pdf` (15 pages; SHA-256 `b0af3f154bea9bdf9bcbc4ce6b343841c60750386a536d6342fececa41a21d64`) was checked visually and by extracted district labels. All 48 district names match the canonical registry. GIS is reused from that registry, rather than traced from the PDF.
+Opening **Alternate world map**, including from the custom atlas or the world edition picker, shows a password dialog. The requested code is checked by `server/alternate-world.mjs`, never compared in browser code. Incorrect entries leave the source world visible. Reloading or restoring a saved alternate map prompts again before displaying its boundary data. No unlock state or password is stored in saved maps or localStorage.
 
-- 48 districts, 12 divisions and 193 mapped tehsils remain unchanged.
-- All detailed names, IDs, boundaries, populations and parent relationships remain unchanged.
-- Amb remains separate and is not added to Punjab or automatically to India.
-- No other disputed context territory is reassigned.
+The server issues a short-lived HMAC-signed, HttpOnly, SameSite=Strict cookie (Secure on HTTPS). Boundary GET requests require a valid, unexpired signature. Responses use `private, no-store`; cross-origin writes, oversized bodies, malformed sessions and repeated failed attempts are rejected. Returning to the source edition clears server access. The handler uses `ALTERNATE_WORLD_SESSION_KEY` when configured, otherwise the existing server-only `PRIVATE_ATLAS_DATA_KEY`. No new environment setup is needed on the current atlas deployment. Failed-attempt throttling is per running function instance; it is not a distributed account system.
 
-## Geometry
+`server/alternate-world-overrides.geojson` is included only in the server function bundle and served through `/api/alternate-world`. The former public override asset is removed and its URL returns 404. The original public source-world GIS remains public. Authorized users can export the map using the existing download controls.
 
-Original WGS84 world country and ADM1 GeoJSON files remain untouched. `public/data/india-punjab-world-overrides.geojson` stores 17 replacements keyed to the original world IDs. `app/india-punjab-scenario.json` stores aliases, bounds, source hashes, PDF provenance, transformation journal and checksums. The edition flag is validated, saved, restored and included in navigation history.
+## GIS and provenance
 
-1. Dissolve the exact 48 canonical district polygons.
-2. Preserve the pre-existing world Indian Punjab edge fragments outside that footprint. These total 0.0088207954 square degrees, approximately 0.0608% of the canonical footprint's angular area. This is a source-resolution residual, not an estimate of geodesic land area. The detailed Punjab atlas remains exact and unchanged.
-3. Union that Punjab footprint and the existing Aksai Chin context polygon into the original India country polygon.
-4. Union Aksai Chin into the original Ladakh ADM1 polygon, retire its separately selectable country-context outline in this edition, and retain it as a named geographic label and search alias for Ladakh.
-5. Subtract only the transfer mask from intersecting other world country/state polygons. Existing differences between country and state source resolutions outside that mask remain unchanged. Do not union unrelated Ladakh source-edge fragments into India.
+The supplied `united-punjab-detailed-atlas.pdf` (15 pages; SHA-256 `b0af3f154bea9bdf9bcbc4ce6b343841c60750386a536d6342fececa41a21d64`) was checked visually and by its district labels. All 48 district names match the existing registry. Punjab GIS is reused from that registry, not traced from the PDF.
 
-All generated polygons are valid without repair. Multipolygons, holes, islands, Islamabad's enclave and the complete Hazarawala northern valley extent are retained. There are no new country overlaps or land gaps. Existing canonical tehsil rounding slivers against district edges are retained: the largest outside sliver is Taxila, 4.34758e-7 square degrees (0.00151% of that tehsil's angular area). The geometry check uses a documented 1e-6 square-degree tolerance for these inherited detail edges.
+`app/india-punjab-scenario.json` records source hashes, original IDs, aliases, focus bounds, the exact transformation journal and output checksum. It contains metadata, not protected polygons or a password verifier. For compatibility, the existing `indiaPunjabScenario` saved-map flag identifies this alternate world edition.
 
-The same override geometry supplies Equal Earth paths, hit testing, labels, selection and SVG/raster exports. Optional MapLibre imagery views use the same geographic replacements. The default source-world edition, colors and custom names continue to work.
+- Dissolve the 48 canonical Punjab district polygons and retain the old world Indian Punjab edge fragments (0.0088207954 square degrees, approximately 0.0608% of the canonical footprint's angular area). Detailed Punjab boundaries remain exact and unchanged.
+- Reuse the original Indian Jammu & Kashmir/Ladakh outlines, their LGD/Bharatlas claimed-extent source outlines, and the existing world Gilgit-Baltistan, Azad Kashmir, Aksai Chin, Siachen-Saltoro and Demchok geometries. Union Ladakh components; union Jammu & Kashmir components while excluding Ladakh and Punjab to prevent double assignment.
+- Union the requested footprints into the original India country polygon. Subtract the same mask from all intersecting other country/state polygons; retire completely transferred context or subdivision records in this edition. Preserve unaffected source features byte-for-byte.
+- Retain multipolygons, holes, islands, Islamabad's enclave and Hazarawala's complete northern valley. No hand-drawn border or invented district/tehsil polygon is introduced. Existing source-resolution differences outside the transfer mask remain unchanged.
+
+The generator produces 19 replacements and retires five original records (three context outlines and two Pakistan first-level divisions). All resulting polygons validate without repair. The 193 canonical tehsil geometries have inherited rounding slivers against district edges; the largest is Taxila at 4.34758e-7 square degrees (0.00151% of that tehsil's angular area). Validation retains these with a documented 1e-6 square-degree tolerance.
+
+Equal Earth rendering, hit testing, labels, selection and SVG/PNG/JPG exports use the same geographic replacements. Imagery views also receive them. Alternate exports use `alternate-world-map` filenames and include edition provenance.
 
 ## Reproduce and verify
 
-Use the configured `.env.local` and atlas key; do not copy secrets into generated files. Python needs Shapely available under `work/world-python` (or installed normally). Optional PDF verification uses pypdf under `work/pdf-reader-126` or the normal Python environment.
+Use the configured `.env.local` and atlas key without copying secrets into generated files. Python needs Shapely under `work/world-python` or installed normally. Optional PDF validation uses pypdf under `work/pdf-reader-126` or the normal Python environment.
 
 ```powershell
 npm run data:india-punjab
-# Optionally validate the source PDF while rebuilding:
-python scripts/build-india-punjab-scenario.py '<path-to-supplied-pdf>'
+python scripts/build-india-punjab-scenario.py '<optional-source-pdf-path>'
 npm run check:india-punjab
 npx tsc --noEmit
 npm run build:vercel
@@ -42,6 +41,6 @@ npm run preview:vercel -- --host 127.0.0.1 --port 4546 --strictPort
 npm run check:india-punjab-browser
 ```
 
-The geometry check verifies source hashes, exact unions, complete Aksai inclusion, parent IDs, valid polygons, land conservation, mask-limited changes and no new overlaps. Model checks cover aliases, source restoration, save/load and navigation. Browser checks cover rendered paths, existing colors, the three detailed atlas views, API counts, Amb independence, SVG metadata/download, reload, source restoration and mobile layout. Screenshots are written to ignored `outputs/india-punjab/`.
+Geometry checks cover exact unions, full Kashmir/Aksai inclusion, preserved IDs, valid polygons, land conservation, no new overlaps and mask-limited changes. Server tests also simulate a flattened function deployment and verify server-file discovery. They cover password failure/success, protected data, origin/payload checks, signed-cookie tampering/expiry, logout and throttling. Browser tests verify the full world opens without a country filter, unrelated continents and colors remain unchanged, password failure/reload cannot expose alternate boundaries, updated polygons receive clicks, downloads work, all three detailed Punjab views load and mobile layout fits. Screenshots are written to ignored `outputs/alternate-world/`.
 
-Credits: world context geoBoundaries CGAZ, Runfola et al. (2020), CC BY 4.0; detailed Punjab LGD/Bharatlas, Esri India, WFP/OCHA 2022, with existing source licenses and attribution retained in the custom atlas.
+Credits: world context geoBoundaries CGAZ, Runfola et al. (2020), CC BY 4.0; Punjab LGD/Bharatlas, Esri India, WFP/OCHA 2022; combined Kashmir LGD/Bharatlas 2024. Existing individual source licenses and detailed-atlas attribution remain applicable.

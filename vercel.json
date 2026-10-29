@@ -4,12 +4,39 @@
   "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist-vercel",
   "functions": {
-    "api/private-atlas.mjs": {"includeFiles": "server/atlas-runtime/**", "excludeFiles": "server/private-atlas.enc"}
+    "api/private-atlas.mjs": {
+      "includeFiles": "server/atlas-runtime/**",
+      "excludeFiles": "server/private-atlas.enc"
+    },
+    "api/alternate-world.mjs": {
+      "includeFiles": "server/alternate-world-overrides.geojson"
+    }
   },
   "routes": [
-    {"src":"/(?:|index\\.html)","headers":{"Cache-Control":"no-cache"},"continue":true},
-    {"handle":"filesystem"},
-    {"src":"/assets/.*","status":404},
-    {"src":"/.*","dest":"/index.html","headers":{"Cache-Control":"no-cache"}}
+    {
+      "src": "/(?:data/india-punjab-world-overrides|server/alternate-world-overrides)\\.geojson",
+      "status": 404
+    },
+    {
+      "src": "/(?:|index\\.html)",
+      "headers": {
+        "Cache-Control": "no-cache"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/assets/.*",
+      "status": 404
+    },
+    {
+      "src": "/.*",
+      "dest": "/index.html",
+      "headers": {
+        "Cache-Control": "no-cache"
+      }
+    }
   ]
 }

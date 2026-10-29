@@ -1,23 +1,23 @@
 'use client';
 import {areasByLayer, areaById, type MapDoc} from './map-model';
-import {indiaPunjabScenario,indiaScenarioArea,scenarioAreaVisible,openIndiaSettings,type PunjabMapLevel} from './india-punjab-scenario';
+import {indiaPunjabScenario,indiaScenarioArea,scenarioAreaVisible,type PunjabMapLevel} from './india-punjab-scenario';
 import {worldCountries,worldSource,worldBounds,worldFocusBounds} from './world-map-model';
 
-export default function WorldMapControls({doc,onChange,onFit,onPunjabDetails}:{doc:MapDoc;onChange:(patch:Partial<MapDoc>)=>void;onFit:(bounds:number[])=>void;onPunjabDetails?:(level:PunjabMapLevel)=>void}) {
+export default function WorldMapControls({doc,onChange,onFit,onPunjabDetails,onAlternateRequest}:{doc:MapDoc;onChange:(patch:Partial<MapDoc>)=>void;onFit:(bounds:number[])=>void;onPunjabDetails?:(level:PunjabMapLevel)=>void;onAlternateRequest:()=>void}) {
   const countries=worldCountries.filter(c=>scenarioAreaVisible(c.id,doc));
   const country=worldCountries.find(c=>c.id===doc.scopeAreas[0]);
-  const divisions=(areasByLayer.get('world-province')||[]).filter(a=>!country||a.parent===country.id).map(a=>indiaScenarioArea(a,doc)).sort((a,b)=>a.name.localeCompare(b.name));
+  const divisions=(areasByLayer.get('world-province')||[]).filter(a=>(!country||a.parent===country.id)&&scenarioAreaVisible(a.id,doc)).map(a=>indiaScenarioArea(a,doc)).sort((a,b)=>a.name.localeCompare(b.name));
   const showDivisions=doc.regions.world.province;
   return <section className="world-map-controls" aria-label="World map controls">
     <h2>World map</h2>
-    <label className="field">Boundary edition<select aria-label="World boundary edition" value={doc.indiaPunjabScenario?'india-punjab':'source'} onChange={e=>{const enabled=e.target.value==='india-punjab';onChange(enabled?openIndiaSettings(doc):{indiaPunjabScenario:false,basemap:'political'});onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.indiaId),{indiaPunjabScenario:enabled}));}}>
-      <option value="source">Source world map</option><option value="india-punjab">Hypothetical India + United Punjab</option>
+    <label className="field">Boundary edition<select aria-label="World boundary edition" value={doc.indiaPunjabScenario?'india-punjab':'source'} onChange={e=>{if(e.target.value==='india-punjab')onAlternateRequest();else{onChange({indiaPunjabScenario:false,basemap:'political',scopeAreas:[]});onFit([...worldBounds]);}}}>
+      <option value="source">Source world map</option><option value="india-punjab">Alternate world map (password)</option>
     </select></label>
-    {doc.indiaPunjabScenario&&<><p className="coverage-warning">Hypothetical India · United Punjab is an Indian state. Aksai Chin is included in Ladakh. Amb remains outside Punjab.</p><div className="scope-shortcuts"><button onClick={()=>onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.punjabId),doc))}>Focus United Punjab</button><button onClick={()=>onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.ladakhId),doc))}>Focus Ladakh + Aksai Chin</button></div>{onPunjabDetails&&<><p className="muted">Detailed Punjab · 48 districts · 12 divisions · 193 tehsils. Approved atlas boundaries and names.</p><div className="scope-shortcuts">{(['district','division','tehsil'] as const).map(level=><button key={level} onClick={()=>onPunjabDetails(level)}>Punjab {level}s</button>)}</div></>}</>}
+    {doc.indiaPunjabScenario&&<><p className="coverage-warning">Alternate world · United Punjab and the combined Kashmir extent are included in India. Aksai Chin is part of Ladakh. Amb remains outside Punjab.</p><div className="scope-shortcuts"><button onClick={()=>onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.punjabId),doc))}>Focus United Punjab</button><button onClick={()=>onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.indiaId),doc))}>Focus India</button><button onClick={()=>onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.kashmirId),doc))}>Focus Kashmir</button><button onClick={()=>onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.ladakhId),doc))}>Focus Ladakh + Aksai Chin</button></div>{onPunjabDetails&&<><p className="muted">Detailed Punjab · 48 districts · 12 divisions · 193 tehsils. Approved atlas boundaries and names.</p><div className="scope-shortcuts">{(['district','division','tehsil'] as const).map(level=><button key={level} onClick={()=>onPunjabDetails(level)}>Punjab {level}s</button>)}</div></>}</>}
 
     <p className="muted"><strong>{doc.basemap==='political'?'Equal Earth · equal-area':'Imagery view · Mercator'}</strong><br/>{doc.basemap==='political'?'Country sizes retain their geographic proportions. Zoom in for lighter internal boundaries and smaller labels.':'This existing imagery basemap uses Mercator. Return to Equal Earth to compare land areas.'}</p>
     {doc.basemap!=='political'&&<button type="button" onClick={()=>onChange({basemap:'political'})}>Return to Equal Earth</button>}
-    <p className="muted">{countries.length} countries / territories · {worldSource.layers['world-province'].count.toLocaleString()} first-level divisions.</p>
+    <p className="muted">{countries.length} countries / territories · {(worldSource.layers['world-province'].count-(doc.indiaPunjabScenario?indiaPunjabScenario.removedIds.filter(id=>areaById.get(id)?.level==='province').length:0)).toLocaleString()} first-level divisions.</p>
     <label className="field">Country or territory<select aria-label="World country" value={country?.id||''} onChange={e=>{const id=e.target.value;onChange({scopeAreas:id?[id]:[]});onFit(id?worldFocusBounds(areaById.get(id),doc):[...worldBounds]);}}>
       <option value="">All countries · world view</option>{countries.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
     </select></label>
