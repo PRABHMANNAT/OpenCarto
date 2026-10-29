@@ -18,7 +18,7 @@ export function privateAtlasPlugin() {
       if (
         /(^|\/)private\//i.test(path) ||
         /private-atlas\.enc$/i.test(path) ||
-        /(?:alternate-world-overrides|india-punjab-world-overrides)\.geojson$/i.test(path) ||
+        /(?:alternate-world-(?:overrides|tibet)|india-punjab-world-overrides)\.geojson$/i.test(path) ||
         /(^|\/)atlas-runtime(?:\/|$)/i.test(path) ||
         /(^|\/)\.env(?:\.|$)/i.test(path)
       ) {

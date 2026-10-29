@@ -9,12 +9,12 @@
       "excludeFiles": "server/private-atlas.enc"
     },
     "api/alternate-world.mjs": {
-      "includeFiles": "server/alternate-world-overrides.geojson"
+      "includeFiles": "server/alternate-world-*.geojson"
     }
   },
   "routes": [
     {
-      "src": "/(?:data/india-punjab-world-overrides|server/alternate-world-overrides)\\.geojson",
+      "src": "/(?:data/india-punjab-world-overrides|server/alternate-world-(?:overrides|tibet))\\.geojson",
       "status": 404
     },
     {

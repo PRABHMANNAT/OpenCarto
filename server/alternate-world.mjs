@@ -5,8 +5,8 @@ import {resolve} from 'node:path';
 const passwordHash=Buffer.from('cea10c90eee9f29280e698a1a2c4a70831fee2881d425c883de61d5b6e72e823','hex');
 const cookieName='alternate_world_access',duration=2*60*60*1000;
 const failures=new Map();
-let boundaries;
-async function readBoundaries(){try{return await readFile(resolve(process.cwd(),'server/alternate-world-overrides.geojson'),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;return readFile(new URL('./alternate-world-overrides.geojson',import.meta.url),'utf8');}}
+const boundaries=new Map();
+async function readBoundaries(part){const name=part==='tibet'?'alternate-world-tibet.geojson':'alternate-world-overrides.geojson';try{return await readFile(resolve(process.cwd(),'server',name),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;return readFile(new URL('./'+name,import.meta.url),'utf8');}}
 function respond(res,status,value){res.statusCode=status;res.setHeader('Content-Type','application/json; charset=utf-8');res.end(JSON.stringify(value));}
 function key(){const value=process.env.ALTERNATE_WORLD_SESSION_KEY||process.env.PRIVATE_ATLAS_DATA_KEY;if(!value||value.length<32)throw Error('Alternate map access is not configured.');return value;}
 function signature(value,secret){return createHmac('sha256',secret).update('alternate-world-v1|'+value).digest('hex');}
@@ -39,7 +39,9 @@ export async function alternateWorldHandler(req,res){
   }
   if(req.method!=='GET'){res.setHeader('Allow','GET, POST, DELETE');return respond(res,405,{error:'Method not allowed.'});}
   if(!authenticated(req,secret))return respond(res,401,{error:'Enter the password to open the alternate world map.'});
-  if(!boundaries)boundaries=readBoundaries().catch(error=>{boundaries=undefined;throw error;});
-  res.statusCode=200;res.setHeader('Content-Type','application/geo+json; charset=utf-8');res.end(await boundaries);
+  const part=new URL(req.url||'/', 'https://atlas.local').searchParams.get('part')||'world';
+  if(!['world','tibet'].includes(part))return respond(res,400,{error:'Unknown map section.'});
+  if(!boundaries.has(part))boundaries.set(part,readBoundaries(part).catch(error=>{boundaries.delete(part);throw error;}));
+  res.statusCode=200;res.setHeader('Content-Type','application/geo+json; charset=utf-8');res.end(await boundaries.get(part));
  }catch{return respond(res,503,{error:'The alternate world map is temporarily unavailable. Please try again.'});}
 }

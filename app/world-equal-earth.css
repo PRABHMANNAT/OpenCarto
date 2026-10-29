@@ -1,3 +1,5 @@
 .equal-earth-host{overflow:hidden;position:relative}
 .equal-earth-svg{display:block;width:100%;max-width:100%;user-select:none}
 .equal-earth-map .map-loading{pointer-events:none}
+
+.tibet-controls{border-top:1px solid var(--line,#dce5e0);padding-top:16px;margin-top:16px}.tibet-controls h3{font-size:16px}.tibet-facts{font-size:12px;line-height:1.6}.tibet-facts div{display:flex;justify-content:space-between;gap:10px;margin:8px 0}.tibet-facts dd{margin:0;text-align:right;font-weight:600}.tibet-toggles{display:grid;gap:10px;margin:12px 0;font-size:12px}.tibet-toggles label{display:flex;gap:8px;align-items:center}.tibet-controls details{margin-top:12px;font-size:12px}.tibet-controls summary{cursor:pointer;font-weight:600}.tibet-controls ul{padding-left:18px}.tibet-controls h4{margin:12px 0 4px}

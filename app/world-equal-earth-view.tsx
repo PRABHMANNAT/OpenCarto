@@ -1,6 +1,6 @@
 'use client';
 /* oxlint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex -- A focusable geographic SVG application supports arrow-key pan and +/- zoom; the parallel Areas controls expose all selection/edit actions to keyboard users. */
-import {useEffect,useMemo,useRef,useState,useId} from 'react';
+import {useEffect,useMemo,useRef,useState,useId,createElement} from 'react';
 import {select as d3Select} from 'd3-selection';
 import {zoom as d3Zoom,zoomIdentity,type ZoomBehavior} from 'd3-zoom';
 import {geoPath} from 'd3-geo';
@@ -19,6 +19,8 @@ import {worldProjection,sphericalFeature,worldRenderedGeometry,worldBorderPath,e
 import {rasterizeWorldSvg} from './world-map-export';
 import type {MapAPI,MapViewProps} from './map-view';
 import './world-equal-earth.css';
+import {tibetRepublic,tibetCulturalColor} from './world-tibet-model';
+import {tibetSvgItems,appendTibetSvg} from './world-tibet-svg';
 
 type Projected={feature:Feature;area:Area;path:string;size:number;point:[number,number]};
 const empty:FeatureCollection={type:'FeatureCollection',features:[]};
@@ -31,6 +33,7 @@ function placeLabels(rows:Projected[],doc:MapDoc,view:{k:number;x:number;y:numbe
   for(const row of candidates){
     const country=row.area.level==='region',screenArea=row.size*(view.k*scale)**2;
     if(country?screenArea<1600:screenArea<1100)continue;
+    if(doc.indiaPunjabScenario&&doc.tibetView==='cultural'&&tibetRepublic.unitIds.includes(row.area.id))continue;
     const p=[row.point[0]*view.k+view.x,row.point[1]*view.k+view.y],name=areaDisplayName(row.area,doc),font=country?13:11,w=name.length*font*.53/scale,h=font/scale;
     if(p[0]<0||p[1]<0||p[0]>WORLD_WIDTH||p[1]>WORLD_HEIGHT)continue;
     const box=[p[0]-w/2,p[1]-h/2,p[0]+w/2,p[1]+h/2];if(occupied.some(b=>box[0]<b[2]+6/scale&&box[2]>b[0]-6/scale&&box[1]<b[3]+4/scale&&box[3]>b[1]-4/scale))continue;
@@ -52,7 +55,8 @@ export default function WorldEqualEarthView(props:MapViewProps){
   const drag=useRef<number[]|null>(null),polygon=useRef<number[][]>([]),suppressClick=useRef(false);
   const [data,setData]=useState<Record<string,FeatureCollection>>({});
   const [rawLoading,setLoading]=useState(true),[error,setError]=useState(''),[view,setView]=useState(zoomIdentity);
-  const [scenario,setScenario]=useState<FeatureCollection|null>(null);
+  const [scenario,setScenario]=useState<FeatureCollection|null>(null),scenarioSource=useRef<FeatureCollection|null>(null);
+  useEffect(()=>{scenarioSource.current=scenario;},[scenario]);
   const loading=rawLoading||props.doc.indiaPunjabScenario&&!scenario;
   const [size,setSize]=useState({width:1200,height:660}),[hover,setHover]=useState(''),[selected,setSelected]=useState('');
   const [selection,setSelection]=useState<number[][]>([]),[measurement,setMeasurement]=useState<number[][]>([]);
@@ -112,13 +116,15 @@ export default function WorldEqualEarthView(props:MapViewProps){
     const group=clone.querySelector('[data-world-scene]');group?.setAttribute('transform',`translate(${target.x},${target.y}) scale(${target.k})`);
     clone.querySelector('[data-world-internal-borders]')?.setAttribute('display',worldInternalVisible(latest.current.doc,target.k>=3)?'inline':'none');
     clone.querySelectorAll('[data-world-label],[data-scenario-context]').forEach(label=>label.remove());
+    clone.querySelector('[data-tibet-overlays]')?.remove();
+    if(group)appendTibetSvg(group,tibetSvgItems(scenarioSource.current,latest.current.doc,target.k,1,new Set(scene.current.map(row=>row.area.id))));
     const exportLabels=placeLabels(scene.current,latest.current.doc,target,1);
     for(const {row,name,font} of exportLabels){
       const label=document.createElementNS('http://www.w3.org/2000/svg','text');label.textContent=name;
       for(const [key,value] of Object.entries({'data-world-label':row.area.id,x:row.point[0],y:row.point[1],'text-anchor':'middle','dominant-baseline':'middle','font-family':'Arial,sans-serif','font-size':font,fill:'#29424e',stroke:'white','stroke-width':font*.2,'paint-order':'stroke'}))label.setAttribute(key,String(value));
       group?.appendChild(label);
     }
-    if(latest.current.doc.indiaPunjabScenario&&latest.current.doc.names&&target.k>=5&&contextLabelClear(exportLabels,target.k)){const p=projection(indiaPunjabScenario.aksaiLabel.center as [number,number]);if(p){const label=document.createElementNS('http://www.w3.org/2000/svg','text');label.textContent='Aksai Chin';for(const [key,value] of Object.entries({x:p[0],y:p[1],'text-anchor':'middle','font-family':'Arial,sans-serif','font-size':10/target.k,fill:'#29424e',stroke:'white','stroke-width':2/target.k,'paint-order':'stroke'}))label.setAttribute(key,String(value));group?.appendChild(label);}}
+    if(latest.current.doc.indiaPunjabScenario&&latest.current.doc.names&&scene.current.some(row=>row.area.id===indiaPunjabScenario.ladakhId)&&target.k>=5&&contextLabelClear(exportLabels,target.k)){const p=projection(indiaPunjabScenario.aksaiLabel.center as [number,number]);if(p){const label=document.createElementNS('http://www.w3.org/2000/svg','text');label.textContent='Aksai Chin';for(const [key,value] of Object.entries({x:p[0],y:p[1],'text-anchor':'middle','font-family':'Arial,sans-serif','font-size':10/target.k,fill:'#29424e',stroke:'white','stroke-width':2/target.k,'paint-order':'stroke'}))label.setAttribute(key,String(value));group?.appendChild(label);}}
     const internalGroup=clone.querySelector('[data-world-internal-borders]');
     if(internalGroup&&worldInternalVisible(latest.current.doc,target.k>=3)){
       const line=worldProvinceLine(latest.current.doc);internalGroup.replaceChildren();
@@ -126,10 +132,10 @@ export default function WorldEqualEarthView(props:MapViewProps){
     }
     const rows=new Map(scene.current.map(row=>[row.area.id,row]));clone.querySelectorAll('[data-world-border]').forEach(node=>{const row=rows.get(node.getAttribute('data-world-border')||'');if(row)node.setAttribute('d',worldBorderPath(row.feature.geometry,target.k*width/WORLD_WIDTH));});
     const text=(tag:string,value:string)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);node.textContent=value;return node;};
-    clone.insertBefore(text('title',latest.current.doc.indiaPunjabScenario?'Alternate world map; independent Balochistan; Sindh, Multan, Bahawalpur, Punjab and Kashmir in India':'World · Equal Earth equal-area projection'),clone.firstChild);
+    clone.insertBefore(text('title',latest.current.doc.indiaPunjabScenario?'Alternate world map; independent Republic of Tibet and Balochistan; Sindh, Multan, Bahawalpur, Punjab and Kashmir in India':'World · Equal Earth equal-area projection'),clone.firstChild);
     clone.insertBefore(text('metadata',JSON.stringify({projection:'Equal Earth',appearance:{scheme:latest.current.doc.worldColorScheme,countryBorder:latest.current.doc.worldCountryBorder,provinceBorder:latest.current.doc.worldProvinceBorder,internalBorders:latest.current.doc.worldInternalBorders},scenario:latest.current.doc.indiaPunjabScenario?indiaPunjabScenario:null,geographicSource:worldSource,areaNames:latest.current.doc.areaNames,view:current?{k:camera.current.k,x:camera.current.x,y:camera.current.y}:null})),clone.firstChild);
     const background=document.createElementNS('http://www.w3.org/2000/svg','rect');background.setAttribute('width',String(WORLD_WIDTH));background.setAttribute('height',String(WORLD_HEIGHT));background.setAttribute('fill',latest.current.doc.bg);clone.insertBefore(background,clone.firstChild);
-    const credit=text('text',(latest.current.doc.indiaPunjabScenario?'Alternate world; independent Balochistan; western provinces, Punjab and Kashmir in India | Punjab: LGD/Bharatlas, WFP/OCHA | ':'')+'Equal Earth · geoBoundaries CGAZ · Runfola et al. (2020) · CC BY 4.0 · doi.org/10.1371/journal.pone.0231866');credit.setAttribute('x','24');credit.setAttribute('y','649');credit.setAttribute('font-size','9');credit.setAttribute('fill','#526477');clone.appendChild(credit);
+    const credit=text('text',(latest.current.doc.indiaPunjabScenario?'Alternate world; peaceful negotiated Republic of Tibet and independent Balochistan; western provinces, Punjab and Kashmir in India | Punjab: LGD/Bharatlas, WFP/OCHA | ':'')+'Equal Earth · geoBoundaries CGAZ · Runfola et al. (2020) · CC BY 4.0 · doi.org/10.1371/journal.pone.0231866');credit.setAttribute('x','24');credit.setAttribute('y','649');credit.setAttribute('font-size','9');credit.setAttribute('fill','#526477');clone.appendChild(credit);
     return new XMLSerializer().serializeToString(clone);
   }
   useEffect(()=>{
@@ -158,13 +164,14 @@ export default function WorldEqualEarthView(props:MapViewProps){
   const scale=Math.max(.01,Math.min(size.width/WORLD_WIDTH,frameHeight/WORLD_HEIGHT));
   const detail=view.k>=3,internalVisible=worldInternalVisible(props.doc,detail),countryLine=worldCountryLine(props.doc),provinceLine=worldProvinceLine(props.doc);
   const fills=useMemo(()=>projected.map(row=>{
-    const paint=displayedPaint(row.area,props.doc),color=paint?.color||displayedBaseColor(props.doc),province=row.area.level==='province';
+    const paint=displayedPaint(row.area,props.doc),color=tibetCulturalColor(row.area,props.doc)||paint?.color||displayedBaseColor(props.doc),province=row.area.level==='province';
     return <path key={row.area.id} data-area={row.area.id} data-level={row.area.level} d={row.path} fill={color} stroke="none" pointerEvents={province&&!detail?'none':'visiblePainted'}><title>{areaDisplayName(row.area,props.doc)}</title></path>;
   }),[projected,props.doc,detail]);
   const patterns=useMemo(()=>projected.filter(row=>{const p=displayedPaint(row.area,props.doc);return p&&p.pattern!=='solid';}).map(row=><path key={row.area.id} d={row.path} fill={`url(#${prefix}-${displayedPaint(row.area,props.doc)!.pattern})`} pointerEvents="none"/>),[projected,props.doc,prefix]);
   const internal=projected.filter(row=>row.area.level==='province'),countries=projected.filter(row=>row.area.level==='region');
   const placedLabels=placeLabels(projected,props.doc,view,scale);
   const labels=placedLabels.map(({row,name,font})=><text key={row.area.id} data-world-label={row.area.id} x={row.point[0]} y={row.point[1]} textAnchor="middle" dominantBaseline="middle" fontFamily="Arial,sans-serif" fontSize={font} fill="#29424e" stroke="white" strokeWidth={font*.2} paintOrder="stroke" pointerEvents="none">{name}</text>);
+  const tibetItems=tibetSvgItems(scenario,props.doc,view.k,scale,new Set(projected.map(row=>row.area.id)));
   const highlighted=projected.find(row=>row.area.id===(hover||selected));
   return <div className="gl-map equal-earth-map"><div ref={host} className="gl-host equal-earth-host" aria-busy={loading} data-projection="equal-earth">
     <svg ref={svg} className="equal-earth-svg" role="application" tabIndex={0} aria-label="World map in Equal Earth equal-area projection. Arrow keys pan; plus and minus zoom. Use Areas search to select countries." viewBox={`0 0 ${WORLD_WIDTH} ${WORLD_HEIGHT}`} preserveAspectRatio="xMidYMid meet" width="100%" height={frameHeight} style={{height:frameHeight,marginTop:topInset,background:props.doc.bg,touchAction:'none',cursor:props.tool==='pan'?'grab':['rect','ellipse','polygon','measure'].includes(props.tool)?'crosshair':'pointer'}}
@@ -180,7 +187,8 @@ export default function WorldEqualEarthView(props:MapViewProps){
         <g data-world-internal-borders="" display={internalVisible?'inline':'none'} pointerEvents="none">{internalVisible&&internal.filter(row=>areaBorderVisible(row.area,props.doc)).map(row=><path key={row.area.id} data-world-border={row.area.id} d={worldBorderPath(row.feature.geometry,view.k*scale)} fill="none" stroke={provinceLine.color} strokeOpacity=".85" strokeWidth={provinceLine.width} vectorEffect="non-scaling-stroke"/>)}</g>
         <g data-world-country-borders="" pointerEvents="none">{countries.filter(row=>areaBorderVisible(row.area,props.doc)).map(row=><path key={row.area.id} data-world-border={row.area.id} d={worldBorderPath(row.feature.geometry,view.k*scale)} fill="none" stroke={countryLine.color} strokeOpacity="1" strokeWidth={countryLine.width} vectorEffect="non-scaling-stroke"/>)}</g>
         {labels}
-        {props.doc.indiaPunjabScenario&&props.doc.names&&view.k>=5&&contextLabelClear(placedLabels,view.k*scale)&&<text data-scenario-context="aksai-chin" x={projection(indiaPunjabScenario.aksaiLabel.center as [number,number])![0]} y={projection(indiaPunjabScenario.aksaiLabel.center as [number,number])![1]} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize={10/(view.k*scale)} fill="#29424e" stroke="white" strokeWidth={2/(view.k*scale)} paintOrder="stroke" pointerEvents="none">Aksai Chin</text>}
+        <g data-tibet-overlays="">{tibetItems.map(item=>createElement(item.tag,{key:item.tag+'-'+item.id,...item.props},item.text))}</g>
+        {props.doc.indiaPunjabScenario&&props.doc.names&&projected.some(row=>row.area.id===indiaPunjabScenario.ladakhId)&&view.k>=5&&contextLabelClear(placedLabels,view.k*scale)&&<text data-scenario-context="aksai-chin" x={projection(indiaPunjabScenario.aksaiLabel.center as [number,number])![0]} y={projection(indiaPunjabScenario.aksaiLabel.center as [number,number])![1]} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize={10/(view.k*scale)} fill="#29424e" stroke="white" strokeWidth={2/(view.k*scale)} paintOrder="stroke" pointerEvents="none">Aksai Chin</text>}
         {highlighted&&<path data-transient="highlight" d={worldBorderPath(highlighted.feature.geometry,view.k*scale)} fill="none" stroke="#1d7b70" strokeWidth="1.8" vectorEffect="non-scaling-stroke" pointerEvents="none"/>}
         {measurement.length>0&&<path data-transient="measurement" d={path({type:'LineString',coordinates:measurement})||''} fill="none" stroke="#1d7b70" strokeWidth="2" vectorEffect="non-scaling-stroke" pointerEvents="none"/>}
       </g>

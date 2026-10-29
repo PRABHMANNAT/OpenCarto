@@ -12,7 +12,7 @@ export const scenarioAreaVisible=(id:string,doc:Flags)=>doc.indiaPunjabScenario?
 export const scenarioAliasText=(id:string,doc:Flags)=>doc.indiaPunjabScenario?[areas[id]?.name,areas[id]?.country,...(areas[id]?.aliases||[])].filter(Boolean).join(' '):'';
 let request:Promise<FeatureCollection>|undefined;
 export function loadIndiaPunjabOverrides(){
-  if(!request)request=fetch('/api/alternate-world',{credentials:'same-origin',cache:'no-store'}).then(async response=>{if(!response.ok)throw Error('The hypothetical India boundaries could not load.');return await response.json() as FeatureCollection;}).catch(error=>{request=undefined;throw error;});
+  if(!request)request=Promise.all(['world','tibet'].map(async part=>{const response=await fetch('/api/alternate-world?part='+part,{credentials:'same-origin',cache:'no-store'});if(!response.ok)throw Error('The alternate world boundaries could not load.');return await response.json() as FeatureCollection;})).then(parts=>({type:'FeatureCollection' as const,features:parts.flatMap(part=>part.features)})).catch(error=>{request=undefined;throw error;});
   return request;
 }
 export function indiaScenarioCollection(original:FeatureCollection,overrides:FeatureCollection,points=false):FeatureCollection{

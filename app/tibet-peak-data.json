@@ -1,0 +1,5 @@
+[
+ {"id":"tibet-peak-shishapangma","name":"Shishapangma","coordinates":[85.77807426452637,28.35398007207481],"source":"GeoNames, CC BY 4.0","url":"https://www.geonames.org/advanced-search.html?q=Tibet%2F"},
+ {"id":"tibet-peak-namcha-barwa","name":"Namcha Barwa","coordinates":[95.0548267364502,29.6314426641108],"source":"GeoNames, CC BY 4.0","url":"https://www.geonames.org/advanced-search.html?country=CN&q=&startRow=650"},
+ {"id":"tibet-peak-gongga","name":"Mount Gongga","coordinates":[101.879053115845,29.5960358640968],"source":"GeoNames, CC BY 4.0","url":"https://www.geonames.org/advanced-search.html?q=Mina%2F&startRow=650"}
+]

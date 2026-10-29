@@ -3,8 +3,8 @@ import {Readable} from 'node:stream';
 import {randomBytes,createHmac} from 'node:crypto';
 import {alternateWorldHandler} from '../server/alternate-world.mjs';
 const original=process.env.ALTERNATE_WORLD_SESSION_KEY,secret=randomBytes(32).toString('hex');process.env.ALTERNATE_WORLD_SESSION_KEY=secret;
-async function call(method='GET',{body,cookie='',origin='https://atlas.test',ip='unit'}={}){
- const req=Readable.from(body===undefined?[]:[typeof body==='string'?body:JSON.stringify(body)]);req.method=method;req.headers={host:'atlas.test',origin,cookie,'x-forwarded-proto':'https','x-forwarded-for':ip};req.socket={remoteAddress:'127.0.0.1'};
+async function call(method='GET',{body,cookie='',origin='https://atlas.test',ip='unit',url='/api/alternate-world'}={}){
+ const req=Readable.from(body===undefined?[]:[typeof body==='string'?body:JSON.stringify(body)]);req.method=method;req.url=url;req.headers={host:'atlas.test',origin,cookie,'x-forwarded-proto':'https','x-forwarded-for':ip};req.socket={remoteAddress:'127.0.0.1'};
  const res={headers:{},statusCode:200,setHeader(key,value){this.headers[key.toLowerCase()]=value;},end(text){this.body=text;}};await alternateWorldHandler(req,res);return res;
 }
 try{
@@ -19,6 +19,9 @@ try{
  assert.equal((await call('GET',{cookie:cookie+'x'})).statusCode,401,'Tampered cookie rejected');
  const expired=(Date.now()-1000)+'.'+randomBytes(16).toString('hex');const signed=createHmac('sha256',secret).update('alternate-world-v1|'+expired).digest('hex');
  assert.equal((await call('GET',{cookie:'alternate_world_access='+expired+'.'+signed})).statusCode,401,'Expired signed cookie rejected');
+ assert.equal((await call('GET',{url:'/api/alternate-world?part=tibet'})).statusCode,401);
+ const tibet=await call('GET',{cookie,url:'/api/alternate-world?part=tibet'});assert.equal(tibet.statusCode,200);assert.ok(JSON.parse(tibet.body).features.some(f=>f.id==='world-c-tibet'));assert.ok(Buffer.byteLength(tibet.body)<4500000);
+ assert.equal((await call('GET',{cookie,url:'/api/alternate-world?part=../../secret'})).statusCode,400);
  assert.equal((await call('PUT')).statusCode,405);
  const lock=await call('DELETE',{cookie});assert.match(lock.headers['set-cookie'],/Max-Age=0/);assert.equal((await call()).statusCode,401);
  for(let n=0;n<10;n++)assert.equal((await call('POST',{body:{password:'bad'},ip:'throttle'})).statusCode,401);

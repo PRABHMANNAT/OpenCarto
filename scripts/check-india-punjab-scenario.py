@@ -8,6 +8,8 @@ from shapely.ops import unary_union
 def read(name):return json.loads((ROOT/name).read_text(encoding='utf-8'))
 def same(a,b,label):assert a.symmetric_difference(b).area<1e-10,label
 m=read('app/india-punjab-scenario.json');o=read('server/alternate-world-overrides.geojson')
+tibet=read('server/alternate-world-tibet.geojson')
+o['features'] += [f for f in tibet['features'] if f['properties']['level'] in ['region','province']]
 source=read('work/india-punjab/punjab-source.json')
 west={f['properties']['id']:shape(f['geometry']) for f in read('work/india-punjab/western-provinces-source.json')['features']}
 assert [len(source[k]['features']) for k in ['district','division','tehsil']]==[48,12,193]
@@ -22,7 +24,7 @@ base={f['id']:shape(f['geometry']) for f in features};props={f['id']:f['properti
 changed={f['id'] for f in o['features']};new={**base,**{f['id']:shape(f['geometry']) for f in o['features']}}
 for ident in m['removedIds']:del new[ident]
 assert set(m['addedIds'])==changed-set(base)
-assert len(m['removedIds'])==7
+assert len(m['removedIds'])==8
 assert all(i in m['removedIds'] for i in [m['aksaiId'],*m['kashmirSourceIds'],*m['replacedWesternIds']])
 for f in o['features']:
  g=shape(f['geometry']);assert not g.is_empty and g.is_valid and g.geom_type in ['Polygon','MultiPolygon'],f['id']
@@ -55,7 +57,9 @@ assert up.difference(new[m['indiaId']]).area<1e-10
 assert ac.difference(new[m['indiaId']]).area<1e-10
 explicit={m[k] for k in ['indiaId','punjabId','ladakhId','kashmirId','sindhId','balochistanId','multanId','bahawalpurId']}
 for ident,g in new.items():
- if ident not in explicit:same(g,base[ident].difference(mask) if ident in changed else base[ident],ident+' only requested transfer')
+ if ident not in explicit and ident not in m['addedIds']:
+  current_mask=unary_union([mask,new[m['tibet']['id']]]) if ident=='world-c-chn' or props[ident]['parent']=='world-c-chn' else mask
+  same(g,base[ident].difference(current_mask) if ident in changed else base[ident],ident+' only requested transfer')
 # No overlapping current owners for any requested new territory.
 for ident in ['world-c-pak','world-c-chn','world-c-afg','world-c-irn']:
  assert new[ident].intersection(new[m['indiaId']]).difference(base[ident].intersection(base[m['indiaId']])).area<1e-10,ident+' new India overlap'

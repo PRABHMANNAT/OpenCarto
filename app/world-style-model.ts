@@ -20,7 +20,7 @@ export const worldThemePalettes:Record<string,string[]>={
  modern:['#9BC9C3','#A6C5DC','#DDC18D','#C1A7CB','#DCAAA5','#B8C88E','#95B4C7','#C9BBA2','#A7C8A9','#C9B7D7','#DFBEA9','#ADC0D1'],
  earth:['#CDBB9E','#C2C7AA','#B1BC9F','#D9C4AC','#B7BCB3','#C7B0A2','#D4CDB5','#A9BBAA','#D1B5AD','#BDC7B9','#C7BFAF','#DDD3BC'],
 };
-const countryNeighbors:Record<string,string[]>={...neighborData,'world-c-balochistan':['world-c-ind','world-c-pak','world-c-irn','world-c-afg']};
+const countryNeighbors:Record<string,string[]>={...neighborData,'world-c-balochistan':['world-c-ind','world-c-pak','world-c-irn','world-c-afg'],'world-c-tibet':['world-c-chn','world-c-ind','world-c-npl','world-c-btn','world-c-mmr']};
 const rgb=(hex:string)=>[1,3,5].map(start=>parseInt(hex.slice(start,start+2),16));
 const distance=(a:string,b:string)=>rgb(a).reduce((sum,v,i)=>sum+(v-rgb(b)[i])**2,0);
 const coordinated=new Map<string,Map<string,string>>();
@@ -28,7 +28,7 @@ function coordinatedPalette(theme:string){
  const cached=coordinated.get(theme);if(cached)return cached;
  const bases=worldThemePalettes[theme]||worldThemePalettes.colorful,assigned=new Map<string,number>(),uses=bases.map(()=>0),remaining=new Set(ids);
  while(remaining.size){
-  const id=[...remaining].sort((a,b)=>Number(extraCountries.includes(a))-Number(extraCountries.includes(b))||new Set((countryNeighbors[b]||[]).flatMap(n=>assigned.has(n)?[assigned.get(n)]:[])).size-new Set((countryNeighbors[a]||[]).flatMap(n=>assigned.has(n)?[assigned.get(n)]:[])).size||(countryNeighbors[b]?.length||0)-(countryNeighbors[a]?.length||0)||a.localeCompare(b))[0];
+  const id=[...remaining].sort((a,b)=>Number(extraCountries.includes(a))-Number(extraCountries.includes(b))||(extraCountries.includes(a)&&extraCountries.includes(b)?extraCountries.indexOf(a)-extraCountries.indexOf(b):0)||new Set((countryNeighbors[b]||[]).flatMap(n=>assigned.has(n)?[assigned.get(n)]:[])).size-new Set((countryNeighbors[a]||[]).flatMap(n=>assigned.has(n)?[assigned.get(n)]:[])).size||(countryNeighbors[b]?.length||0)-(countryNeighbors[a]?.length||0)||a.localeCompare(b))[0];
   const neighbors=(countryNeighbors[id]||[]).flatMap(n=>assigned.has(n)?[assigned.get(n)!]:[]);let best=0,score=-Infinity;
   for(let i=0;i<bases.length;i++){const contrast=neighbors.length?Math.min(...neighbors.map(n=>distance(bases[i],bases[n]))):100000;const candidate=contrast-uses[i]*200-((i-ids.indexOf(id)*7)%bases.length+bases.length)%bases.length;if(candidate>score){score=candidate;best=i;}}
   assigned.set(id,best);uses[best]++;remaining.delete(id);
