@@ -49,7 +49,8 @@ try{
   await page.waitForFunction(({level,count})=>{const node=document.querySelector('.ua-map');return node&&node.getAttribute('aria-busy')==='false'&&JSON.parse(node.getAttribute('data-province-details')||'{}').punjab===level&&Number(node.getAttribute('data-detail-count'))===count&&!document.querySelector('.ua-map-caption')?.textContent.includes('Loading');},{level,count:({district:48,division:12,tehsil:193})[level]},{timeout:120000});
   await page.getByRole('button',{name:'Alternate world map',exact:true}).click();await unlock();
  }
- await page.getByRole('button',{name:'Open world map',exact:true}).click();await ready();
+ const logout=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/alternate-world'&&response.request().method()==='DELETE');
+ await page.getByRole('button',{name:'Open world map',exact:true}).click();await logout;await context.cookies();await ready();
  await page.waitForFunction(path=>document.querySelector('path[data-area="world-c-ind"]')?.getAttribute('d')===path,originalIndia);
  await page.waitForFunction(()=>!document.querySelector('[data-slot=dialog-content]'));
  assert.equal((await context.request.get(new URL('/api/alternate-world',url).href)).status(),401,'Source edition locks server access');
