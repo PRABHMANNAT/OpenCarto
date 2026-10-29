@@ -4,8 +4,8 @@ Both the source and password-protected alternate world maps have a **Country col
 
 Color choices:
 
-- **Distinct country colors:** a deterministic, unique hex color for every source country/context outline. Provinces inherit their country's fill.
-- **Soft country colors:** distinct, lighter pastel fills.
+- **Default political:** coordinated atlas colors with subtle unique country shades. Neighboring countries are assigned contrasting palette colors. Provinces inherit their country's fill.
+- **Pastel, Muted, Marine, Royal, Modern and Earth tones:** coordinated alternatives with distinct country shades.
 - **White countries:** solid white fills.
 - **Light gray countries:** solid pale gray fills.
 - **White and gray countries:** three restrained neutral tones.
@@ -17,7 +17,7 @@ International borders default to opaque black, thicker than the light gray provi
 
 Equal Earth paths, imagery views and SVG/PNG/JPG exports share the same country fills and border hierarchy. SVG metadata records the selected appearance. No geographic coordinates, administrative relationships, alternate-world edits or password settings change.
 
-Implementation: `app/world-style-model.ts` contains scheme generation, backup/restore, settings validation and border helpers; `app/world-style-controls.tsx` exposes the controls. Country colors use deterministic golden-angle hues with varying saturation/lightness and collision checking. The original uploaded palette is retained for the saved-colors mode.
+Implementation: `app/world-style-model.ts` contains scheme generation, backup/restore, settings validation and border helpers; `app/world-style-controls.tsx` exposes the controls. Country colors now use curated, coordinated palettes with neighbor-aware assignment and subtle tonal variation. Earlier generated rainbow fills migrate to the new Default/Pastel palettes while manual colors are retained. The palette previews show the actual swatches. The original uploaded palette is retained for the saved-colors mode.
 
 Validation:
 

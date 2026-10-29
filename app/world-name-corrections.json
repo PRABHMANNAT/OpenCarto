@@ -1,0 +1,1427 @@
+{
+  "version": 1,
+  "sources": [
+    "https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-1-states-provinces/",
+    "https://www.augsdaugavasnovads.lv/lv/novads",
+    "https://www.condao.com.vn/vi/about.html"
+  ],
+  "records": {
+    "world-a1-13066534B71664328266075": {
+      "original": "Samtskhe?Javakheti",
+      "name": "Samtskhe-Javakheti",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / GE-SJ"
+    },
+    "world-a1-17162690B20834640531728": {
+      "original": "?wi?tokrzyskie Voivodeship",
+      "name": "Świętokrzyskie Voivodeship",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / PL-SK"
+    },
+    "world-a1-17162690B86810837764805": {
+      "original": "?ód? Voivodeship",
+      "name": "Łódź Voivodeship",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / PL-LD"
+    },
+    "world-a1-1811400B15614733245507": {
+      "original": "Mah?r?shtra",
+      "name": "Maharashtra",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-MH"
+    },
+    "world-a1-1811400B16134215155042": {
+      "original": "Arun?chal Pradesh",
+      "name": "Arunachal Pradesh",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-AR"
+    },
+    "world-a1-1811400B21086746745937": {
+      "original": "Him?chal Pradesh",
+      "name": "Himachal Pradesh",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-HP"
+    },
+    "world-a1-1811400B21167269026319": {
+      "original": "Tamil N?du",
+      "name": "Tamil Nadu",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-TN"
+    },
+    "world-a1-1811400B23769854471902": {
+      "original": "Lad?kh",
+      "name": "Ladakh",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-LA"
+    },
+    "world-a1-1811400B25711494603400": {
+      "original": "Telang?na",
+      "name": "Telangana",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-TG"
+    },
+    "world-a1-1811400B26595099860318": {
+      "original": "Bih?r",
+      "name": "Bihar",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-BR"
+    },
+    "world-a1-1811400B28404458933503": {
+      "original": "Megh?laya",
+      "name": "Meghalaya",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-ML"
+    },
+    "world-a1-1811400B3558497485804": {
+      "original": "Uttar?khand",
+      "name": "Uttarakhand",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-UT"
+    },
+    "world-a1-1811400B37341166588993": {
+      "original": "R?jasth?n",
+      "name": "Rajasthan",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-RJ"
+    },
+    "world-a1-1811400B42025667129192": {
+      "original": "Jammu and Kashm?r",
+      "name": "Jammu and Kashmir",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-JK"
+    },
+    "world-a1-1811400B51283975314925": {
+      "original": "D?dra and Nagar Haveli and Dam?n and Diu",
+      "name": "Dadra and Nagar Haveli and Daman and Diu",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-DH"
+    },
+    "world-a1-1811400B52412412689061": {
+      "original": "Jh?rkhand",
+      "name": "Jharkhand",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-JH"
+    },
+    "world-a1-1811400B56841107211215": {
+      "original": "Karn?taka",
+      "name": "Karnataka",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-KA"
+    },
+    "world-a1-1811400B68407848780347": {
+      "original": "Hary?na",
+      "name": "Haryana",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-HR"
+    },
+    "world-a1-1811400B70654311394581": {
+      "original": "Chhatt?sgarh",
+      "name": "Chhattisgarh",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-CT"
+    },
+    "world-a1-1811400B74762431478096": {
+      "original": "N?g?land",
+      "name": "Nagaland",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-NL"
+    },
+    "world-a1-1811400B77692474244036": {
+      "original": "Chand?garh",
+      "name": "Chandigarh",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-CH"
+    },
+    "world-a1-1811400B80305611676067": {
+      "original": "Gujar?t",
+      "name": "Gujarat",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / IN-GJ"
+    },
+    "world-a1-18629408B11945654439238": {
+      "original": "?Adan Governorate",
+      "name": "Aden Governorate",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-18629408B48104637123824": {
+      "original": "San?a?",
+      "name": "Sana'a",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-18629408B64822604790923": {
+      "original": "San?a? Governorate",
+      "name": "Sana'a Governorate",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-22733592B30896182433416": {
+      "original": "Gy?r-Moson-Sopron",
+      "name": "Gyor-Moson-Sopron",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / HU-GS"
+    },
+    "world-a1-24955722B7740823350033": {
+      "original": "SANTARÃM",
+      "name": "SANTARÉM",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-24955722B80201627987226": {
+      "original": "SETÃBAL",
+      "name": "SETÚBAL",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-24955722B8611706516273": {
+      "original": "RegiÃ£o AutÃ³noma dos AÃ§ores",
+      "name": "Região Autónoma dos Açores",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-24955722B94024055587671": {
+      "original": "RegiÃ£o AutÃ³noma da Madeira",
+      "name": "Região Autónoma da Madeira",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-24955722B95387288640341": {
+      "original": "BRAGANÃA",
+      "name": "BRAGANÇA",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-24955722B96057717933498": {
+      "original": "ÃVORA",
+      "name": "ÉVORA",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-25762395B19733540227871": {
+      "original": "Region of ?ilina",
+      "name": "Region of Žilina",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / SK-ZI"
+    },
+    "world-a1-25762395B28279050649796": {
+      "original": "Region of Ko?ice",
+      "name": "Region of Košice",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / SK-KI"
+    },
+    "world-a1-25762395B87770954339991": {
+      "original": "Region of Tren?ín",
+      "name": "Region of Trenčín",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / SK-TC"
+    },
+    "world-a1-25762395B99480342603175": {
+      "original": "Region of Pre?ov",
+      "name": "Region of Prešov",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / SK-PV"
+    },
+    "world-a1-25984515B10334298996421": {
+      "original": "K?rklareli",
+      "name": "Kirklareli",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-39"
+    },
+    "world-a1-25984515B11362042972294": {
+      "original": "K?r?kkale",
+      "name": "Kırıkkale",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / TR-71"
+    },
+    "world-a1-25984515B12971548112787": {
+      "original": "Eski?ehir",
+      "name": "Eskisehir",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-26"
+    },
+    "world-a1-25984515B18723924091225": {
+      "original": "Nev?ehir",
+      "name": "Nevsehir",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-50"
+    },
+    "world-a1-25984515B18786507826220": {
+      "original": "?stanbul",
+      "name": "Istanbul",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-34"
+    },
+    "world-a1-25984515B20089439873245": {
+      "original": "I?d?r",
+      "name": "Iğdir",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-76"
+    },
+    "world-a1-25984515B3524648625362": {
+      "original": "Çank?r?",
+      "name": "Çankiri",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-18"
+    },
+    "world-a1-25984515B35512619552530": {
+      "original": "?anl?urfa",
+      "name": "Sanliurfa",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-63"
+    },
+    "world-a1-25984515B36227448932647": {
+      "original": "Gümü?hane",
+      "name": "Gümüshane",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-29"
+    },
+    "world-a1-25984515B39003465173278": {
+      "original": "A?r?",
+      "name": "Agri",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-04"
+    },
+    "world-a1-25984515B41137800759750": {
+      "original": "??rnak",
+      "name": "Sirnak",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-73"
+    },
+    "world-a1-25984515B4318484465943": {
+      "original": "Tekirda?",
+      "name": "Tekirdag",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-59"
+    },
+    "world-a1-25984515B55384476443375": {
+      "original": "Bal?kesir",
+      "name": "Balikesir",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-10"
+    },
+    "world-a1-25984515B57226385500606": {
+      "original": "Mu?la",
+      "name": "Mugla",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-48"
+    },
+    "world-a1-25984515B58862484177861": {
+      "original": "Kahramanmara?",
+      "name": "Kahramanmaraş",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / TR-46"
+    },
+    "world-a1-25984515B59477790330217": {
+      "original": "?zmir",
+      "name": "Izmir",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-35"
+    },
+    "world-a1-25984515B59741408878569": {
+      "original": "Ni?de",
+      "name": "Nigde",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-51"
+    },
+    "world-a1-25984515B63739470532168": {
+      "original": "Ayd?n",
+      "name": "Aydin",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-09"
+    },
+    "world-a1-25984515B73855241915553": {
+      "original": "Elaz??",
+      "name": "Elazig",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-23"
+    },
+    "world-a1-25984515B74564265494308": {
+      "original": "Bart?n",
+      "name": "Bartın",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-74"
+    },
+    "world-a1-25984515B83185192232063": {
+      "original": "K?r?ehir",
+      "name": "Kirsehir",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-40"
+    },
+    "world-a1-25984515B88478081264350": {
+      "original": "Mu?",
+      "name": "Mus",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-49"
+    },
+    "world-a1-25984515B90872828599679": {
+      "original": "Ad?yaman",
+      "name": "Adiyaman",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-02"
+    },
+    "world-a1-25984515B95251525471141": {
+      "original": "U?ak",
+      "name": "Usak",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-64"
+    },
+    "world-a1-25984515B99670107521163": {
+      "original": "Diyarbak?r",
+      "name": "Diyarbakir",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / TR-21"
+    },
+    "world-a1-27960609B23297644769428": {
+      "original": "Po?ega-Slavonia",
+      "name": "Požega-Slavonia",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / HR-12"
+    },
+    "world-a1-27960609B2739070191620": {
+      "original": "?ibenik-Knin",
+      "name": "Šibenik-Knin",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / HR-15"
+    },
+    "world-a1-27960609B42477591474793": {
+      "original": "Koprivnica-Kri?evci",
+      "name": "Koprivnica-Križevci",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / HR-06"
+    },
+    "world-a1-27960609B77748153160451": {
+      "original": "Vara?din",
+      "name": "Varaždin",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / HR-05"
+    },
+    "world-a1-27960609B88841376316079": {
+      "original": "Me?imurje",
+      "name": "Međimurje",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / HR-20"
+    },
+    "world-a1-28173009B7235812138525": {
+      "original": "North Ossetia?Alania",
+      "name": "North Ossetia-Alania",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-28173009B731487536241": {
+      "original": "Khanty-Mansiysk Autonomous Okrug ? Ugra",
+      "name": "Khanty-Mansiysk Autonomous Okrug – Ugra",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-4304713B64732243105598": {
+      "original": "Roche CaÃ¯m",
+      "name": "Roche Caïm",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-4304713B99498664822858": {
+      "original": "La RiviÃ¨re",
+      "name": "La Rivière",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-43142294B61154116750870": {
+      "original": "Bordj Bou Arreridj?",
+      "name": "Bordj Bou Arréridj",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-47653553B1207481020383": {
+      "original": "RegiÃ³n de Arica y Parinacota",
+      "name": "Región de Arica y Parinacota",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B32293817275864": {
+      "original": "RegiÃ³n de Ãuble",
+      "name": "Región de Ñuble",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B40993810137393": {
+      "original": "RegiÃ³n de Antofagasta",
+      "name": "Región de Antofagasta",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B5611469222723": {
+      "original": "RegiÃ³n de ValparaÃ­so",
+      "name": "Región de Valparaíso",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B65340542415201": {
+      "original": "RegiÃ³n del Maule",
+      "name": "Región del Maule",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B66141875659978": {
+      "original": "RegiÃ³n del Libertador Bernardo O'Higgins",
+      "name": "Región del Libertador Bernardo O'Higgins",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B66835736668351": {
+      "original": "RegiÃ³n del BÃ­o-BÃ­o",
+      "name": "Región del Bío-Bío",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B67595840047202": {
+      "original": "RegiÃ³n de Los RÃ­os",
+      "name": "Región de Los Ríos",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B69224850096491": {
+      "original": "RegiÃ³n de Los Lagos",
+      "name": "Región de Los Lagos",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B71653813080592": {
+      "original": "RegiÃ³n de Atacama",
+      "name": "Región de Atacama",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B77266651052380": {
+      "original": "RegiÃ³n de AysÃ©n del Gral.IbaÃ±ez del Campo",
+      "name": "Región de Aysén del Gral.Ibañez del Campo",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B78904739401519": {
+      "original": "RegiÃ³n Metropolitana de Santiago",
+      "name": "Región Metropolitana de Santiago",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B84299910343297": {
+      "original": "RegiÃ³n de La AraucanÃ­a",
+      "name": "Región de La Araucanía",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B86325292267162": {
+      "original": "RegiÃ³n de Magallanes y AntÃ¡rtica Chilena",
+      "name": "Región de Magallanes y Antártica Chilena",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B91907313612474": {
+      "original": "RegiÃ³n de Coquimbo",
+      "name": "Región de Coquimbo",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-47653553B97418467345315": {
+      "original": "RegiÃ³n de TarapacÃ¡",
+      "name": "Región de Tarapacá",
+      "method": [
+        "Recover UTF-8 bytes read as Latin-1"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    },
+    "world-a1-54001226B82378099338701": {
+      "original": "Br?ko District",
+      "name": "Brčko District",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / BA-BRC"
+    },
+    "world-a1-59799669B28207041867492": {
+      "original": "Plu?ine Municipality",
+      "name": "Plužine Municipality",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / ME-15"
+    },
+    "world-a1-59799669B41052051546873": {
+      "original": "?abljak Municipality",
+      "name": "Žabljak Municipality",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / ME-21"
+    },
+    "world-a1-59799669B48420505719641": {
+      "original": "Kola?in Municipality",
+      "name": "Kolašin Municipality",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / ME-09"
+    },
+    "world-a1-59799669B66678983232609": {
+      "original": "Nik?i? Municipality",
+      "name": "Nikšic Municipality",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / ME-12"
+    },
+    "world-a1-59799669B79583520985931": {
+      "original": "?avnik Municipality",
+      "name": "Šavnik Municipality",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / ME-18"
+    },
+    "world-a1-59799669B88193558767116": {
+      "original": "Ro?aje Municipality",
+      "name": "Rožaje Municipality",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / ME-17"
+    },
+    "world-a1-63759600B11108179203280": {
+      "original": "Cao B?ng",
+      "name": "Cao Bằng",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-04"
+    },
+    "world-a1-63759600B12588044805894": {
+      "original": "Ti?n Giang",
+      "name": "Tiền Giang",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-46"
+    },
+    "world-a1-63759600B12839449494422": {
+      "original": "??ng Nai",
+      "name": "Đồng Nai",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-63759600B13042736323456": {
+      "original": "Bình Ph??c",
+      "name": "Bình Phước",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-58"
+    },
+    "world-a1-63759600B19155127097543": {
+      "original": "Ninh Thu?n",
+      "name": "Ninh Thuận",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-36"
+    },
+    "world-a1-63759600B21046589863912": {
+      "original": "C?n Th?",
+      "name": "Cần Thơ",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-CT"
+    },
+    "world-a1-63759600B21465540527765": {
+      "original": "Qu?ng Tr?",
+      "name": "Quảng Trị",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-25"
+    },
+    "world-a1-63759600B21811289888982": {
+      "original": "Bà R?a?V?ng Tàu",
+      "name": "Bà Rịa-Vũng Tàu",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / VN-43"
+    },
+    "world-a1-63759600B22683796323846": {
+      "original": "??k Nông",
+      "name": "Đắk Nông",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-72"
+    },
+    "world-a1-63759600B25056861299541": {
+      "original": "Lâm ??ng",
+      "name": "Lâm Đồng",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-35"
+    },
+    "world-a1-63759600B29118141744967": {
+      "original": "B?c K?n",
+      "name": "Bắc Kạn",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-63759600B31473825670333": {
+      "original": "Bình Thu?n",
+      "name": "Bình Thuận",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-40"
+    },
+    "world-a1-63759600B34367175145761": {
+      "original": "V?nh Phúc",
+      "name": "Vĩnh Phúc",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-70"
+    },
+    "world-a1-63759600B37262939240335": {
+      "original": "B?c Giang",
+      "name": "Bắc Giang",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-54"
+    },
+    "world-a1-63759600B38696477403674": {
+      "original": "H?ng Yên",
+      "name": "Hưng Yên",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-63759600B3920147428024": {
+      "original": "S?n La",
+      "name": "Sơn La",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-05"
+    },
+    "world-a1-63759600B40382966221261": {
+      "original": "B?c Ninh",
+      "name": "Bắc Ninh",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-56"
+    },
+    "world-a1-63759600B40468097531795": {
+      "original": "Nam ??nh",
+      "name": "Nam Định",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-67"
+    },
+    "world-a1-63759600B45971409679814": {
+      "original": "Phú Th?",
+      "name": "Phú Thọ",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-68"
+    },
+    "world-a1-63759600B4649941622975": {
+      "original": "Bình D??ng",
+      "name": "Bình Dương",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-57"
+    },
+    "world-a1-63759600B48704001246073": {
+      "original": "Qu?ng Ninh",
+      "name": "Quảng Ninh",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-13"
+    },
+    "world-a1-63759600B49404698723526": {
+      "original": "B?c Liêu",
+      "name": "Bạc Liêu",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-55"
+    },
+    "world-a1-63759600B52412632417993": {
+      "original": "Hà T?nh",
+      "name": "Hà Tĩnh",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-23"
+    },
+    "world-a1-63759600B52816170319692": {
+      "original": "Qu?ng Ngãi",
+      "name": "Quảng Ngãi",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-29"
+    },
+    "world-a1-63759600B57390768683549": {
+      "original": "H?i Phòng",
+      "name": "Hải Phòng",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-HP"
+    },
+    "world-a1-63759600B58335636470412": {
+      "original": "Sóc Tr?ng",
+      "name": "Sóc Trăng",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-52"
+    },
+    "world-a1-63759600B58815535609509": {
+      "original": "L?ng S?n",
+      "name": "Lạng Sơn",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-09"
+    },
+    "world-a1-63759600B5991530625500": {
+      "original": "Côn ??o",
+      "name": "Côn Đảo",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-63759600B63586366081005": {
+      "original": "Qu?ng Bình",
+      "name": "Quảng Bình",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-24"
+    },
+    "world-a1-63759600B6612369570330": {
+      "original": "H?i D??ng",
+      "name": "Hải Dương",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-61"
+    },
+    "world-a1-63759600B66868150968055": {
+      "original": "V?nh Long",
+      "name": "Vĩnh Long",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-49"
+    },
+    "world-a1-63759600B71233846988018": {
+      "original": "B?n Tre",
+      "name": "Bến Tre",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-50"
+    },
+    "world-a1-63759600B72990231521734": {
+      "original": "?i?n Biên",
+      "name": "Điện Biên",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-71"
+    },
+    "world-a1-63759600B73452440048702": {
+      "original": "Th?a Thiên Hu?",
+      "name": "Thừa Thiên Huế",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-26"
+    },
+    "world-a1-63759600B74453713760270": {
+      "original": "Qu?ng Nam",
+      "name": "Quảng Nam",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-27"
+    },
+    "world-a1-63759600B81354309972615": {
+      "original": "??ng Tháp",
+      "name": "Đồng Tháp",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-45"
+    },
+    "world-a1-63759600B83996903780984": {
+      "original": "Ngh? An",
+      "name": "Nghệ An",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-22"
+    },
+    "world-a1-63759600B8583399541445": {
+      "original": "?à N?ng",
+      "name": "Đà Nẵng",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-DN"
+    },
+    "world-a1-63759600B90584107995256": {
+      "original": "H?u Giang",
+      "name": "Hậu Giang",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-73"
+    },
+    "world-a1-63759600B97182540787332": {
+      "original": "??k L?k",
+      "name": "Đắk Lắk",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-33"
+    },
+    "world-a1-63759600B97268694287734": {
+      "original": "Hà N?i\t",
+      "name": "Hà Nội",
+      "method": [
+        "Trim source control whitespace",
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-HN"
+    },
+    "world-a1-63759600B9901642676381": {
+      "original": "Bình ??nh",
+      "name": "Bình Định",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_vi / VN-31"
+    },
+    "world-a1-71098776B19754450586287": {
+      "original": "Limba?u novads",
+      "name": "Limbažu novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B20667457444759": {
+      "original": "Prei?u novads",
+      "name": "Preiļu novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B31603947980404": {
+      "original": "Aug?daugavas novads",
+      "name": "Augšdaugavas novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B36836907015105": {
+      "original": "Liep?jas",
+      "name": "Liepājas",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B38282481952649": {
+      "original": "Kr?slavas novads",
+      "name": "Krāslavas novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B41268812817743": {
+      "original": "R?ga",
+      "name": "Rīga",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B48937535890319": {
+      "original": "J?kabpils novads",
+      "name": "Jēkabpils novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B4894818931549": {
+      "original": "Varak??nu novads",
+      "name": "Varakļānu novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B49730814014776": {
+      "original": "Ropa?u novads",
+      "name": "Ropažu novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B65259108099076": {
+      "original": "?ekavas novads",
+      "name": "Ķekavas novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B68624450600982": {
+      "original": "M?rupes novads",
+      "name": "Mārupes novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B69315771541786": {
+      "original": "J?rmalas",
+      "name": "Jūrmalas",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B7317746382863": {
+      "original": "C?su novads",
+      "name": "Cēsu novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B7836540053544": {
+      "original": "R?zeknes",
+      "name": "Rēzeknes",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B78485662562022": {
+      "original": "?da?u novads",
+      "name": "Ādažu novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B79799475449991": {
+      "original": "Al?ksnes novads",
+      "name": "Alūksnes novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B8434036234200": {
+      "original": "R?zeknes novads",
+      "name": "Rēzeknes novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B86236730304515": {
+      "original": "L?v?nu novads",
+      "name": "Līvānu novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-71098776B9951399870342": {
+      "original": "Kuld?gas novads",
+      "name": "Kuldīgas novads",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-73172107B16313596965023": {
+      "original": "Hlavní m?sto Praha",
+      "name": "Hlavni mesto Praha",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 gn_name / CZ-PR"
+    },
+    "world-a1-73172107B33107872828953": {
+      "original": "Kraj Vyso?ina",
+      "name": "Kraj Vysočina",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_pl / CZ-VY"
+    },
+    "world-a1-73172107B46425968394697": {
+      "original": "Jiho?eský kraj",
+      "name": "Jihocesky Kraj",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 gns_name / CZ-JC"
+    },
+    "world-a1-73172107B58641114734330": {
+      "original": "St?edo?eský kraj",
+      "name": "Stredocesky Kraj",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 gns_name / CZ-ST"
+    },
+    "world-a1-73172107B93878397098511": {
+      "original": "Plze?ský kraj",
+      "name": "Plzensky Kraj",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 gns_name / CZ-PL"
+    },
+    "world-a1-83640313B20015641298084": {
+      "original": "?abbar",
+      "name": "Żabbar",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-64"
+    },
+    "world-a1-83640313B26470162845875": {
+      "original": "?urrieq",
+      "name": "Żurrieq",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-68"
+    },
+    "world-a1-83640313B26643895520377": {
+      "original": "?amrun",
+      "name": "Ħamrun",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-18"
+    },
+    "world-a1-83640313B26944319289369": {
+      "original": "Bir?ebbu?a",
+      "name": "Birżebbuġa",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-05"
+    },
+    "world-a1-83640313B35952736247105": {
+      "original": "Xg?ajra",
+      "name": "Xgħajra",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-63"
+    },
+    "world-a1-83640313B45218014578174": {
+      "original": "M?arr",
+      "name": "Mġarr",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-31"
+    },
+    "world-a1-83640313B66469281314411": {
+      "original": "?ebbu? Gozo",
+      "name": "Żebbuġ Gozo",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name_en / MT-66"
+    },
+    "world-a1-83640313B7434934757616": {
+      "original": "Mellie?a",
+      "name": "Mellieħa",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-30"
+    },
+    "world-a1-83640313B82150771484023": {
+      "original": "Ker?em",
+      "name": "Kerċem",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-22"
+    },
+    "world-a1-83640313B82456448658391": {
+      "original": "G?arg?ur",
+      "name": "Għargħur",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-15"
+    },
+    "world-a1-83640313B83137316861428": {
+      "original": "Si??iewi",
+      "name": "Siġġiewi",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-55"
+    },
+    "world-a1-83640313B83261609786955": {
+      "original": "Xag?ra",
+      "name": "Xagħra",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-61"
+    },
+    "world-a1-83640313B8600633511290": {
+      "original": "G?axaq",
+      "name": "Għaxaq",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-17"
+    },
+    "world-a1-83640313B87582987818287": {
+      "original": "?ebbu? Malta",
+      "name": "Żebbuġ Malta",
+      "method": [
+        "Reviewed source-name restoration"
+      ],
+      "verification": "Natural Earth ADM1 name variants and manual review of source spelling"
+    },
+    "world-a1-83640313B88881158567089": {
+      "original": "?ejtun",
+      "name": "Żejtun",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-67"
+    },
+    "world-a1-83640313B93972734358441": {
+      "original": "G?ira",
+      "name": "Gżira",
+      "method": [
+        "Match damaged source spelling to Unicode name variant"
+      ],
+      "verification": "Natural Earth ADM1 name / MT-12"
+    },
+    "world-a1-98808126B66499753932145": {
+      "original": "Ogooué-Ivindo\t",
+      "name": "Ogooué-Ivindo",
+      "method": [
+        "Trim source control whitespace"
+      ],
+      "verification": "Reversible UTF-8 decoding / whitespace cleanup"
+    }
+  }
+}

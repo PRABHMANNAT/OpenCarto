@@ -86,7 +86,10 @@
     "check:india-punjab": "node scripts/check-alternate-world-access.mjs && node scripts/check-alternate-world-deployment.mjs && python scripts/check-india-punjab-scenario.py && node scripts/check-india-punjab-scenario.mjs",
     "check:india-punjab-browser": "node scripts/verify-india-punjab-scenario.mjs",
     "check:world-style": "node scripts/check-world-style.mjs",
-    "check:world-style-browser": "node scripts/verify-world-style.mjs"
+    "check:world-style-browser": "node scripts/verify-world-style.mjs",
+    "data:world-names": "python scripts/repair-world-names.py && python scripts/build-india-punjab-scenario.py",
+    "check:world-readability": "python scripts/check-world-name-geometry.py && node scripts/check-world-readability.mjs",
+    "check:world-readability-browser": "node scripts/verify-world-readability.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

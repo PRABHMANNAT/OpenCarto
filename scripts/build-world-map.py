@@ -19,6 +19,7 @@ layers = {}
 repairs = []
 parents = {}
 counts = collections.Counter()
+name_corrections = json.loads((ROOT/'app/world-name-corrections.json').read_text(encoding='utf-8'))['records']
 
 def write(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
@@ -71,6 +72,8 @@ for level, kind in [(0, 'region'), (1, 'province')]:
         point = main.representative_point()
         extent = [round(x, 7) for x in geometry.bounds]
         name = str(props.get('shapeName') or f'Unnamed ADM1 ({source_id})')
+        source_name=name
+        if ident in name_corrections:name=name_corrections[ident]['name']
         if level == 0:
             parents[code] = name
         else:
@@ -82,6 +85,7 @@ for level, kind in [(0, 'region'), (1, 'province')]:
                           country=name if level == 0 else parents[code], sourceCode=source_id,
                           sourceParentCode=code, sourceLevel=props['shapeType'],
                           source='geoBoundaries CGAZ · ADM0 / ADM1 · CC BY 4.0')
+        if name!=source_name:properties['originalName']=source_name
         catalog.append(properties)
         features.append(dict(type='Feature', id=ident, properties=properties, bbox=extent, geometry=display_geometry(geometry)))
     features.sort(key=lambda f: f['id'])
@@ -107,3 +111,7 @@ write(ROOT / 'app/world-sources.json', dict(
     notes='Global source snapshot, not a current legal register. CGAZ follows US Department of State definitions for disputed areas. Display geometry is simplified; no ADM2 or lower units are imported. Countries without supplied ADM1 geometry retain their country outline only.'
 ))
 print('Validated', len(catalog), 'unique areas;', len(repairs), 'source geometries repaired.')
+
+# Keep the label audit and file checksums in sync after rebuilding from source.
+import runpy
+runpy.run_path(str(ROOT/'scripts/repair-world-names.py'), run_name='__main__')

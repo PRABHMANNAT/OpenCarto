@@ -5,9 +5,9 @@ import {scenarioAreaVisible,scenarioAliasText,indiaScenarioArea} from './india-p
 
 export const areaLevelNames:Record<Area['level'],string>={region:'Country / state / territory',province:'Province',division:'Division',district:'District',tehsil:'Tehsil / subdivision',uc:'Ward / union council'};
 export const searchableAreas=areas.filter(a=>!['delhi-ncr','kashmir-united','tibet-modern-three'].includes(a.region));
-const normalize=(text:string)=>text.normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+const normalize=(text:string)=>text.normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase().replace(/[łđðħıæœßþ]/g,c=>({'ł':'l','đ':'d','ð':'d','ħ':'h','ı':'i','æ':'ae','œ':'oe','ß':'ss','þ':'th'}[c]!)).replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 export function areaContext(a:Area){return [...new Set([areaById.get(a.parent)?.name,a.district,a.province,regionById.get(a.region)?.name].filter((v):v is string=>!!v&&v!==a.name))].join(' · ');}
-const searchIndex=new Map(searchableAreas.map(a=>[a.id,normalize([a.name,areaContext(a),areaLevelNames[a.level],a.country,a.id].join(' '))]));
+const searchIndex=new Map(searchableAreas.map(a=>[a.id,normalize([a.name,a.originalName,areaContext(a),areaLevelNames[a.level],a.country,a.id].join(' '))]));
 export function findAreas(query:string,level='all',region='all',doc?:Pick<MapDoc,'areaNames'>&{indiaPunjabScenario?:boolean}){
  const words=normalize(query).split(' ').filter(Boolean);
  const custom=new Map(Object.entries(doc?.areaNames||{}).map(([id,name])=>[id,normalize(name)]));
