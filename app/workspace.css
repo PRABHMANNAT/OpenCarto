@@ -647,3 +647,5 @@
 .paint-import-error {color:#a63d37;}.paint-import-notice {color:#356646;}
 .premium-studio .map-toolbar button.toolbar-palette-trigger {height:53px;min-height:53px;display:flex;flex-direction:column;gap:3px;padding:4px;}
 .toolbar-palette-trigger i {width:23px;height:12px;border:1px solid #00000015;border-radius:3px;}
+
+.world-style-controls{padding:14px 0;margin:10px 0;border-block:1px solid #dce4e2}.world-style-controls h3{font-size:13px;margin:0 0 10px}.world-scheme-preview{display:flex;gap:4px;margin:8px 0 12px}.world-scheme-preview i{flex:1;height:18px;border:1px solid #b9c1c8;border-radius:3px}.world-border-colors{display:grid;grid-template-columns:1fr 1fr;gap:10px}.world-border-colors input[type=color]{width:100%;height:32px;padding:2px;border:1px solid #ced8d2;border-radius:6px}.world-style-controls .muted{margin-top:10px}

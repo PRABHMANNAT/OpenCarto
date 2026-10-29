@@ -12,6 +12,7 @@ import {hiddenMasks,visibleBoundaries} from './visibility-geometry';
 import {displayedPaint,displayedBaseColor} from './empire-model';
 import {scopeFocusBounds} from './scope-model';
 import {distanceKm} from './map-tools';
+import {worldCountryLine,worldProvinceLine,worldInternalVisible} from './world-style-model';
 import {worldSource} from './world-map-model';
 import {indiaPunjabScenario,indiaScenarioArea,indiaScenarioCollection,loadIndiaPunjabOverrides} from './india-punjab-scenario';
 import {worldProjection,sphericalFeature,worldRenderedGeometry,equalEarthFit,WORLD_WIDTH,WORLD_HEIGHT} from './world-equal-earth';
@@ -104,7 +105,7 @@ export default function WorldEqualEarthView(props:MapViewProps){
     clone.querySelectorAll('[data-transient]').forEach(node=>node.remove());
     const target=current?camera.current:equalEarthFit(scopeFocusBounds(latest.current.doc)||[-180,-90,180,90]);
     const group=clone.querySelector('[data-world-scene]');group?.setAttribute('transform',`translate(${target.x},${target.y}) scale(${target.k})`);
-    clone.querySelector('[data-world-internal-borders]')?.setAttribute('display',target.k>=3?'inline':'none');
+    clone.querySelector('[data-world-internal-borders]')?.setAttribute('display',worldInternalVisible(latest.current.doc,target.k>=3)?'inline':'none');
     clone.querySelectorAll('[data-world-label],[data-scenario-context]').forEach(label=>label.remove());
     for(const {row,name,font} of placeLabels(scene.current,latest.current.doc,target,1)){
       const label=document.createElementNS('http://www.w3.org/2000/svg','text');label.textContent=name;
@@ -114,7 +115,7 @@ export default function WorldEqualEarthView(props:MapViewProps){
     if(latest.current.doc.indiaPunjabScenario&&latest.current.doc.names&&target.k>=5){const p=projection(indiaPunjabScenario.aksaiLabel.center as [number,number]);if(p){const label=document.createElementNS('http://www.w3.org/2000/svg','text');label.textContent='Aksai Chin';for(const [key,value] of Object.entries({x:p[0],y:p[1],'text-anchor':'middle','font-family':'Arial,sans-serif','font-size':10/target.k,fill:'#29424e',stroke:'white','stroke-width':2/target.k,'paint-order':'stroke'}))label.setAttribute(key,String(value));group?.appendChild(label);}}
     const text=(tag:string,value:string)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);node.textContent=value;return node;};
     clone.insertBefore(text('title',latest.current.doc.indiaPunjabScenario?'Alternate world map; United Punjab and Kashmir in India; Aksai Chin in Ladakh':'World · Equal Earth equal-area projection'),clone.firstChild);
-    clone.insertBefore(text('metadata',JSON.stringify({projection:'Equal Earth',scenario:latest.current.doc.indiaPunjabScenario?indiaPunjabScenario:null,geographicSource:worldSource,areaNames:latest.current.doc.areaNames,view:current?{k:camera.current.k,x:camera.current.x,y:camera.current.y}:null})),clone.firstChild);
+    clone.insertBefore(text('metadata',JSON.stringify({projection:'Equal Earth',appearance:{scheme:latest.current.doc.worldColorScheme,countryBorder:latest.current.doc.worldCountryBorder,provinceBorder:latest.current.doc.worldProvinceBorder,internalBorders:latest.current.doc.worldInternalBorders},scenario:latest.current.doc.indiaPunjabScenario?indiaPunjabScenario:null,geographicSource:worldSource,areaNames:latest.current.doc.areaNames,view:current?{k:camera.current.k,x:camera.current.x,y:camera.current.y}:null})),clone.firstChild);
     const background=document.createElementNS('http://www.w3.org/2000/svg','rect');background.setAttribute('width',String(WORLD_WIDTH));background.setAttribute('height',String(WORLD_HEIGHT));background.setAttribute('fill',latest.current.doc.bg);clone.insertBefore(background,clone.firstChild);
     const credit=text('text',(latest.current.doc.indiaPunjabScenario?'Alternate world; Punjab and Kashmir in India; Aksai Chin in Ladakh | Punjab: LGD/Bharatlas, WFP/OCHA | ':'')+'Equal Earth · geoBoundaries CGAZ · Runfola et al. (2020) · CC BY 4.0 · doi.org/10.1371/journal.pone.0231866');credit.setAttribute('x','24');credit.setAttribute('y','649');credit.setAttribute('font-size','9');credit.setAttribute('fill','#526477');clone.appendChild(credit);
     return new XMLSerializer().serializeToString(clone);
@@ -143,7 +144,7 @@ export default function WorldEqualEarthView(props:MapViewProps){
   }
   const topInset=size.width<700?44:0,bottomInset=size.width<700?100:0,frameHeight=Math.max(120,size.height-topInset-bottomInset);
   const scale=Math.max(.01,Math.min(size.width/WORLD_WIDTH,frameHeight/WORLD_HEIGHT));
-  const detail=view.k>=3;
+  const detail=view.k>=3,internalVisible=worldInternalVisible(props.doc,detail),countryLine=worldCountryLine(props.doc),provinceLine=worldProvinceLine(props.doc);
   const fills=useMemo(()=>projected.map(row=>{
     const paint=displayedPaint(row.area,props.doc),color=paint?.color||displayedBaseColor(props.doc),province=row.area.level==='province';
     return <path key={row.area.id} data-area={row.area.id} data-level={row.area.level} d={row.path} fill={color} stroke="none" pointerEvents={province&&!detail?'none':'visiblePainted'}><title>{areaDisplayName(row.area,props.doc)}</title></path>;
@@ -163,8 +164,8 @@ export default function WorldEqualEarthView(props:MapViewProps){
       <defs>{['stripes','dots','cross'].map(pattern=><pattern key={pattern} id={`${prefix}-${pattern}`} width="8" height="8" patternUnits="userSpaceOnUse"><path d={pattern==='stripes'?'M-2 2L2 -2M0 8L8 0M6 10L10 6':pattern==='cross'?'M4 0V8M0 4H8':'M4 4h.1'} fill="none" stroke="#ffffff" strokeOpacity=".6" strokeWidth={pattern==='dots'?2:1}/></pattern>)}</defs>
       <g data-world-scene="" transform={view.toString()}>
         {fills}{patterns}
-        <g data-world-internal-borders="" display={detail?'inline':'none'} pointerEvents="none">{internal.filter(row=>areaBorderVisible(row.area,props.doc)).map(row=><path key={row.area.id} d={row.path} fill="none" stroke={props.doc.border} strokeOpacity=".22" strokeWidth={Math.min(.5,props.doc.width*.28)} vectorEffect="non-scaling-stroke"/>)}</g>
-        <g data-world-country-borders="" pointerEvents="none">{countries.filter(row=>areaBorderVisible(row.area,props.doc)).map(row=><path key={row.area.id} d={row.path} fill="none" stroke={props.doc.border} strokeOpacity=".8" strokeWidth={Math.min(1,props.doc.width*.65)} vectorEffect="non-scaling-stroke"/>)}</g>
+        <g data-world-internal-borders="" display={internalVisible?'inline':'none'} pointerEvents="none">{internal.filter(row=>areaBorderVisible(row.area,props.doc)).map(row=><path key={row.area.id} d={row.path} fill="none" stroke={provinceLine.color} strokeOpacity=".85" strokeWidth={provinceLine.width} vectorEffect="non-scaling-stroke"/>)}</g>
+        <g data-world-country-borders="" pointerEvents="none">{countries.filter(row=>areaBorderVisible(row.area,props.doc)).map(row=><path key={row.area.id} d={row.path} fill="none" stroke={countryLine.color} strokeOpacity="1" strokeWidth={countryLine.width} vectorEffect="non-scaling-stroke"/>)}</g>
         {labels}
         {props.doc.indiaPunjabScenario&&props.doc.names&&view.k>=5&&<text data-scenario-context="aksai-chin" x={projection(indiaPunjabScenario.aksaiLabel.center as [number,number])![0]} y={projection(indiaPunjabScenario.aksaiLabel.center as [number,number])![1]} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize={10/(view.k*scale)} fill="#29424e" stroke="white" strokeWidth={2/(view.k*scale)} paintOrder="stroke" pointerEvents="none">Aksai Chin</text>}
         {highlighted&&<path data-transient="highlight" d={highlighted.path} fill="none" stroke="#1d7b70" strokeWidth="1.8" vectorEffect="non-scaling-stroke" pointerEvents="none"/>}

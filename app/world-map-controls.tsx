@@ -1,4 +1,5 @@
 'use client';
+import WorldStyleControls from './world-style-controls';
 import {areasByLayer, areaById, type MapDoc} from './map-model';
 import {indiaPunjabScenario,indiaScenarioArea,scenarioAreaVisible,type PunjabMapLevel} from './india-punjab-scenario';
 import {worldCountries,worldSource,worldBounds,worldFocusBounds} from './world-map-model';
@@ -13,6 +14,7 @@ export default function WorldMapControls({doc,onChange,onFit,onPunjabDetails,onA
     <label className="field">Boundary edition<select aria-label="World boundary edition" value={doc.indiaPunjabScenario?'india-punjab':'source'} onChange={e=>{if(e.target.value==='india-punjab')onAlternateRequest();else{onChange({indiaPunjabScenario:false,basemap:'political',scopeAreas:[]});onFit([...worldBounds]);}}}>
       <option value="source">Source world map</option><option value="india-punjab">Alternate world map (password)</option>
     </select></label>
+    <WorldStyleControls doc={doc} onChange={onChange}/>
     {doc.indiaPunjabScenario&&<><p className="coverage-warning">Alternate world · United Punjab and the combined Kashmir extent are included in India. Aksai Chin is part of Ladakh. Amb remains outside Punjab.</p><div className="scope-shortcuts"><button onClick={()=>onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.punjabId),doc))}>Focus United Punjab</button><button onClick={()=>onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.indiaId),doc))}>Focus India</button><button onClick={()=>onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.kashmirId),doc))}>Focus Kashmir</button><button onClick={()=>onFit(worldFocusBounds(areaById.get(indiaPunjabScenario.ladakhId),doc))}>Focus Ladakh + Aksai Chin</button></div>{onPunjabDetails&&<><p className="muted">Detailed Punjab · 48 districts · 12 divisions · 193 tehsils. Approved atlas boundaries and names.</p><div className="scope-shortcuts">{(['district','division','tehsil'] as const).map(level=><button key={level} onClick={()=>onPunjabDetails(level)}>Punjab {level}s</button>)}</div></>}</>}
 
     <p className="muted"><strong>{doc.basemap==='political'?'Equal Earth · equal-area':'Imagery view · Mercator'}</strong><br/>{doc.basemap==='political'?'Country sizes retain their geographic proportions. Zoom in for lighter internal boundaries and smaller labels.':'This existing imagery basemap uses Mercator. Return to Equal Earth to compare land areas.'}</p>

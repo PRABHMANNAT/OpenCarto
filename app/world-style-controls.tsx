@@ -1,0 +1,11 @@
+'use client';
+import type {MapDoc} from './map-model';
+import {worldSchemes,applyWorldScheme,worldSchemeColor,type WorldColorScheme} from './world-style-model';
+export default function WorldStyleControls({doc,onChange}:{doc:MapDoc;onChange:(patch:Partial<MapDoc>)=>void}){
+ return <section className="world-style-controls" aria-label="World map appearance"><h3>Country colors and borders</h3><label className="field">Color scheme<select aria-label="World color scheme" value={doc.worldColorScheme} onChange={event=>onChange(applyWorldScheme(doc,event.target.value as WorldColorScheme))}>{worldSchemes.map(([id,name])=><option key={id} value={id}>{name}</option>)}</select></label>
+ <div className="world-scheme-preview" aria-hidden="true">{['world-c-ind','world-c-bra','world-c-fra','world-c-aus','world-c-can','world-c-zaf'].map(id=><i key={id} style={{background:doc.worldColorScheme==='custom'?doc.paintPalette[0]?.hex||'#ffffff':worldSchemeColor(id,doc.worldColorScheme)}}/>)}</div>
+ <div className="world-border-colors"><label className="field">International borders<input aria-label="World international border color" type="color" value={doc.worldCountryBorder} onChange={event=>onChange({worldCountryBorder:event.target.value})}/></label><label className="field">Province borders<input aria-label="World province border color" type="color" value={doc.worldProvinceBorder} onChange={event=>onChange({worldProvinceBorder:event.target.value})}/></label></div>
+ <label className="field">Internal province borders<select aria-label="World province border visibility" value={doc.worldInternalBorders} onChange={event=>onChange({worldInternalBorders:event.target.value as MapDoc['worldInternalBorders']})}><option value="zoom">Show when zoomed in</option><option value="always">Always visible</option><option value="hidden">Hidden</option></select></label>
+ {doc.worldColorScheme!=='custom'&&<div className="scope-shortcuts"><button onClick={()=>onChange(applyWorldScheme(doc,doc.worldColorScheme))}>Reapply scheme</button><button onClick={()=>onChange(applyWorldScheme(doc,'custom'))}>Restore saved colors</button></div>}
+ <p className="muted">Each province uses its country’s fill. You can still paint individual areas. Restore saved colors returns to your previous palette.</p></section>;
+}
