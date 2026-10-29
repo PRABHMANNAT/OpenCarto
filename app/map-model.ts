@@ -1,6 +1,6 @@
 import raw from './catalog.json';
 import {worldStyleDefaults,validateWorldStyle,upgradeWorldScheme,type WorldStyleSettings} from './world-style-model';
-import {scenarioAreaVisible} from './india-punjab-scenario';
+import {scenarioAreaVisible,indiaScenarioArea} from './india-punjab-scenario';
 import {worldAreas, worldSource} from './world-map-model';
 import {paintPaletteDefaults,validatePaintPalette,type PaintPaletteSettings} from './paint-palette-model';
 import caseStudyAreas from './case-study-area-data.json';
@@ -65,9 +65,9 @@ const ncrRajasthanParents=new Set(delhiSources.ncr.rajasthanParentIds);
 export function inNcr(a:Area){return a.region==='in-delhi'||ncrDistrictIds.has(a.id)||ncrDistrictIds.has(a.parent)||(a.level==='tehsil'&&ncrRajasthanParents.has(a.parent))}
 export function inCountryScope(a:Area,d:MapDoc){return !d.countryView||a.region===d.countryView||!!countryViewById.get(d.countryView)?.regionIds.includes(a.region)}
 export function visible(a:Area,d:MapDoc){if(!scenarioAreaVisible(a.id,d))return false;if(!scopeAreaAllowed(a,d)||!scopeLevelAllowed(a,d))return false;const context=countryViewById.get(d.countryView);if(countryViewById.has(a.region))return d.countryView===a.region&&!hiddenByAncestor(a,d);if(d.countryView&&!(context?context.regionIds.includes(a.region):a.region===d.countryView))return false;if(context&&a.level==='region'&&context.regionIds.includes(a.region))return false;if(d.regions['pk-country']?.show&&scopeRegionAllowed('pk-country',d)&&(d.mapScope!=='selection'||d.scopeAreas.includes('pk-country'))&&['pk-punjab','pk-kp','islamabad'].includes(a.region)&&!(isCaseStudyMap(d)&&d.mapScope==='full'&&a.level!=='region'&&caseStudyIncludes(a)))return false;if(a.region==='delhi-ncr')return d.delhiView==='ncr'&&!d.hidden.includes(a.id);if(d.delhiView==='ncr'&&!inNcr(a))return false;if(a.region==='kashmir-united')return d.kashmirView==='combined'&&!d.hidden.includes(a.id);if(a.level==='region'&&isKashmirPart(a.region)&&d.kashmirView==='combined')return false;if(a.region==='in-delhi'&&a.level==='uc'&&d.delhiMunicipality!=='all'&&a.municipality!==d.delhiMunicipality)return false;const r=d.regions[a.region];return !!r?.show&&(a.level==='region'||scopePrimaryArea(a,d)||(areaDetailVisibility(a,d)??r[a.level]))&&!hiddenByAncestor(a,d)}
-export function effectivePaint(a:Area,d:MapDoc){const seen=new Set<string>();let current:Area|undefined=a;while(current&&!seen.has(current.id)){seen.add(current.id);const paint=d.fills[current.id];if(paint)return paint;current=areaById.get(current.parent)}return undefined}
+export function effectivePaint(a:Area,d:MapDoc){const seen=new Set<string>();let current:Area|undefined=indiaScenarioArea(a,d);while(current&&!seen.has(current.id)){seen.add(current.id);const paint=d.fills[current.id];if(paint)return paint;current=areaById.get(current.parent)}return undefined}
 export function mapPaintGroups(d:MapDoc){const paints=d.caseStudyId==='sikh-heritage-core'?areas.filter(a=>visible(a,d)).map(a=>effectivePaint(a,d)).filter((p):p is Paint=>!!p):Object.values(d.fills);return [...new Map(paints.map(p=>[paintKey(p),p])).entries()];}
-function hiddenByAncestor(a:Area,d:MapDoc){return d.hidden.some(id=>areaBelongsTo(a,id));}
+function hiddenByAncestor(a:Area,d:MapDoc){return d.hidden.some(id=>areaBelongsTo(a,id,d));}
 export function bounds(list:Area[]){return list.reduce((b,a)=>[Math.min(b[0],a.bbox[0]),Math.min(b[1],a.bbox[1]),Math.max(b[2],a.bbox[2]),Math.max(b[3],a.bbox[3])],[180,90,-180,-90])}
 export const allBounds=bounds(areas.filter(a=>a.level==='region'&&a.region!=='world'&&a.region!=='delhi-ncr'&&!countryViewById.has(a.region)));
 export function countryFocusBounds(id:string){return countryViewById.get(id)?.bbox||areaById.get(id)?.bbox||allBounds}

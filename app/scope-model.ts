@@ -38,10 +38,10 @@ for(const a of catalog){
  while(current){for(const division of districtDivisions.get(current.id)||[])ids.add(division);if(!current.parent||ids.has(current.parent))break;ids.add(current.parent);current=byId.get(current.parent);}
  ancestors.set(a.id,ids);
 }
-export const areaBelongsTo=(a:Area,id:string)=>ancestors.get(a.id)?.has(id)||false;
+export function areaBelongsTo(a:Area,id:string,doc:{indiaPunjabScenario?:boolean}={}){if(a.region==='world'&&doc.indiaPunjabScenario){const current=indiaScenarioArea(a,doc);return current.id===id||current.region===id||current.parent===id;}return ancestors.get(a.id)?.has(id)||false;}
 export function selectionAreas(d:ScopeDocument){
  const selected=(d.scopeAreas||[]).map(id=>byId.get(id)).filter((a):a is Area=>!!a).map(a=>indiaScenarioArea(a,d));
- return selected.filter(a=>!selected.some(parent=>parent.id!==a.id&&areaBelongsTo(a,parent.id)));
+ return selected.filter(a=>!selected.some(parent=>parent.id!==a.id&&areaBelongsTo(a,parent.id,d)));
 }
 export const scopeQualifications={
  tricity:'Chandigarh + S A S Nagar (Mohali) district + Panchkula district. This is a union of the supplied administrative areas, not an exact urban, municipal or planning boundary of the Tricity.',
@@ -88,7 +88,7 @@ function inTricity(a:Area){
 }
 // Geographic filtering is separate from layer visibility: overlay markers can
 // use the same selected polygon union without depending on a detail checkbox.
-export function scopeAreaAllowed(a:Area,d:ScopeDocument){if(d.mapScope==='world')return worldAreaAllowed(a,{scopeAreas:d.scopeAreas||[],indiaPunjabScenario:d.indiaPunjabScenario});return d.mapScope==='selection'?(d.scopeAreas||[]).some(id=>areaBelongsTo(a,id)):(d.mapScope==='tricity'?inTricity(a):scopeRegionAllowed(a.region,d));}
+export function scopeAreaAllowed(a:Area,d:ScopeDocument){if(d.mapScope==='world')return worldAreaAllowed(a,{scopeAreas:d.scopeAreas||[],indiaPunjabScenario:d.indiaPunjabScenario});return d.mapScope==='selection'?(d.scopeAreas||[]).some(id=>areaBelongsTo(a,id,d)):(d.mapScope==='tricity'?inTricity(a):scopeRegionAllowed(a.region,d));}
 export function scopeLevelAllowed(a:Area,d:ScopeDocument){return d.mapScope!=='full'||!!d.fullDetail||a.level==='region';}
 // The two district polygons serve as Tricity context outlines even when a
 // previously saved district-detail checkbox was off. Child details still use
@@ -132,7 +132,7 @@ export function scopeQualification(d:ScopeDocument){return d.mapScope==='world'?
 export function scopeLabel(d:ScopeDocument){
  switch(d.mapScope||'atlas'){
   case 'selection':{const selected=selectionAreas(d);return selected.length===1?selected[0].name:selected.length+' selected territories';}
-  case 'world':return d.indiaPunjabScenario?'Alternate world · United Punjab and Kashmir in India · Aksai Chin in Ladakh':'World · countries & first-level divisions';
+  case 'world':return d.indiaPunjabScenario?'Alternate world · Independent Balochistan · Sindh, Multan, Bahawalpur, Punjab and Kashmir in India':'World · countries & first-level divisions';
   case 'full':return 'Full available map';
   case 'single':return scopeRegions.find(r=>r.id===(d.scopeRegion||scopeDefaults.scopeRegion))?.name||'Individual region';
   case 'combination':return 'Custom region combination';

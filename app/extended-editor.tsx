@@ -27,7 +27,7 @@ import {StudioMark,StudioAbout} from './studio-brand';
 import ScopeControls from './scope-controls';
 import WorldMapControls from './world-map-controls';
 import AlternateWorldAccess from './alternate-world-access';
-import {indiaPunjabScenario,indiaScenarioArea,revokeAlternateWorld,type PunjabMapLevel} from './india-punjab-scenario';
+import {indiaScenarioArea,revokeAlternateWorld,type PunjabMapLevel} from './india-punjab-scenario';
 import {worldSource} from './world-map-model';
 import {equalEarthView,worldScope} from './world-equal-earth';
 import RegionExplorer from './region-explorer';
@@ -97,8 +97,8 @@ export default function RegionalEditor(){
  function returnToNormal(){fitPatch(normalMapPatch(current.current));setInspectedId('');setTool('paint');api.current?.clearSelection?.();setStatus('Normal map restored · your custom edits are retained')}
  function openWorldMap(){setPrivateAtlasOpen(false);if(!equalEarthView(current.current))setMapReady(false);change(scopePreset(current.current,'world',{indiaPunjabScenario:false,scopeAreas:[]}));api.current?.fit([-180,-90,180,90]);openPanel('layers');setStatus('World map · countries and first-level divisions only')}
  function requestAlternateWorld(){setPrivateAtlasOpen(false);setAlternateUnlocked(false);void revokeAlternateWorld();setAlternatePasswordOpen(true)}
- function cancelAlternateWorld(){change({indiaPunjabScenario:false});setAlternatePasswordOpen(false)}
- function openAlternateWorld(){setAlternateUnlocked(true);setAlternatePasswordOpen(false);const patch=scopePreset(current.current,'world',{indiaPunjabScenario:true,scopeAreas:[]});const bounds=[-180,-90,180,90];if(!equalEarthView(current.current)){pendingMapBounds.current=bounds;setMapReady(false);}change(patch);api.current?.fit(bounds);openPanel('layers');setStatus('Alternate world map · United Punjab and Kashmir in India')}
+ function cancelAlternateWorld(){change({indiaPunjabScenario:false,scopeAreas:[]});setAlternatePasswordOpen(false)}
+ function openAlternateWorld(){setAlternateUnlocked(true);setAlternatePasswordOpen(false);const patch=scopePreset(current.current,'world',{indiaPunjabScenario:true,scopeAreas:[]});const bounds=[-180,-90,180,90];if(!equalEarthView(current.current)){pendingMapBounds.current=bounds;setMapReady(false);}change(patch);api.current?.fit(bounds);openPanel('layers');setStatus('Alternate world map · independent Balochistan · Sindh, Multan and Bahawalpur in India')}
  function openPunjabDetails(level:PunjabMapLevel){setInitialPunjabView(level);setPrivateAtlasOpen(true)}
  function viewCompleteMap(){fitPatch(completeMapPatch(current.current));setStatus('Complete map · use View → Selected map to return')}
  function viewSelectedMap(){fitPatch(selectedMapPatch(current.current));setStatus('Showing your selected map')}

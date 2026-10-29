@@ -31,7 +31,7 @@ export function visibleBoundaries(geo:FeatureCollection,doc:MapDoc,hidden:Mask[]
  if(previous?.key===key&&previous.cuts.every((m,i)=>m.geometry===hidden[i]?.geometry))return previous.result;
  const result:FeatureCollection={...geo,features:geo.features.flatMap(f=>{
   const a=areaById.get(String(f.id));if(!a)return [f];
-  if(hidden.some(mask=>areaBelongsTo(a,mask.id)))return [];
+  if(hidden.some(mask=>areaBelongsTo(a,mask.id,doc)))return [];
   if(f.geometry.type!=='Polygon'&&f.geometry.type!=='MultiPolygon')return [f];
   const geometry=subtractHidden(f.geometry,f.bbox||a.bbox,hidden);return geometry?[{...f,geometry}]:[];
  })};cache.set(geo,{key,cuts:hidden,result});return result;

@@ -16,8 +16,8 @@ export function findAreas(query:string,level='all',region='all',doc?:Pick<MapDoc
   return Number(bn===q)-Number(an===q)||Number(bn.startsWith(q))-Number(an.startsWith(q))||a.name.localeCompare(b.name)||areaContext(a).localeCompare(areaContext(b));
  }).map(a=>indiaScenarioArea(a,doc||{}));
 }
-export function hiddenArea(a:Area,doc:MapDoc){return doc.hidden.some(id=>areaBelongsTo(a,id));}
-export function revealArea(a:Area,doc:MapDoc){return doc.hidden.filter(id=>!areaBelongsTo(a,id));}
+export function hiddenArea(a:Area,doc:MapDoc){return doc.hidden.some(id=>areaBelongsTo(a,id,doc));}
+export function revealArea(a:Area,doc:MapDoc){return doc.hidden.filter(id=>!areaBelongsTo(a,id,doc));}
 export function addArea(doc:MapDoc,id:string,only=false):Partial<MapDoc>{
  const area=areaById.get(id);if(!area)return {};
  const selected=doc.mapScope==='selection'?selectionAreas(doc):scopeGeometryAreas(doc);

@@ -28,13 +28,24 @@ try{
  await page.screenshot({path:'outputs/alternate-world/password.png'});await unlock();
  assert.equal(await page.getByLabel('World boundary edition').inputValue(),'india-punjab');
  assert.equal(await page.getByLabel('World country',{exact:true}).inputValue(),'','Opens whole world, without an India filter');
- assert.equal(await page.locator('path[data-area][data-level=region]').count(),218-m.removedIds.filter(id=>model.areaById.get(id).level==='region').length);
- for(const id of [m.indiaId,m.punjabId,m.ladakhId,m.kashmirId])assert.equal(await polygon(id).getAttribute('d'),helper.worldRenderedGeometry(overrides.features.find(f=>f.id===id).geometry).path);
+ assert.equal(await page.locator('path[data-area][data-level=region]').count(),218-m.removedIds.filter(id=>model.areaById.get(id).level==='region').length+m.addedIds.filter(id=>model.areaById.get(id).level==='region').length);
+ for(const id of [m.indiaId,m.punjabId,m.ladakhId,m.kashmirId,m.balochistanId,m.sindhId,m.multanId,m.bahawalpurId])assert.equal(await polygon(id).getAttribute('d'),helper.worldRenderedGeometry(overrides.features.find(f=>f.id===id).geometry).path);
  for(const id of m.removedIds)assert.equal(await polygon(id).count(),0,id+' no duplicated owner');
  for(const id of ['world-c-aus','world-c-bra','world-c-rus','world-c-ata'])assert.equal(await polygon(id).getAttribute('d'),helper.worldRenderedGeometry(baseCountries.features.find(f=>f.id===id).geometry).path,id+' unchanged');
  assert.equal(await polygon('world-c-aus').getAttribute('fill'),'#abcdef');
  await page.screenshot({path:'outputs/alternate-world/full-world.png'});
- await page.getByLabel('World country',{exact:true}).selectOption('world-c-pak');await ready();assert.equal(await page.getByLabel('World first-level division').locator('option').count(),1+model.areas.filter(a=>a.parent==='world-c-pak'&&!m.removedIds.includes(a.id)).length);await page.getByLabel('World country',{exact:true}).selectOption('');await ready();
+ await page.getByLabel('World country',{exact:true}).selectOption('world-c-pak');await ready();assert.equal(await page.getByLabel('World first-level division').locator('option').count(),1+2);await page.getByLabel('World country',{exact:true}).selectOption('');await ready();
+ await page.getByLabel('World country',{exact:true}).selectOption(m.indiaId);await ready();
+ const indiaOptions=await page.getByLabel('World first-level division').locator('option').allTextContents();
+ assert.equal(indiaOptions.length,40);for(const name of ['Sindh','Multan','Bahawalpur','United Punjab'])assert.ok(indiaOptions.includes(name));
+ await page.getByLabel('World country',{exact:true}).selectOption(m.balochistanId);await ready();
+ assert.equal(await polygon(m.balochistanId).count(),1);assert.equal(await page.getByLabel('World first-level division').count(),0);
+ await page.getByLabel('World country',{exact:true}).selectOption('');await ready();
+ await page.getByRole('button',{name:'Focus Balochistan',exact:true}).click();
+ await page.screenshot({path:'outputs/alternate-world/western-country-overview.png'});
+ await page.getByRole('button',{name:'Focus Multan',exact:true}).click();
+ await page.waitForFunction(()=>[...document.querySelectorAll('.equal-earth-svg text')].some(t=>t.textContent==='Multan'));
+ await page.screenshot({path:'outputs/alternate-world/western-provinces.png'});
  await page.getByRole('button',{name:'Focus Kashmir',exact:true}).click();
  const point=helper.worldProjection()(m.areas[m.kashmirId].center);const client=await page.locator('[data-world-scene]').evaluate((node,point)=>{const p=node.ownerSVGElement.createSVGPoint();p.x=point[0];p.y=point[1];const v=p.matrixTransform(node.getScreenCTM());return {x:v.x,y:v.y};},point);
  await page.mouse.click(client.x,client.y);await page.waitForFunction(id=>JSON.parse(localStorage.getItem('punjab-studio-regional-v2')).fills[id],m.kashmirId);
@@ -42,7 +53,7 @@ try{
  await page.getByRole('button',{name:'Fit whole world',exact:true}).click();
  await page.getByRole('button',{name:'Export map',exact:true}).click();await page.getByRole('button',{name:'SVG',exact:true}).click();
  const download=page.waitForEvent('download');await page.getByRole('button',{name:'Download SVG',exact:true}).click();const file=await download;assert.equal(file.suggestedFilename(),'alternate-world-map.svg');await file.saveAs('outputs/alternate-world/alternate-world-map.svg');
- const svg=await fs.readFile('outputs/alternate-world/alternate-world-map.svg','utf8');assert.match(svg,/Alternate world map/);assert.match(svg,/Kashmir/);assert.ok(svg.includes('data-area="world-c-bra"'));assert.ok(!/NaN|Infinity/.test(svg));await page.keyboard.press('Escape');
+ const svg=await fs.readFile('outputs/alternate-world/alternate-world-map.svg','utf8');assert.match(svg,/Alternate world map/);assert.match(svg,/Kashmir/);assert.match(svg,/Balochistan/);assert.match(svg,/Bahawalpur/);assert.ok(svg.includes('data-area="world-c-bra"'));assert.ok(!/NaN|Infinity/.test(svg));await page.keyboard.press('Escape');
  await page.reload({waitUntil:'domcontentloaded'});await access().waitFor();await ready();assert.equal(await polygon(m.indiaId).getAttribute('d'),originalIndia,'Reload requires password before alternate geometry');await unlock();
  for(const level of ['district','division','tehsil']){
   await page.getByRole('button',{name:'Punjab '+level+'s',exact:true}).click();
@@ -54,8 +65,13 @@ try{
  await page.waitForFunction(path=>document.querySelector('path[data-area="world-c-ind"]')?.getAttribute('d')===path,originalIndia);
  await page.waitForFunction(()=>!document.querySelector('[data-slot=dialog-content]'));
  assert.equal((await context.request.get(new URL('/api/alternate-world',url).href)).status(),401,'Source edition locks server access');
+ await page.getByRole('button',{name:'Open alternate world map',exact:true}).click();await unlock();
+ await page.getByLabel('World country',{exact:true}).selectOption(m.balochistanId);await ready();await page.reload({waitUntil:'domcontentloaded'});
+ await access().getByRole('button',{name:'Cancel',exact:true}).click();await ready();
+ assert.equal(await page.locator('path[data-area][data-level=region]').count(),218,'Canceling a restored alternate-only country returns the full source world');
+ assert.equal(await polygon(m.balochistanId).count(),0);
  await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'Open alternate world map',exact:true}).click();await unlock();
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth)<=392);assert.equal(await page.locator('.equal-earth-svg').getAttribute('preserveAspectRatio'),'xMidYMid meet');await page.screenshot({path:'outputs/alternate-world/mobile.png'});
  assert.deepEqual(errors,[]);
- console.log('Verified password rejection/unlock/reload/lock, protected data, complete world and unaffected continents, Punjab/Kashmir/Ladakh paths, hit testing, SVG download, all three detailed Punjab views, preserved colors and mobile layout.');
+ console.log('Verified password rejection/unlock/reload/lock, protected data, complete world and unaffected continents, independent Balochistan, Sindh/Multan/Bahawalpur in India, Punjab/Kashmir/Ladakh paths, source restoration after cancel, hit testing, SVG download, all three detailed Punjab views, preserved colors and mobile layout.');
 }finally{await browser.close();}

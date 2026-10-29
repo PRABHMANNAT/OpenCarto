@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import {loadMapModel,loadLocalModule} from './load-map-model.mjs';
 const m=await loadMapModel(),s=await loadLocalModule(new URL('../app/world-style-model.ts',import.meta.url));
-const countries=m.areas.filter(a=>a.region==='world'&&a.level==='region');
+const countries=m.areas.filter(a=>a.region==='world'&&a.level==='region'&&m.visible(a,{...m.initial,mapScope:'world',regions:{...m.initial.regions,world:{...m.initial.regions.world,show:true}}}));
+assert.equal(countries.length,218,'Source edition keeps all 218 source outlines');
 const old={...m.initial,legend:true,fills:{'world-c-ind':{color:'#123456',pattern:'dots'},'world-a1-1811400B91946361694107':{color:'#abcdef',pattern:'solid'},'in-d-608':{color:'#aabbcc',pattern:'solid'}}};
 for(const scheme of ['colorful','pastel','white','gray','white-gray']){
  const doc={...old,...s.applyWorldScheme(old,scheme)};

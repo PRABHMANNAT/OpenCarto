@@ -27,7 +27,7 @@ const inside=(p:number[],ring:number[][])=>{let hit=false;for(let i=0,j=ring.len
 function placeLabels(rows:Projected[],doc:MapDoc,view:{k:number;x:number;y:number},scale:number){
   if(!doc.names)return [];
   const occupied:number[][]=[],labels:{row:Projected;name:string;font:number}[]=[];
-  const candidates=rows.filter(row=>row.area.level==='region'||view.k>=8||doc.indiaPunjabScenario&&[indiaPunjabScenario.punjabId,indiaPunjabScenario.ladakhId].includes(row.area.id)).sort((a,b)=>Number(b.area.level==='region')-Number(a.area.level==='region')||b.size-a.size);
+  const candidates=rows.filter(row=>row.area.level==='region'||view.k>=8||doc.indiaPunjabScenario&&[indiaPunjabScenario.punjabId,indiaPunjabScenario.ladakhId,indiaPunjabScenario.sindhId,indiaPunjabScenario.multanId,indiaPunjabScenario.bahawalpurId].includes(row.area.id)).sort((a,b)=>Number(b.area.level==='region')-Number(a.area.level==='region')||b.size-a.size);
   for(const row of candidates){
     const country=row.area.level==='region',screenArea=row.size*(view.k*scale)**2;
     if(country?screenArea<1600:screenArea<1100)continue;
@@ -126,10 +126,10 @@ export default function WorldEqualEarthView(props:MapViewProps){
     }
     const rows=new Map(scene.current.map(row=>[row.area.id,row]));clone.querySelectorAll('[data-world-border]').forEach(node=>{const row=rows.get(node.getAttribute('data-world-border')||'');if(row)node.setAttribute('d',worldBorderPath(row.feature.geometry,target.k*width/WORLD_WIDTH));});
     const text=(tag:string,value:string)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);node.textContent=value;return node;};
-    clone.insertBefore(text('title',latest.current.doc.indiaPunjabScenario?'Alternate world map; United Punjab and Kashmir in India; Aksai Chin in Ladakh':'World · Equal Earth equal-area projection'),clone.firstChild);
+    clone.insertBefore(text('title',latest.current.doc.indiaPunjabScenario?'Alternate world map; independent Balochistan; Sindh, Multan, Bahawalpur, Punjab and Kashmir in India':'World · Equal Earth equal-area projection'),clone.firstChild);
     clone.insertBefore(text('metadata',JSON.stringify({projection:'Equal Earth',appearance:{scheme:latest.current.doc.worldColorScheme,countryBorder:latest.current.doc.worldCountryBorder,provinceBorder:latest.current.doc.worldProvinceBorder,internalBorders:latest.current.doc.worldInternalBorders},scenario:latest.current.doc.indiaPunjabScenario?indiaPunjabScenario:null,geographicSource:worldSource,areaNames:latest.current.doc.areaNames,view:current?{k:camera.current.k,x:camera.current.x,y:camera.current.y}:null})),clone.firstChild);
     const background=document.createElementNS('http://www.w3.org/2000/svg','rect');background.setAttribute('width',String(WORLD_WIDTH));background.setAttribute('height',String(WORLD_HEIGHT));background.setAttribute('fill',latest.current.doc.bg);clone.insertBefore(background,clone.firstChild);
-    const credit=text('text',(latest.current.doc.indiaPunjabScenario?'Alternate world; Punjab and Kashmir in India; Aksai Chin in Ladakh | Punjab: LGD/Bharatlas, WFP/OCHA | ':'')+'Equal Earth · geoBoundaries CGAZ · Runfola et al. (2020) · CC BY 4.0 · doi.org/10.1371/journal.pone.0231866');credit.setAttribute('x','24');credit.setAttribute('y','649');credit.setAttribute('font-size','9');credit.setAttribute('fill','#526477');clone.appendChild(credit);
+    const credit=text('text',(latest.current.doc.indiaPunjabScenario?'Alternate world; independent Balochistan; western provinces, Punjab and Kashmir in India | Punjab: LGD/Bharatlas, WFP/OCHA | ':'')+'Equal Earth · geoBoundaries CGAZ · Runfola et al. (2020) · CC BY 4.0 · doi.org/10.1371/journal.pone.0231866');credit.setAttribute('x','24');credit.setAttribute('y','649');credit.setAttribute('font-size','9');credit.setAttribute('fill','#526477');clone.appendChild(credit);
     return new XMLSerializer().serializeToString(clone);
   }
   useEffect(()=>{

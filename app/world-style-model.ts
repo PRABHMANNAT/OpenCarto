@@ -1,4 +1,5 @@
 import countries from './world-sources.json';
+import {scenarioAddedAreas,scenarioAddedIds} from './india-punjab-scenario';
 import neighborData from './world-country-neighbors.json';
 import worldAreas from './world-areas.json';
 import type {MapDoc,Paint} from './map-model';
@@ -6,7 +7,7 @@ export const worldSchemes=[['custom','Your saved colors'],['colorful','Default p
 export type WorldColorScheme=typeof worldSchemes[number][0];
 export type WorldStyleSettings={worldPaletteVersion:number;worldColorScheme:WorldColorScheme;worldSavedFills:Record<string,Paint>|null;worldSavedLegend:boolean;worldCountryBorder:string;worldProvinceBorder:string;worldInternalBorders:'zoom'|'always'|'hidden'};
 export const worldStyleDefaults:WorldStyleSettings={worldPaletteVersion:2,worldColorScheme:'custom',worldSavedFills:null,worldSavedLegend:true,worldCountryBorder:'#000000',worldProvinceBorder:'#9ca3af',worldInternalBorders:'zoom'};
-const ids=countries.countries.map(c=>c.id).sort(),worldIds=new Set(worldAreas.map(a=>a.id));
+const baseIds=countries.countries.map(c=>c.id).sort(),extraCountries=scenarioAddedAreas.filter(a=>a.level==='region').map(a=>a.id),ids=[...baseIds,...extraCountries],worldIds=new Set([...worldAreas.map(a=>a.id),...scenarioAddedIds]);
 function hsl(h:number,s:number,l:number){s/=100;l/=100;const a=s*Math.min(l,1-l),f=(n:number)=>{const k=(n+h/30)%12;return Math.round(255*(l-a*Math.max(-1,Math.min(k-3,9-k,1)))).toString(16).padStart(2,'0');};return '#'+f(0)+f(8)+f(4);}
 function palette(pastel:boolean){const used=new Set<string>();return new Map(ids.map((id,i)=>{let color=hsl(i*137.507764%360,pastel?40+i%4*5:48+i%3*9,pastel?80+i%3*3:65+i%5*3);while(used.has(color))color='#'+((parseInt(color.slice(1),16)+1)%0xffffff).toString(16).padStart(6,'0');used.add(color);return [id,color];}));}
 const legacyColorful=palette(false),legacyPastel=palette(true);
@@ -19,7 +20,7 @@ export const worldThemePalettes:Record<string,string[]>={
  modern:['#9BC9C3','#A6C5DC','#DDC18D','#C1A7CB','#DCAAA5','#B8C88E','#95B4C7','#C9BBA2','#A7C8A9','#C9B7D7','#DFBEA9','#ADC0D1'],
  earth:['#CDBB9E','#C2C7AA','#B1BC9F','#D9C4AC','#B7BCB3','#C7B0A2','#D4CDB5','#A9BBAA','#D1B5AD','#BDC7B9','#C7BFAF','#DDD3BC'],
 };
-const countryNeighbors=neighborData as Record<string,string[]>;
+const countryNeighbors:Record<string,string[]>={...neighborData,'world-c-balochistan':['world-c-ind','world-c-pak','world-c-irn','world-c-afg']};
 const rgb=(hex:string)=>[1,3,5].map(start=>parseInt(hex.slice(start,start+2),16));
 const distance=(a:string,b:string)=>rgb(a).reduce((sum,v,i)=>sum+(v-rgb(b)[i])**2,0);
 const coordinated=new Map<string,Map<string,string>>();
@@ -27,7 +28,7 @@ function coordinatedPalette(theme:string){
  const cached=coordinated.get(theme);if(cached)return cached;
  const bases=worldThemePalettes[theme]||worldThemePalettes.colorful,assigned=new Map<string,number>(),uses=bases.map(()=>0),remaining=new Set(ids);
  while(remaining.size){
-  const id=[...remaining].sort((a,b)=>new Set((countryNeighbors[b]||[]).flatMap(n=>assigned.has(n)?[assigned.get(n)]:[])).size-new Set((countryNeighbors[a]||[]).flatMap(n=>assigned.has(n)?[assigned.get(n)]:[])).size||(countryNeighbors[b]?.length||0)-(countryNeighbors[a]?.length||0)||a.localeCompare(b))[0];
+  const id=[...remaining].sort((a,b)=>Number(extraCountries.includes(a))-Number(extraCountries.includes(b))||new Set((countryNeighbors[b]||[]).flatMap(n=>assigned.has(n)?[assigned.get(n)]:[])).size-new Set((countryNeighbors[a]||[]).flatMap(n=>assigned.has(n)?[assigned.get(n)]:[])).size||(countryNeighbors[b]?.length||0)-(countryNeighbors[a]?.length||0)||a.localeCompare(b))[0];
   const neighbors=(countryNeighbors[id]||[]).flatMap(n=>assigned.has(n)?[assigned.get(n)!]:[]);let best=0,score=-Infinity;
   for(let i=0;i<bases.length;i++){const contrast=neighbors.length?Math.min(...neighbors.map(n=>distance(bases[i],bases[n]))):100000;const candidate=contrast-uses[i]*200-((i-ids.indexOf(id)*7)%bases.length+bases.length)%bases.length;if(candidate>score){score=candidate;best=i;}}
   assigned.set(id,best);uses[best]++;remaining.delete(id);
@@ -46,7 +47,7 @@ export function upgradeWorldScheme(doc:MapDoc,version?:number){
 export function applyWorldScheme(doc:MapDoc,scheme:WorldColorScheme):Partial<MapDoc>{
  const nonWorld=Object.fromEntries(Object.entries(doc.fills).filter(([id])=>!worldIds.has(id)));
  if(scheme==='custom')return {worldPaletteVersion:2,worldColorScheme:scheme,fills:{...nonWorld,...(doc.worldSavedFills||Object.fromEntries(Object.entries(doc.fills).filter(([id])=>worldIds.has(id))))},legend:doc.worldSavedFills?doc.worldSavedLegend:doc.legend,worldSavedFills:null};
- return {worldPaletteVersion:2,worldColorScheme:scheme,worldSavedFills:doc.worldSavedFills||Object.fromEntries(Object.entries(doc.fills).filter(([id])=>worldIds.has(id))),worldSavedLegend:doc.worldSavedFills?doc.worldSavedLegend:doc.legend,fills:{...nonWorld,...Object.fromEntries(ids.map(id=>[id,{color:worldSchemeColor(id,scheme),pattern:'solid'}]))},legend:false};
+ return {worldPaletteVersion:2,worldColorScheme:scheme,worldSavedFills:doc.worldSavedFills||Object.fromEntries(Object.entries(doc.fills).filter(([id])=>worldIds.has(id))),worldSavedLegend:doc.worldSavedFills?doc.worldSavedLegend:doc.legend,fills:{...nonWorld,...Object.fromEntries(ids.filter(id=>doc.indiaPunjabScenario||!extraCountries.includes(id)).map(id=>[id,{color:worldSchemeColor(id,scheme),pattern:'solid'}]))},legend:false};
 }
 export function validateWorldStyle(value:Partial<WorldStyleSettings>):WorldStyleSettings{
  const result={...worldStyleDefaults};if(worldSchemes.some(([id])=>id===value.worldColorScheme))result.worldColorScheme=value.worldColorScheme!;
